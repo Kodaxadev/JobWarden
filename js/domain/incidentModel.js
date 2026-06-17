@@ -4,7 +4,7 @@
 import { nowIso, localTimezone } from './timeUtils.js';
 import { analyze } from './breakRules.js';
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 function uuid() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
@@ -62,6 +62,7 @@ export function createIncident(input = {}) {
     attachments: input.attachments || [],
     deleted: false, deletedAt: '', deleteReason: '',
     editLog: [],
+    contentHash: '', recordHash: '', sealedAt: '', // set by the repo when persisted (see integrity.js)
   };
   i.flags = analyze(i);
   return i;
@@ -92,6 +93,7 @@ export function hydrateIncident(stored = {}) {
     deletedAt: stored.deletedAt || '',
     deleteReason: stored.deleteReason || '',
     editLog: Array.isArray(stored.editLog) ? [...stored.editLog] : [],
+    contentHash: stored.contentHash || '', recordHash: stored.recordHash || '', sealedAt: stored.sealedAt || '',
   };
   i.flags = analyze(i);
   return i;

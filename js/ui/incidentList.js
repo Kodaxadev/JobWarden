@@ -2,6 +2,7 @@
 import { el, clear, toast, confirmDialog } from './dom.js';
 import { getAllIncidents, getDeletedIncidents, putIncident } from '../data/incidentRepo.js';
 import { softDelete, restoreIncident } from '../domain/incidentModel.js';
+import { verifyIntegrity } from '../domain/integrity.js';
 import { summarize } from '../domain/breakRules.js';
 import { labelFor } from '../config/infractionTypes.js';
 import { formatDate } from '../domain/timeUtils.js';
@@ -82,6 +83,14 @@ function buildDetail(host, item, { onEdit, onChanged }) {
   if ((item.attachments || []).length) add('Proof saved', `${item.attachments.length} photo(s)`);
   add('Saved at', new Date(item.createdAt).toLocaleString());
   host.appendChild(facts);
+
+  const seal = el('div', { class: 'seal', text: 'Checking record fingerprint…' });
+  host.appendChild(seal);
+  verifyIntegrity(item).then(v => {
+    if (!v.sealed) { seal.className = 'seal none'; seal.textContent = 'Not sealed (older record)'; }
+    else if (v.ok) { seal.className = 'seal ok'; seal.textContent = '✓ Fingerprint verified — unchanged since saved'; }
+    else { seal.className = 'seal warn'; seal.textContent = '⚠ This record may have been changed outside the app'; }
+  }).catch(() => seal.remove());
 
   const noted = (item.flags || []).filter(f => f.note);
   if (noted.length) host.appendChild(el('ul', { class: 'flaglist' }, noted.map(f => el('li', { text: f.note }))));

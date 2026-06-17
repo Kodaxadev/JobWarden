@@ -3,13 +3,18 @@
 // current schema (fills meal2/offClock/classification defaults, recomputes flags) on the way out.
 import { STORE_INCIDENTS, tx, reqToPromise } from './db.js';
 import { hydrateIncident } from '../domain/incidentModel.js';
+import { stampIntegrity } from '../domain/integrity.js';
 
-export function addIncident(incident) {
-  return tx(STORE_INCIDENTS, 'readwrite', s => reqToPromise(s.add(incident)));
+// Records are sealed (content + record SHA-256 fingerprints, plus per-photo hashes)
+// on the way into storage, so every create/edit/delete reseals the tamper-evident state.
+export async function addIncident(incident) {
+  const sealed = await stampIntegrity(incident);
+  return tx(STORE_INCIDENTS, 'readwrite', s => reqToPromise(s.add(sealed)));
 }
 
-export function putIncident(incident) {
-  return tx(STORE_INCIDENTS, 'readwrite', s => reqToPromise(s.put(incident)));
+export async function putIncident(incident) {
+  const sealed = await stampIntegrity(incident);
+  return tx(STORE_INCIDENTS, 'readwrite', s => reqToPromise(s.put(sealed)));
 }
 
 export function getIncident(id) {

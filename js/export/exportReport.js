@@ -3,8 +3,10 @@ import { blobToDataUrl } from '../capture/media.js';
 import { labelFor } from '../config/infractionTypes.js';
 import { formatDate } from '../domain/timeUtils.js';
 import { formatLoc } from '../capture/geo.js';
+import { verifyIntegrity, manifestHash, HASH_ALGO } from '../domain/integrity.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const when = iso => { try { return new Date(iso).toLocaleString(); } catch { return iso || '—'; } };
 
 const STYLE = `
   *{box-sizing:border-box} body{font:13px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;color:#111;margin:32px;}
@@ -16,7 +18,18 @@ const STYLE = `
   dt{color:#555} dd{margin:0}
   ul.notes{margin:8px 0;padding-left:18px} ul.notes li{color:#1a5}
   .narr{white-space:pre-wrap;background:#f7f7f7;border-left:3px solid #ccc;padding:8px 10px;margin:8px 0}
-  .imgs img{max-width:240px;max-height:240px;border:1px solid #ccc;margin:6px 6px 0 0;vertical-align:top}
+  figure.shot{display:inline-block;margin:6px 6px 0 0;vertical-align:top}
+  figure.shot img{max-width:240px;max-height:240px;border:1px solid #ccc;display:block}
+  figcaption{font:10px/1.3 ui-monospace,Menlo,Consolas,monospace;color:#666;max-width:240px;word-break:break-all;margin-top:2px}
+  .attest{margin:10px 0 0;padding:8px 10px;background:#f3f6f3;border:1px solid #cfe0cf;border-radius:6px;font-size:11px;color:#333}
+  .attest code{font:10px/1.3 ui-monospace,Menlo,Consolas,monospace;word-break:break-all}
+  .attest .imm{color:#070}
+  .mismatch{color:#a10000;font-weight:700;margin-top:4px}
+  .unsealed{color:#777;font-style:italic}
+  .hist{margin:8px 0 0;font-size:11px;color:#444} .hist ul{margin:4px 0 0;padding-left:18px}
+  .integrity{margin:0 0 18px;padding:10px 12px;background:#f3f6f3;border:1px solid #cfe0cf;border-radius:6px;font-size:11px;color:#333}
+  .integrity code{font:10px/1.3 ui-monospace,Menlo,Consolas,monospace;word-break:break-all}
+  .integrity p{margin:6px 0 0;color:#555}
   .foot{margin-top:24px;font-size:11px;color:#666;border-top:1px solid #ccc;padding-top:10px}
   .sign{margin-top:30px} .sign .line{border-top:1px solid #000;width:280px;margin-top:34px;padding-top:4px;font-size:11px}
   @media print{body{margin:12mm}}
@@ -54,8 +67,28 @@ async function recordHtml(i) {
   let imgs = '';
   for (const a of (i.attachments || [])) {
     const url = a.dataUrl || (a.blob ? await blobToDataUrl(a.blob) : '');
-    if (url) imgs += `<img src="${url}" alt="${esc(a.name)}">`;
+    if (!url) continue;
+    const cap = a.sha256 ? `${esc(a.name || 'photo')} · ${HASH_ALGO}: ${a.sha256}` : esc(a.name || 'photo');
+    imgs += `<figure class="shot"><img src="${url}" alt="${esc(a.name)}"><figcaption>${cap}</figcaption></figure>`;
   }
+
+  const v = await verifyIntegrity(i);
+  const edits = i.editLog || [];
+  const editLine = edits.length
+    ? `Edited ${edits.length} time(s) after creation — see history below.`
+    : 'Not edited since creation.';
+  const fp = v.sealed
+    ? `<div><strong>Record fingerprint (${HASH_ALGO}):</strong> <code>${i.recordHash}</code></div>`
+    : '<div class="unsealed">Created before fingerprint sealing was added.</div>';
+  const mismatch = (v.sealed && !v.ok)
+    ? '<div class="mismatch">⚠ Fingerprint does not match this record’s contents — it may have been changed outside the app.</div>'
+    : '';
+  const histHtml = edits.length ? `<div class="hist"><strong>Edit history</strong><ul>${
+    edits.map(h => {
+      const ch = (h.changes || []).map(c => `${esc(c.field)}: ${esc(c.from ?? '')} → ${esc(c.to ?? '')}`).join('; ');
+      return `<li>${esc(when(h.at))} — ${esc(h.note || 'edited')}${ch ? ` (${ch})` : ''}</li>`;
+    }).join('')
+  }</ul></div>` : '';
 
   return `<div class="rec">
     <h2>${esc(formatDate(i.incidentDate))}</h2>
@@ -64,20 +97,32 @@ async function recordHtml(i) {
     ${notes ? `<ul class="notes">${notes}</ul>` : ''}
     ${i.narrative ? `<div class="narr">${esc(i.narrative)}</div>` : ''}
     ${imgs ? `<div class="imgs">${imgs}</div>` : ''}
-    ${(i.editLog || []).length ? `<p style="font-size:11px;color:#666">Edit history: ${(i.editLog || []).length} change-set(s) after creation; original createdAt is immutable.</p>` : ''}
+    <div class="attest">
+      <div><strong>Created:</strong> ${esc(when(i.createdAt))} <span class="imm">(immutable)</span></div>
+      <div><strong>Edits:</strong> ${editLine}</div>
+      ${fp}${mismatch}
+    </div>
+    ${histHtml}
   </div>`;
 }
 
 export async function buildReportHtml(incidents, settings = {}) {
   const blocks = [];
   for (const i of incidents) blocks.push(await recordHtml(i));
+  const mh = await manifestHash(incidents);
   const title = 'Workplace Meal/Rest & Wage Log — California';
   const who = [settings.employeeName && `Employee: ${esc(settings.employeeName)}`,
     settings.employer && `Employer: ${esc(settings.employer)}`].filter(Boolean).join(' · ');
+  const integrity = mh ? `<div class="integrity">
+      <div><strong>Report integrity</strong> — Algorithm: ${HASH_ALGO} · Records: ${incidents.length} · Generated: ${esc(new Date().toLocaleString())}</div>
+      <div><strong>Set fingerprint:</strong> <code>${mh}</code></div>
+      <p>Each record below carries a fingerprint of its contents and edit history, and each photo carries a fingerprint of its file. These let anyone detect whether a record was changed after it was saved. This is a self-kept log, not a third-party timestamp — the fingerprints do not prove the times entered are true.</p>
+    </div>` : '';
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title>
     <style>${STYLE}</style></head><body>
     <h1>${esc(title)}</h1>
     <p class="sub">${who}${who ? ' · ' : ''}Generated ${new Date().toLocaleString()} · ${incidents.length} record(s)</p>
+    ${integrity}
     ${blocks.join('')}
     <div class="sign">
       <p style="font-size:11px;color:#444">These are my own records, made at or near the time of each event to the best of my knowledge.</p>
