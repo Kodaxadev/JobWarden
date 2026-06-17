@@ -4,6 +4,7 @@ import { getAllIncidents, getDeletedIncidents, putIncident } from '../data/incid
 import { softDelete, restoreIncident } from '../domain/incidentModel.js';
 import { verifyIntegrity } from '../domain/integrity.js';
 import { summarize } from '../domain/breakRules.js';
+import { summarizePatterns } from '../domain/patterns.js';
 import { labelFor } from '../config/infractionTypes.js';
 import { formatDate } from '../domain/timeUtils.js';
 import { attachmentUrl } from '../capture/media.js';
@@ -23,6 +24,7 @@ export async function renderIncidentList(container, { onEdit, onChanged } = {}) 
     return;
   }
 
+  if (items.length) container.appendChild(glanceCard(items));
   container.appendChild(el('p', { class: 'count', text: `${items.length} record${items.length === 1 ? '' : 's'}` }));
   items.forEach(item => container.appendChild(row(item, { onEdit, onChanged })));
 
@@ -35,6 +37,29 @@ export async function renderIncidentList(container, { onEdit, onChanged } = {}) 
 
 function chipRow(item) {
   return el('div', { class: 'row-chips' }, (item.types || []).map(t => el('span', { class: 'chip mini', text: labelFor(t) })));
+}
+
+// "Pattern" layer: a plain-language roll-up so a recurring problem is visible at a glance.
+function glanceCard(items) {
+  const s = summarizePatterns(items);
+  const kpi = (num, label) => el('div', { class: 'kpi' }, [
+    el('span', { class: 'kpi-num', text: String(num) }),
+    el('span', { class: 'kpi-label', text: label }),
+  ]);
+  const stats = s.headline.slice(0, 5).map(h => kpi(h.count, h.label));
+  if (s.offClock.records) stats.push(kpi(`${s.offClock.totalMinutes} min`, 'Off the clock'));
+
+  const range = s.range.from
+    ? `${formatDate(s.range.from)} – ${formatDate(s.range.to)} (${s.range.span})`
+    : '';
+  return el('section', { class: 'card glance' }, [
+    el('h2', { text: 'Your records at a glance' }),
+    el('p', { class: 'glance-range', text: `${items.length} shift${items.length === 1 ? '' : 's'} logged${range ? ` · ${range}` : ''}` }),
+    stats.length
+      ? el('div', { class: 'kpi-grid' }, stats)
+      : el('p', { class: 'hint', text: 'No possible issues flagged yet.' }),
+    el('p', { class: 'glance-foot hint', text: `${s.reportedCount} reported · ${s.withProofCount} with photo proof. Make a one-page summary in Export.` }),
+  ]);
 }
 
 function row(item, { onEdit, onChanged }) {

@@ -5,6 +5,7 @@ import { getSettings, markBackedUp } from '../data/settingsRepo.js';
 import { exportJson } from '../export/exportJson.js';
 import { exportCsv } from '../export/exportCsv.js';
 import { openPrintReport } from '../export/exportReport.js';
+import { openPrintSummary } from '../export/exportSummary.js';
 
 const action = (label, desc, cls, onclick) => el('div', { class: 'action' }, [
   el('button', { class: cls, text: label, onclick }),
@@ -26,6 +27,8 @@ export async function renderExportView(container, { onChanged } = {}) {
         guard(async () => { exportCsv(items); toast('Spreadsheet saved'); })),
       action('Make printable report', 'A report to print or save as PDF for the Labor Commissioner, a lawyer, or HR.', 'btn',
         guard(async () => { const ok = await openPrintReport(items, settings); if (!ok) toast('Allow pop-ups to print'); })),
+      action('Make summary report', 'A one-page overview — the patterns and a timeline — a lawyer can read in 30 seconds.', 'btn',
+        guard(async () => { const ok = await openPrintSummary(items, settings); if (!ok) toast('Allow pop-ups to print'); })),
     ]),
   ]));
 }

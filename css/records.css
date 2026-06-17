@@ -1,5 +1,12 @@
 /* records.css — records list, detail, history, deleted, export & settings bits. */
 .count { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+
+.glance .glance-range { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.kpi { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.kpi-num { font-size: 22px; font-weight: 800; color: var(--incident); line-height: 1.05; }
+.kpi-label { font-size: 12.5px; color: var(--muted); line-height: 1.3; overflow-wrap: anywhere; }
+.glance-foot { margin: 12px 0 0; }
 .empty { text-align: center; color: var(--muted); padding: 48px 16px; }
 .empty p { margin: 0 0 8px; }
 
