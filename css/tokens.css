@@ -4,7 +4,7 @@
   --line:#2c3d4d; --text:#f4f0e8; --muted:#9ca9b4;
   --primary:#3e8fb0; --primary-strong:#57b7da;
   --incident:#c98a3a; --danger:#e15b4f; --ok:#57b982;
-  --radius:8px; --tap:48px;
+  --radius:10px; --tap:48px;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }

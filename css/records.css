@@ -1,34 +1,35 @@
 /* records.css — records list, detail, history, deleted, export & settings bits. */
-.count { color: var(--muted); font-size: 13px; margin: 0 0 10px; }
-.empty { text-align: center; color: var(--muted); padding: 40px 10px; }
+.count { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+.empty { text-align: center; color: var(--muted); padding: 48px 16px; }
+.empty p { margin: 0 0 8px; }
 
-.row { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin: 0 0 10px; overflow: hidden; }
-.row-head { width: 100%; text-align: left; background: none; border: none; color: var(--text); padding: 14px; display: flex; justify-content: space-between; gap: 10px; cursor: pointer; }
+.row { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin: 0 0 12px; overflow: hidden; }
+.row-head { width: 100%; text-align: left; background: none; border: none; color: var(--text); padding: 16px; display: flex; justify-content: space-between; gap: 12px; cursor: pointer; }
 .row-head.static { cursor: default; align-items: center; }
 .row-main { min-width: 0; }
-.row-date { font-weight: 600; margin-bottom: 6px; }
-.row-chips { display: flex; flex-wrap: wrap; gap: 4px; }
-.chip.mini { display: inline-block; background: var(--surface-3); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; font-size: 12px; min-height: 0; }
-.row-flags { color: var(--incident); font-size: 13px; margin-top: 6px; }
-.row-meta { color: var(--muted); font-size: 12px; white-space: nowrap; }
-.row-detail { padding: 0 14px 14px; border-top: 1px solid var(--line); }
-.facts { display: grid; grid-template-columns: 130px 1fr; gap: 4px 10px; margin: 12px 0; font-size: 14px; }
+.row-date { font-weight: 600; font-size: 15px; margin-bottom: 8px; }
+.row-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip.mini { display: inline-block; background: var(--surface-3); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 12px; min-height: 0; }
+.row-flags { color: var(--incident); font-size: 13px; line-height: 1.4; margin-top: 8px; }
+.row-meta { color: var(--muted); font-size: 12px; white-space: nowrap; text-align: right; }
+.row-detail { padding: 0 16px 16px; border-top: 1px solid var(--line); }
+.facts { display: grid; grid-template-columns: 132px 1fr; gap: 8px 12px; margin: 14px 0; font-size: 14px; }
 .facts dt { color: var(--muted); }
 .facts dd { margin: 0; }
-.flaglist { margin: 8px 0; padding-left: 18px; }
-.flaglist li { color: var(--ok); font-size: 13px; margin-bottom: 3px; }
-.narrative { white-space: pre-wrap; background: var(--surface-2); border-left: 3px solid var(--line); padding: 10px; border-radius: 6px; font-size: 14px; }
-.row-actions { display: flex; gap: 10px; margin-top: 12px; }
+.flaglist { margin: 10px 0; padding-left: 18px; }
+.flaglist li { color: var(--ok); font-size: 13px; line-height: 1.4; margin-bottom: 5px; }
+.narrative { white-space: pre-wrap; background: var(--surface-2); border-left: 3px solid var(--line); padding: 12px 14px; border-radius: 8px; font-size: 14px; line-height: 1.5; }
+.row-actions { display: flex; gap: 12px; margin-top: 16px; }
 .row-detail a { color: var(--primary-strong); }
 
-.history { margin-top: 10px; font-size: 12px; color: var(--muted); }
-.history summary { cursor: pointer; }
-.hist-entry { margin: 6px 0; padding-left: 8px; border-left: 2px solid var(--line); }
+.history { margin-top: 14px; font-size: 12px; color: var(--muted); }
+.history summary { cursor: pointer; padding: 4px 0; }
+.hist-entry { margin: 8px 0; padding-left: 10px; border-left: 2px solid var(--line); }
 .hist-change { color: var(--text); word-break: break-word; }
 
-.deleted-wrap { margin-top: 18px; }
-.deleted-wrap summary { color: var(--muted); cursor: pointer; padding: 6px 0; }
+.deleted-wrap { margin-top: 20px; }
+.deleted-wrap summary { color: var(--muted); cursor: pointer; padding: 8px 0; }
 .row.deleted { opacity: .7; }
 
-.action { display: flex; flex-direction: column; gap: 4px; }
+.action { display: flex; flex-direction: column; gap: 6px; }
 .action .hint { margin: 0; }
