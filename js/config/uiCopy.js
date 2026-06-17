@@ -2,13 +2,14 @@
 // Primary copy must avoid legal jargon (see BANNED_PRIMARY_WORDS + tests/uiCopy.test.mjs).
 export const BANNED_PRIMARY_WORDS = ['infraction', 'waiver', 'classification', 'compliance', 'indexeddb'];
 
+// The fixed 6-step "Evidence Trail" spine. Each step: icon + title + helper + short button label.
 export const TRAIL_STEPS = [
-  { id: 'issue', icon: 'circle-alert', title: 'Pick what happened', helper: 'Choose the things that went wrong today.' },
-  { id: 'time', icon: 'clock', title: 'Add work times', helper: 'Add when you started and stopped work.' },
-  { id: 'meal', icon: 'utensils', title: 'Add lunch breaks', helper: 'Add lunch times, or say if lunch did not happen.' },
-  { id: 'offClock', icon: 'timer-off', title: 'Add unpaid work', helper: 'Add work time that was not paid.' },
-  { id: 'proof', icon: 'camera', title: 'Add proof', helper: 'Add photos, place, and witnesses.' },
-  { id: 'story', icon: 'file-pen-line', title: 'Tell what happened', helper: 'Write short facts. Names, times, and what was said help.' },
+  { id: 'issue', icon: 'triangle-alert', title: 'Pick what happened', helper: 'Choose all that happened today.', btn: 'Pick' },
+  { id: 'time', icon: 'clock', title: 'Add work times', helper: 'Add when you started and ended work.', btn: 'Add times' },
+  { id: 'meal', icon: 'sandwich', title: 'Add lunch breaks', helper: 'Add your lunch start and end times.', btn: 'Add lunch' },
+  { id: 'offClock', icon: 'footprints', title: 'Add unpaid work', helper: 'Add any work you did off the clock.', btn: 'Add unpaid' },
+  { id: 'proof', icon: 'camera', title: 'Add proof', helper: 'Add photos or notes that back you up.', btn: 'Add proof' },
+  { id: 'story', icon: 'notebook-pen', title: 'Tell what happened', helper: 'Write a few short sentences.', btn: 'Add notes' },
 ];
 
 export const ISSUE_GROUPS = [
@@ -27,9 +28,3 @@ export const ISSUE_GROUPS = [
   { id: 'pay', label: 'Unpaid work', items: [{ id: 'off_clock_work', label: 'Worked but was not paid' }] },
   { id: 'notice', label: 'I told someone', items: [{ id: 'complaint_raised', label: 'I reported the problem' }] },
 ];
-
-// Extra trail steps for issues outside the canonical 6-step spine (rest breaks, notice).
-export const EXTRA_STEPS = {
-  rest: { id: 'rest', icon: 'clock', title: 'Add rest breaks', helper: 'Add 10-minute rest breaks you missed or that were interrupted.' },
-  notice: { id: 'notice', icon: 'file-pen-line', title: 'Who you told', helper: 'Add who you told and what they said.' },
-};

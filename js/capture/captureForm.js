@@ -1,65 +1,89 @@
-// captureForm.js — Evidence Trail orchestration. One concern: assemble the trail → validate → save.
+// captureForm.js — Evidence Trail stepper: collapsed step rows, accordion expand, save.
+// One concern: assembling the trail shell, status, and save → validate → persist.
 import { el, clear, toast } from '../ui/dom.js';
-import { fieldsForTypes, FIELD } from '../config/infractionTypes.js';
-import { TRAIL_STEPS, EXTRA_STEPS } from '../config/uiCopy.js';
+import { icon } from '../ui/icons.js';
+import { TRAIL_STEPS } from '../config/uiCopy.js';
 import { createIncident, reviseIncident, validateIncident } from '../domain/incidentModel.js';
 import { addIncident, putIncident } from '../data/incidentRepo.js';
 import { getSettings } from '../data/settingsRepo.js';
-import {
-  buildInitialState, logStatusRow, trailStep, issueGroups, basicsBody,
-  clockBody, mealBody, restBody, offClockBody, noticeBody, proofBody, storyBody,
-} from './captureFields.js';
+import { todayDateStr } from '../domain/timeUtils.js';
+import { buildInitialState, issueBody, timeBody, mealBody, offClockBody, proofBody, storyBody } from './captureFields.js';
 
-const STEP = Object.fromEntries(TRAIL_STEPS.map(s => [s.id, s]));
+const BODY = { issue: issueBody, time: timeBody, meal: mealBody, offClock: offClockBody, proof: proofBody, story: storyBody };
+const iconEl = (n) => { const s = el('span'); s.innerHTML = icon(n); return s.firstElementChild || s; };
+
+function isSet(id, s) {
+  switch (id) {
+    case 'issue': return s.types.length > 0;
+    case 'time': return !!(s.clockIn || s.clockOut || s.rest.taken != null || s.rest.interrupted || s.rest.onCall);
+    case 'meal': return !!(s.meal.start || s.meal.taken === false || s.meal.waived || s.meal2.start);
+    case 'offClock': return !!(s.offClock.start || s.offClock.task);
+    case 'proof': return !!((s.attachments || []).length || s.location || s.witnesses);
+    case 'story': return !!((s.narrative || '').trim() || s.notice.to);
+    default: return false;
+  }
+}
+function dateLabel(ds) {
+  const [y, m, d] = String(ds).split('-').map(Number);
+  if (!y) return '—';
+  const nice = new Date(y, m - 1, d).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+  return (ds === todayDateStr() ? 'Today, ' : '') + nice;
+}
 
 export async function renderCaptureForm(container, { onSaved, existing } = {}) {
   clear(container);
   const settings = await getSettings();
   const state = buildInitialState(existing, settings);
+  let openId = existing ? null : 'issue';
 
-  const wrap = el('form', { class: 'capture', autocomplete: 'off' });
-  wrap.addEventListener('submit', e => e.preventDefault());
-  wrap.appendChild(logStatusRow());
+  const form = el('form', { class: 'capture', autocomplete: 'off' });
+  form.addEventListener('submit', e => e.preventDefault());
 
-  const trail = el('div', { class: 'trail' });
-  wrap.appendChild(trail);
-
-  const saveBtn = el('button', { type: 'button', class: 'btn primary big',
-    text: existing ? 'Save changes' : 'Save record', onclick: () => save() });
-  wrap.appendChild(el('div', { class: 'actions' }, [saveBtn]));
+  const status = el('div', { class: 'log-status' });
+  const steps = el('div', { class: 'steps' });
+  const saveBtn = el('button', { type: 'button', class: 'btn save big', onclick: () => save() }, [iconEl('save'), document.createTextNode(' ' + (existing ? 'Save changes' : 'Save Record'))]);
+  form.append(status, steps, el('div', { class: 'savewrap' }, [saveBtn]));
 
   if ((settings.workplaces || []).length) {
     const dl = el('datalist', { id: 'workplaces' });
     settings.workplaces.forEach(w => dl.appendChild(el('option', { value: w })));
-    wrap.appendChild(dl);
+    form.appendChild(dl);
+  }
+  container.appendChild(form);
+  render();
+
+  function render() {
+    status.replaceChildren(
+      el('span', {}, [iconEl('calendar'), document.createTextNode(' ' + dateLabel(state.incidentDate))]),
+      el('i', {}),
+      el('span', {}, [iconEl('shield'), document.createTextNode(' Only you can see this')]),
+    );
+    clear(steps);
+    const activeId = (TRAIL_STEPS.find(st => !isSet(st.id, state)) || {}).id || null;
+    TRAIL_STEPS.forEach((step, idx) => {
+      const set = isSet(step.id, state);
+      const active = step.id === activeId;
+      const open = openId === step.id;
+      steps.appendChild(stepEl(step, idx, { set, active, open }));
+    });
   }
 
-  container.appendChild(wrap);
-  renderTrail();
-
-  function renderTrail() {
-    clear(trail);
-    const f = fieldsForTypes(state.types);
-    const issueBody = el('div', {}, [basicsBody(state), issueGroups(state, renderTrail)]);
-    trail.appendChild(trailStep(STEP.issue, issueBody, state.types.length > 0));
-
-    if (f.includes(FIELD.CLOCK)) {
-      trail.appendChild(trailStep(STEP.time, clockBody(state), !!(state.clockIn && state.clockOut)));
-    }
-    if (f.includes(FIELD.MEAL) || f.includes(FIELD.MEAL2)) {
-      trail.appendChild(trailStep(STEP.meal, mealBody(state, f.includes(FIELD.MEAL2)), !!(state.meal.start || state.meal.taken === false)));
-    }
-    if (f.includes(FIELD.REST)) {
-      trail.appendChild(trailStep(EXTRA_STEPS.rest, restBody(state), state.rest.taken != null || state.rest.interrupted || state.rest.onCall));
-    }
-    if (f.includes(FIELD.OFFCLOCK)) {
-      trail.appendChild(trailStep(STEP.offClock, offClockBody(state), !!(state.offClock.start || state.offClock.task)));
-    }
-    if (f.includes(FIELD.NOTICE)) {
-      trail.appendChild(trailStep(EXTRA_STEPS.notice, noticeBody(state), !!state.notice.to));
-    }
-    trail.appendChild(trailStep(STEP.proof, proofBody(state), !!(state.attachments.length || state.location || state.witnesses)));
-    trail.appendChild(trailStep(STEP.story, storyBody(state), !!state.narrative));
+  function stepEl(step, idx, { set, active, open }) {
+    const toggle = () => { openId = open ? null : step.id; render(); };
+    const stepBtn = el('button', { type: 'button', class: 'stepbtn' + (active ? ' on' : ''), onclick: e => { e.stopPropagation(); toggle(); } },
+      [document.createTextNode(step.btn + ' '), iconEl('chevron-right')]);
+    const stat = set
+      ? el('div', { class: 'stat set' }, [iconEl('check'), document.createTextNode(' Added')])
+      : el('div', { class: 'stat' + (active ? ' on' : '') }, [el('span', { class: 'dot' }), document.createTextNode(' Not set')]);
+    const row = el('div', { class: 'step-row', onclick: toggle }, [
+      el('div', { class: 'rail' }, [el('div', { class: 'num' }, [set ? iconEl('check') : document.createTextNode(String(idx + 1))])]),
+      el('div', { class: 'iconwrap' }, [iconEl(step.icon)]),
+      el('div', { class: 'txt' }, [el('div', { class: 'title', text: step.title }), el('div', { class: 'help', text: step.helper })]),
+      el('div', { class: 'act' }, [stepBtn, stat]),
+    ]);
+    const art = el('article', { class: 'step' + (active ? ' active' : '') + (set ? ' set' : '') + (open ? ' open' : '') }, [row]);
+    if (open) art.appendChild(el('div', { class: 'step-body' }, [BODY[step.id](state)]));
+    return art;
   }
 
   async function save() {
@@ -72,13 +96,11 @@ export async function renderCaptureForm(container, { onSaved, existing } = {}) {
     };
     const draft = existing ? reviseIncident(existing, input) : createIncident(input);
     const { valid, errors } = validateIncident(draft);
-    if (!valid) { toast(errors[0] === 'Pick at least one issue type.' ? 'Pick what happened' : errors[0]); return; }
+    if (!valid) { openId = 'issue'; render(); toast(errors[0] === 'Pick at least one issue type.' ? 'Pick what happened first' : errors[0]); return; }
     try {
       if (existing) await putIncident(draft); else await addIncident(draft);
       toast(existing ? 'Record updated' : 'Saved on this phone ✓');
       onSaved?.(draft);
-    } catch (err) {
-      toast('Could not save: ' + (err?.message || err));
-    }
+    } catch (err) { toast('Could not save: ' + (err?.message || err)); }
   }
 }

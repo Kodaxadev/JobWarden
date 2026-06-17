@@ -1,10 +1,11 @@
 /* tokens.css — design tokens, reset, base type, focus. One concern: foundations. */
 :root {
-  --bg:#070b10; --surface:#101820; --surface-2:#16212b; --surface-3:#1d2a35;
-  --line:#2c3d4d; --text:#f4f0e8; --muted:#9ca9b4;
-  --primary:#3e8fb0; --primary-strong:#57b7da;
-  --incident:#c98a3a; --danger:#e15b4f; --ok:#57b982;
-  --radius:10px; --tap:48px;
+  --bg:#0b0a08; --surface:#16130d; --surface-2:#1d1810; --surface-3:#241d13;
+  --line:#2c2720; --node:#3a342b; --text:#f3ede2; --muted:#9a9388;
+  --primary:#c0632e; --primary-strong:#d57b3f; --primary-deep:#a8521f;
+  --incident:#e0a23a; --danger:#e15b4f; --ok:#69a55a;
+  --gline:#3f7a3a; --gfill:#15240f; --gtext:#8ed07e;
+  --radius:12px; --tap:48px;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }

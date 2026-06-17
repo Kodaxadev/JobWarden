@@ -51,6 +51,7 @@ export async function renderSettingsView(container) {
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Data safety' }),
     el('p', { class: 'hint', text: 'Records stay on this phone only. Keeping storage persistent lowers the chance the browser clears them — but it is not a backup. Export often.' }),
+    el('p', { class: 'hint', text: 'Not legal advice. No audio recording (illegal in California without all-party consent).' }),
     el('div', { class: 'actions' }, [persistBtn]),
   ]));
 }
