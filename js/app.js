@@ -6,9 +6,10 @@ import { renderCaptureForm } from './capture/captureForm.js';
 import { renderIncidentList } from './ui/incidentList.js';
 import { renderExportView } from './ui/exportView.js';
 import { renderSettingsView } from './ui/settingsView.js';
+import { renderOnboarding } from './ui/onboarding.js';
 import { renderBackupBanner } from './export/backup.js';
 import { exportJson } from './export/exportJson.js';
-import { qs, toast } from './ui/dom.js';
+import { qs, clear, toast } from './ui/dom.js';
 
 const main = qs('#view');
 const bannerHost = qs('#banner');
@@ -49,9 +50,27 @@ async function show(name, opts = {}) {
 
 tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.view)));
 
+// First-run setup: only when the profile was never confirmed AND there are no records
+// (so existing users are never sent back through onboarding).
+async function showOnboarding() {
+  document.body.classList.add('onboarding');
+  setActive('log');
+  clear(bannerHost);
+  main.scrollTop = 0;
+  await renderOnboarding(main, {
+    onDone: async () => {
+      document.body.classList.remove('onboarding');
+      await refreshBanner();
+      await show('log');
+    },
+  });
+}
+
 async function boot() {
   try { await openDb(); requestPersistence(); }
   catch (e) { toast('Storage unavailable: ' + (e?.message || e)); }
+  const [settings, count] = await Promise.all([getSettings(), countIncidents()]);
+  if (!settings.onboardedAt && count === 0) { await showOnboarding(); return; }
   await refreshBanner();
   await show('log');
 }

@@ -11,6 +11,7 @@ const DEFAULTS = {
   workplaces: [],        // [string] dealership names / locations
   lastBackupAt: '',
   backupReminderDays: 7,
+  onboardedAt: '',       // ISO timestamp set once the first-run setup is completed
 };
 
 export async function getSettings() {

@@ -1,5 +1,5 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v10';
+const CACHE = 'jobwarden-v11';
 const ASSETS = [
   './', './index.html', './install.html', './manifest.webmanifest',
   './css/styles.css', './css/tokens.css', './css/shell.css', './css/forms.css', './css/records.css',
@@ -9,7 +9,7 @@ const ASSETS = [
   './js/domain/timeUtils.js', './js/domain/breakRules.js', './js/domain/incidentModel.js',
   './js/data/db.js', './js/data/incidentRepo.js', './js/data/settingsRepo.js',
   './js/capture/geo.js', './js/capture/media.js', './js/capture/captureFields.js', './js/capture/captureForm.js',
-  './js/ui/dom.js', './js/ui/icons.js', './js/ui/incidentList.js', './js/ui/exportView.js', './js/ui/settingsView.js',
+  './js/ui/dom.js', './js/ui/icons.js', './js/ui/incidentList.js', './js/ui/exportView.js', './js/ui/settingsView.js', './js/ui/onboarding.js',
   './js/export/download.js', './js/export/exportJson.js', './js/export/exportCsv.js',
   './js/export/exportReport.js', './js/export/backup.js',
 ];
