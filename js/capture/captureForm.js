@@ -34,7 +34,7 @@ export async function renderCaptureForm(container, { onSaved, existing } = {}) {
   clear(container);
   const settings = await getSettings();
   const state = buildInitialState(existing, settings);
-  let openId = existing ? null : 'issue';
+  let openId = null;
 
   const form = el('form', { class: 'capture', autocomplete: 'off' });
   form.addEventListener('submit', e => e.preventDefault());

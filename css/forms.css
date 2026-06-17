@@ -1,62 +1,73 @@
 /* forms.css — Log "Evidence Trail" stepper + field bodies. */
-.log-status { display: flex; align-items: center; gap: 14px; margin: -18px -16px 6px; padding: 13px 16px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 14px; }
-.log-status span { display: inline-flex; align-items: center; gap: 7px; }
+.log-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: -18px -16px 6px; padding: 13px 16px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+.log-status span { display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
 .log-status i { width: 1px; height: 18px; background: var(--line); }
-.log-status .icon svg { width: 16px; height: 16px; }
+.log-status .icon svg { width: 16px; height: 16px; flex: none; }
 
 .steps { position: relative; margin: 0 -16px; }
 .steps::before { content: ""; position: absolute; left: 32px; top: 46px; bottom: 46px; width: 2px; background: var(--line); z-index: 0; }
 .step { position: relative; z-index: 1; border-bottom: 1px solid var(--line); }
-.step-row { display: grid; grid-template-columns: 28px 56px 1fr auto; align-items: center; column-gap: 13px; padding: 18px 16px; cursor: pointer; }
+.step-row { display: grid; grid-template-columns: 28px 56px minmax(0, 1fr) auto; align-items: center; column-gap: 13px; padding: 18px 16px; cursor: pointer; }
 .rail { display: flex; justify-content: center; }
-.num { width: 28px; height: 28px; border-radius: 50%; background: var(--bg); border: 2px solid var(--node); color: var(--muted); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+.num { width: 28px; height: 28px; border-radius: 50%; background: var(--bg); border: 2px solid var(--node); color: var(--muted); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex: none; }
 .num .icon svg { width: 15px; height: 15px; }
 .step.active .num { background: var(--primary); border-color: var(--primary); color: #fff; }
 .step.set .num { background: var(--ok); border-color: var(--ok); color: #08220f; }
-.iconwrap { width: 56px; height: 56px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--text); position: relative; }
+.iconwrap { width: 56px; height: 56px; border-radius: 50%; border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--text); position: relative; flex: none; }
 .iconwrap::before { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px dashed rgba(154,147,136,.18); }
 .iconwrap .icon svg { width: 26px; height: 26px; }
 .step.active .iconwrap { border-color: var(--incident); color: var(--incident); }
 .step.active .iconwrap::before { border-color: rgba(224,162,58,.35); }
 .txt { min-width: 0; }
-.title { font-size: 20px; font-weight: 800; line-height: 1.13; letter-spacing: -.01em; }
-.help { color: var(--muted); font-size: 13.5px; line-height: 1.35; margin-top: 5px; }
-.act { display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
-.stepbtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: none; border: 1.5px solid var(--node); color: var(--text); border-radius: 11px; padding: 10px 13px; font-size: 14.5px; font-weight: 700; white-space: nowrap; cursor: pointer; min-height: 44px; }
-.stepbtn .icon svg { width: 16px; height: 16px; transition: transform .18s; }
+.title { font-size: 20px; font-weight: 800; line-height: 1.13; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.help { color: var(--muted); font-size: 13.5px; line-height: 1.35; margin-top: 5px; overflow-wrap: anywhere; }
+.act { display: flex; flex-direction: column; align-items: stretch; gap: 8px; min-width: 0; }
+.stepbtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: none; border: 1.5px solid var(--node); color: var(--text); border-radius: 11px; padding: 10px 12px; font-size: 14px; font-weight: 700; white-space: nowrap; cursor: pointer; min-height: 44px; }
+.stepbtn .icon svg { width: 16px; height: 16px; flex: none; transition: transform .18s; }
 .step.open .stepbtn .icon svg { transform: rotate(90deg); }
 .stepbtn.on { background: var(--primary); border-color: var(--primary-deep); color: #fff; }
-.stat { display: flex; align-items: center; justify-content: flex-end; gap: 6px; color: var(--muted); font-size: 13px; }
-.stat .dot { width: 8px; height: 8px; border-radius: 50%; background: #4a443a; }
+.stat { display: flex; align-items: center; justify-content: flex-end; gap: 6px; color: var(--muted); font-size: 13px; white-space: nowrap; }
+.stat .dot { width: 8px; height: 8px; border-radius: 50%; background: #4a443a; flex: none; }
 .stat.on { color: var(--incident); } .stat.on .dot { background: var(--incident); }
 .stat.set { color: var(--ok); } .stat.set .icon svg { width: 15px; height: 15px; }
-.step-body { padding: 2px 16px 22px 56px; }
-@media (max-width: 380px) { .step-row { column-gap: 10px; } .iconwrap { width: 50px; height: 50px; } .iconwrap .icon svg { width: 23px; height: 23px; } .title { font-size: 18px; } .step-body { padding-left: 20px; } }
+.step-body { padding: 2px 16px 22px 44px; }
+@media (max-width: 480px) { .step-body { padding-left: 28px; } }
+@media (max-width: 380px) {
+  .step-row { grid-template-columns: 24px 48px minmax(0, 1fr); grid-template-areas: "num icon txt" "act act act"; column-gap: 10px; row-gap: 12px; }
+  .rail { grid-area: num; align-self: start; margin-top: 4px; }
+  .iconwrap { grid-area: icon; width: 48px; height: 48px; } .iconwrap .icon svg { width: 22px; height: 22px; }
+  .txt { grid-area: txt; } .title { font-size: 18px; }
+  .act { grid-area: act; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; }
+  .step-body { padding-left: 18px; }
+}
 
-/* fields inside expanded step bodies */
-.field { display: flex; flex-direction: column; gap: 8px; margin: 0 0 16px; }
+/* fields inside expanded step bodies — hardened against mobile overflow */
+.field { display: flex; flex-direction: column; gap: 8px; margin: 0 0 16px; min-width: 0; }
 .field:last-child { margin-bottom: 0; }
 .field-label { font-size: 13px; color: var(--muted); font-weight: 600; }
-.hint { font-size: 12px; color: var(--muted); line-height: 1.45; }
+.hint { font-size: 12px; color: var(--muted); line-height: 1.45; overflow-wrap: anywhere; }
 .warn-text { color: #ffcf7a; }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; min-width: 0; }
+.grid2 > * { min-width: 0; }
 @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
 input[type=text], input[type=time], input[type=date], input[type=number], select, textarea {
-  width: 100%; background: var(--surface-2); color: var(--text); border: 1px solid var(--line);
-  border-radius: 10px; padding: 13px 14px; font-size: 16px; min-height: 50px;
+  display: block; width: 100%; min-width: 0; max-width: 100%; background: var(--surface-2); color: var(--text);
+  border: 1px solid var(--line); border-radius: 10px; padding: 13px 14px; font-size: 16px; min-height: 50px;
 }
 textarea { min-height: 104px; resize: vertical; line-height: 1.5; }
 input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary); border-color: var(--primary); }
-.time-row { display: flex; gap: 10px; align-items: center; }
-.time-row input { flex: 1; min-width: 0; }
-.check { display: flex; align-items: center; gap: 12px; padding: 11px 0; font-size: 15px; min-height: 46px; line-height: 1.35; }
-.check input { width: 22px; height: 22px; flex: none; }
+.time-row { display: flex; gap: 10px; align-items: center; min-width: 0; }
+.time-row input { flex: 1 1 0; min-width: 0; }
+.time-row .btn { flex: none; }
+.check { display: flex; align-items: flex-start; gap: 12px; padding: 11px 0; font-size: 15px; min-height: 46px; line-height: 1.35; }
+.check input { width: 22px; height: 22px; flex: none; margin-top: 1px; }
+.check span { min-width: 0; overflow-wrap: anywhere; }
 .sub-head { font-size: 13px; color: var(--muted); font-weight: 700; margin: 18px 0 8px; padding-top: 14px; border-top: 1px solid var(--line); }
 
 .issue-group { margin: 16px 0 0; }
 .issue-group-label { font-size: 13px; color: var(--muted); font-weight: 600; margin: 0 0 8px; }
 .issue-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-.chip { background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font-size: 15px; min-height: 52px; cursor: pointer; text-align: left; display: inline-flex; align-items: center; gap: 10px; line-height: 1.35; }
+.chip { background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font-size: 15px; min-height: 52px; cursor: pointer; text-align: left; display: inline-flex; align-items: center; gap: 10px; line-height: 1.35; overflow-wrap: anywhere; }
 .chip.on { background: var(--primary); border-color: var(--primary-deep); font-weight: 600; color: #fff; }
 
 .loc-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
