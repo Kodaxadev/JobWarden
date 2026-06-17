@@ -1,0 +1,40 @@
+/* shell.css — header, tabs, banners, dialogs, toasts, shared surfaces & buttons. */
+.app-header { position: sticky; top: 0; z-index: 5; display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 14px 16px calc(14px + env(safe-area-inset-top)); background: var(--surface); border-bottom: 1px solid var(--line); }
+.brand { font-weight: 700; font-size: 19px; letter-spacing: .2px; display: flex; align-items: center; gap: 7px; }
+.brand .icon svg { width: 1.25em; height: 1.25em; color: var(--primary-strong); }
+.tagline { color: var(--muted); font-size: 12px; }
+
+.banner-host:empty { display: none; }
+.banner { display: flex; gap: 10px; align-items: center; justify-content: space-between; background: #3a2a07; color: #ffd98a; border-bottom: 1px solid #5a4310; padding: 10px 14px; font-size: 13px; }
+
+.view { padding: 14px 14px 96px; max-width: 720px; margin: 0 auto; min-height: 60vh; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; margin: 0 0 14px; }
+.card h2 { font-size: 15px; margin: 0 0 10px; display: flex; align-items: center; gap: 8px; }
+
+.btn { background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; font-size: 15px; min-height: var(--tap); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+.btn:active { transform: translateY(1px); }
+.btn.primary { background: var(--primary); border-color: var(--primary-strong); font-weight: 600; }
+.btn.danger { background: #2a1313; border-color: #5a2020; color: #ffb4b4; }
+.btn.tiny { min-height: 36px; padding: 6px 12px; font-size: 13px; }
+.btn.big { width: 100%; font-size: 17px; padding: 16px; }
+.btn:disabled { opacity: .5; }
+
+.status-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 14px; }
+.status-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 10px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); }
+.status-badge.ok { color: var(--ok); border-color: #2f6b4f; }
+.status-badge.warn { color: #ffd98a; border-color: #5a4310; }
+.status-badge .icon svg { width: 14px; height: 14px; }
+
+.tabbar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 6; display: flex; background: var(--surface); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); }
+.tab { flex: 1; background: none; border: none; color: var(--muted); padding: 8px 4px; font-size: 12px; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; min-height: 56px; }
+.tab .icon svg { width: 22px; height: 22px; }
+.tab.active { color: var(--text); background: var(--surface-2); }
+
+.disclaimer { position: fixed; bottom: 64px; left: 0; right: 0; text-align: center; font-size: 10px; color: var(--muted); pointer-events: none; padding: 0 10px; }
+
+.toast { position: fixed; left: 50%; bottom: 88px; transform: translateX(-50%) translateY(20px); opacity: 0; background: #0b1430; border: 1px solid var(--primary); color: var(--text); padding: 12px 18px; border-radius: 10px; z-index: 20; transition: .25s; max-width: 90%; text-align: center; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 30; padding: 20px; }
+.dialog { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; max-width: 360px; width: 100%; }
+.dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }

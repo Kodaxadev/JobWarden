@@ -1,0 +1,14 @@
+{
+  "name": "jobwarden",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Private California meal/rest break & wage infraction tracker (local-only, offline-first PWA). No runtime dependencies.",
+  "scripts": {
+    "build:icons": "node scripts/build-icons.mjs",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "lucide-static": "1.20.0"
+  }
+}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070b10">
+  <meta name="description" content="Private California meal/rest break & wage field log.">
+  <title>JobWarden</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">JobWarden</div>
+    <div class="tagline">CA meal &amp; rest field log</div>
+  </header>
+
+  <div id="banner" class="banner-host"></div>
+  <main id="view" class="view"></main>
+
+  <nav class="tabbar">
+    <button class="tab active" data-view="log"><span>Log</span></button>
+    <button class="tab" data-view="records"><span>Records</span></button>
+    <button class="tab" data-view="export"><span>Export</span></button>
+    <button class="tab" data-view="settings"><span>Settings</span></button>
+  </nav>
+
+  <footer class="disclaimer">
+    Saved on this phone · Not legal advice · No audio recording (illegal in CA without all-party consent)
+  </footer>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>

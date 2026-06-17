@@ -1,0 +1,20 @@
+/* tokens.css — design tokens, reset, base type, focus. One concern: foundations. */
+:root {
+  --bg:#070b10; --surface:#101820; --surface-2:#16212b; --surface-3:#1d2a35;
+  --line:#2c3d4d; --text:#f4f0e8; --muted:#9ca9b4;
+  --primary:#3e8fb0; --primary-strong:#57b7da;
+  --incident:#c98a3a; --danger:#e15b4f; --ok:#57b982;
+  --radius:8px; --tap:48px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-text-size-adjust: 100%; padding-bottom: env(safe-area-inset-bottom);
+}
+:focus-visible { outline: 2px solid var(--primary-strong); outline-offset: 2px; }
+a { color: var(--primary-strong); }
+.icon { display: inline-flex; vertical-align: -0.15em; }
+.icon svg { width: 1.2em; height: 1.2em; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); border: 0; }
