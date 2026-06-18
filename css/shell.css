@@ -1,6 +1,6 @@
 /* shell.css — header, tabs, banners, dialogs, toasts, shared surfaces & buttons. */
 .app-header { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 10px; padding: 16px 16px calc(14px + env(safe-area-inset-top)); background: var(--surface); border-bottom: 1px solid var(--line); }
-.brand { font-weight: 800; font-size: 25px; letter-spacing: -.01em; display: flex; align-items: center; gap: 9px; min-width: 0; }
+.brand { margin: 0; font-weight: 800; font-size: 25px; letter-spacing: -.01em; display: flex; align-items: center; gap: 9px; min-width: 0; }
 .brand .icon { flex: none; }
 .brand .icon svg { width: 1.2em; height: 1.2em; color: var(--primary); }
 .pill { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--gline); color: var(--gtext); border-radius: 999px; padding: 8px 13px; font-size: 13.5px; font-weight: 600; white-space: nowrap; }
@@ -15,9 +15,9 @@
 
 .btn { background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: 11px; padding: 13px 16px; font-size: 15px; min-height: var(--tap); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; justify-content: center; font-weight: 600; }
 .btn:active { transform: translateY(1px); }
-.btn.primary { background: var(--primary); border-color: var(--primary-deep); color: #fff; font-weight: 700; }
+.btn.primary { background: var(--primary-deep); border-color: var(--primary-deep); color: #fff; font-weight: 700; }
 .btn.danger { background: #2a1313; border-color: #5a2020; color: #ffb4b4; }
-.btn.tiny { min-height: 40px; padding: 8px 13px; font-size: 13px; white-space: nowrap; }
+.btn.tiny { min-height: 44px; padding: 9px 14px; font-size: 13px; white-space: nowrap; }
 .btn.big { width: 100%; font-size: 17px; padding: 16px; }
 .btn.save { width: 100%; font-size: 19px; font-weight: 800; padding: 17px; border: 1.5px solid var(--gline); background: var(--gfill); color: var(--gtext); border-radius: 13px; }
 .btn.save .icon svg { width: 22px; height: 22px; }

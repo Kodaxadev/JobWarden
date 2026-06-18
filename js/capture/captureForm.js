@@ -69,9 +69,13 @@ export async function renderCaptureForm(container, { onSaved, existing } = {}) {
   }
 
   function stepEl(step, idx, { set, active, open }) {
+    const bodyId = 'stepbody-' + step.id;
     const toggle = () => { openId = open ? null : step.id; render(); };
-    const stepBtn = el('button', { type: 'button', class: 'stepbtn' + (active ? ' on' : ''), onclick: e => { e.stopPropagation(); toggle(); } },
-      [document.createTextNode(step.btn + ' '), iconEl('chevron-right')]);
+    const stepBtn = el('button', {
+      type: 'button', class: 'stepbtn' + (active ? ' on' : ''),
+      'aria-expanded': open ? 'true' : 'false', 'aria-controls': bodyId,
+      onclick: e => { e.stopPropagation(); toggle(); },
+    }, [document.createTextNode(step.btn + ' '), iconEl('chevron-right')]);
     const stat = set
       ? el('div', { class: 'stat set' }, [iconEl('check'), document.createTextNode(' Added')])
       : el('div', { class: 'stat' + (active ? ' on' : '') }, [el('span', { class: 'dot' }), document.createTextNode(' Not set')]);
@@ -82,7 +86,7 @@ export async function renderCaptureForm(container, { onSaved, existing } = {}) {
       el('div', { class: 'act' }, [stepBtn, stat]),
     ]);
     const art = el('article', { class: 'step' + (active ? ' active' : '') + (set ? ' set' : '') + (open ? ' open' : '') }, [row]);
-    if (open) art.appendChild(el('div', { class: 'step-body' }, [BODY[step.id](state)]));
+    if (open) art.appendChild(el('div', { class: 'step-body', id: bodyId }, [BODY[step.id](state)]));
     return art;
   }
 

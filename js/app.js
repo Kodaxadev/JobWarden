@@ -29,7 +29,13 @@ async function quickBackup() {
   refreshBanner();
 }
 
-function setActive(name) { tabs.forEach(t => t.classList.toggle('active', t.dataset.view === name)); }
+function setActive(name) {
+  tabs.forEach(t => {
+    const on = t.dataset.view === name;
+    t.classList.toggle('active', on);
+    if (on) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
+  });
+}
 
 async function show(name, opts = {}) {
   setActive(name);

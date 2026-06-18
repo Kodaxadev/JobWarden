@@ -69,7 +69,8 @@ function row(item, { onEdit, onChanged }) {
   if ((item.attachments || []).length) meta.push(`${item.attachments.length} proof`);
   if (item.location) meta.push('GPS');
 
-  const head = el('button', { type: 'button', class: 'row-head' }, [
+  const detailId = 'rec-' + item.id;
+  const head = el('button', { type: 'button', class: 'row-head', 'aria-expanded': 'false', 'aria-controls': detailId }, [
     el('div', { class: 'row-main' }, [
       el('div', { class: 'row-date', text: formatDate(item.incidentDate) }),
       chipRow(item),
@@ -78,10 +79,11 @@ function row(item, { onEdit, onChanged }) {
     el('div', { class: 'row-meta', text: meta.join('  ') }),
   ]);
 
-  const detail = el('div', { class: 'row-detail', hidden: true });
+  const detail = el('div', { class: 'row-detail', id: detailId, hidden: true });
   let built = false;
   head.addEventListener('click', () => {
     detail.hidden = !detail.hidden;
+    head.setAttribute('aria-expanded', detail.hidden ? 'false' : 'true');
     if (!built) { buildDetail(detail, item, { onEdit, onChanged }); built = true; }
   });
   return el('article', { class: 'row' }, [head, detail]);
@@ -109,7 +111,7 @@ function buildDetail(host, item, { onEdit, onChanged }) {
   add('Saved at', new Date(item.createdAt).toLocaleString());
   host.appendChild(facts);
 
-  const seal = el('div', { class: 'seal', text: 'Checking record fingerprint…' });
+  const seal = el('div', { class: 'seal', role: 'status', 'aria-live': 'polite', text: 'Checking record fingerprint…' });
   host.appendChild(seal);
   verifyIntegrity(item).then(v => {
     if (!v.sealed) { seal.className = 'seal none'; seal.textContent = 'Not sealed (older record)'; }

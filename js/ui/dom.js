@@ -26,26 +26,44 @@ export function clear(node) { while (node && node.firstChild) node.removeChild(n
 let _toastTimer = null;
 export function toast(msg, ms = 2600) {
   let t = qs('.toast');
-  if (!t) { t = el('div', { class: 'toast' }); document.body.appendChild(t); }
+  if (!t) { t = el('div', { class: 'toast', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true' }); document.body.appendChild(t); }
   t.textContent = msg;
   requestAnimationFrame(() => t.classList.add('show'));
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(() => t.classList.remove('show'), ms);
 }
 
-// Minimal confirm dialog (returns a Promise<boolean>) so we don't rely on window.confirm styling.
-export function confirmDialog(message) {
+// Accessible confirm dialog (returns a Promise<boolean>). role=dialog + aria-modal,
+// focus moves into the dialog and is trapped, Escape cancels, focus returns to the trigger.
+export function confirmDialog(message, { confirmText = 'Delete', cancelText = 'Cancel' } = {}) {
   return new Promise(resolve => {
-    const overlay = el('div', { class: 'overlay' });
-    const box = el('div', { class: 'dialog' }, [
-      el('p', { text: message }),
-      el('div', { class: 'dialog-actions' }, [
-        el('button', { class: 'btn', text: 'Cancel', onclick: () => { overlay.remove(); resolve(false); } }),
-        el('button', { class: 'btn danger', text: 'Delete', onclick: () => { overlay.remove(); resolve(true); } }),
-      ]),
+    const prevFocus = document.activeElement;
+    const close = (val) => {
+      document.removeEventListener('keydown', onKey, true);
+      overlay.remove();
+      if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
+      resolve(val);
+    };
+    const cancelBtn = el('button', { class: 'btn', text: cancelText, onclick: () => close(false) });
+    const okBtn = el('button', { class: 'btn danger', text: confirmText, onclick: () => close(true) });
+    const msgId = 'dlg-' + Math.random().toString(16).slice(2);
+    const box = el('div', { class: 'dialog', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': msgId }, [
+      el('p', { id: msgId, text: message }),
+      el('div', { class: 'dialog-actions' }, [cancelBtn, okBtn]),
     ]);
-    overlay.appendChild(box);
-    overlay.addEventListener('click', e => { if (e.target === overlay) { overlay.remove(); resolve(false); } });
+    const overlay = el('div', { class: 'overlay' }, [box]);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(false); });
+    const focusables = [cancelBtn, okBtn];
+    const onKey = (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); close(false); }
+      else if (e.key === 'Tab') {
+        const i = focusables.indexOf(document.activeElement);
+        const next = e.shiftKey ? (i <= 0 ? focusables.length - 1 : i - 1) : (i + 1) % focusables.length;
+        e.preventDefault(); focusables[next].focus();
+      }
+    };
+    document.addEventListener('keydown', onKey, true);
     document.body.appendChild(overlay);
+    cancelBtn.focus();
   });
 }
