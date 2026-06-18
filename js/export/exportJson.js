@@ -15,8 +15,9 @@ async function serializeAttachments(atts = []) {
   return out;
 }
 
-// Produces a complete, re-importable backup. This is the canonical "don't lose the evidence" file.
-export async function exportJson(incidents, settings) {
+// Build the complete, re-importable backup as a JSON string (no download/side effects),
+// so it can be downloaded OR shared/emailed. The canonical "don't lose the evidence" file.
+export async function buildBackupPayload(incidents, settings) {
   const records = [];
   for (const i of incidents) {
     records.push({ ...i, attachments: await serializeAttachments(i.attachments) });
@@ -36,6 +37,11 @@ export async function exportJson(incidents, settings) {
     },
     records,
   };
-  downloadText(`jobwarden-backup-${dateStamp()}.json`, JSON.stringify(payload, null, 2), 'application/json');
-  return records.length;
+  return { text: JSON.stringify(payload, null, 2), count: records.length, filename: `jobwarden-backup-${dateStamp()}.json` };
+}
+
+export async function exportJson(incidents, settings) {
+  const { text, count, filename } = await buildBackupPayload(incidents, settings);
+  downloadText(filename, text, 'application/json');
+  return count;
 }

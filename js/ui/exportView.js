@@ -3,6 +3,7 @@ import { el, clear, toast } from './dom.js';
 import { getAllIncidents } from '../data/incidentRepo.js';
 import { getSettings, markBackedUp } from '../data/settingsRepo.js';
 import { exportJson } from '../export/exportJson.js';
+import { emailRecords } from '../export/emailExport.js';
 import { exportCsv } from '../export/exportCsv.js';
 import { openPrintReport } from '../export/exportReport.js';
 import { openPrintSummary } from '../export/exportSummary.js';
@@ -21,7 +22,13 @@ export async function renderExportView(container, { onChanged } = {}) {
     el('h2', { text: 'Export & back up' }),
     el('p', { class: 'hint', text: `${items.length} record${items.length === 1 ? '' : 's'}, saved on this phone only.` }),
     el('div', { class: 'btn-col' }, [
-      action('Save full backup', 'A complete copy with photos. Email it to yourself so a copy is off this phone.', 'btn primary',
+      action('Email to myself', 'Opens your email with a summary + the backup file attached — the fastest way to keep a copy off this phone.', 'btn primary',
+        guard(async () => {
+          const r = await emailRecords(items, settings);
+          if (r !== 'cancelled') { await markBackedUp(); onChanged?.(); }
+          toast(r === 'shared' ? 'Shared ✓' : r === 'fallback' ? 'Opening email — attach the saved file' : 'Email canceled');
+        })),
+      action('Save full backup', 'Download a complete copy with photos to this device.', 'btn',
         guard(async () => { const n = await exportJson(items, settings); await markBackedUp(); toast(`Backed up ${n} record(s)`); onChanged?.(); })),
       action('Make spreadsheet', 'A table you can open in Excel or Google Sheets.', 'btn',
         guard(async () => { exportCsv(items); toast('Spreadsheet saved'); })),
