@@ -6,16 +6,20 @@
 @font-face { font-family:"Geist"; font-style:normal; font-weight:600; font-display:swap; src:url("../fonts/geist-sans-latin-600-normal.woff2") format("woff2"); }
 @font-face { font-family:"Geist Mono"; font-style:normal; font-weight:400; font-display:swap; src:url("../fonts/geist-mono-latin-400-normal.woff2") format("woff2"); }
 @font-face { font-family:"Geist Mono"; font-style:normal; font-weight:500; font-display:swap; src:url("../fonts/geist-mono-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family:"Cinzel"; font-style:normal; font-weight:600; font-display:swap; src:url("../fonts/cinzel-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family:"Cinzel"; font-style:normal; font-weight:700; font-display:swap; src:url("../fonts/cinzel-latin-700-normal.woff2") format("woff2"); }
 
 :root {
-  /* canvas + layered surfaces (each lighter; depth = surface + highlight + shadow, not borders) */
-  --bg:#0b0907; --surface:#15110b; --surface-2:#1e1810; --surface-3:#272016;
-  --line:rgba(245,240,230,.09); --line-2:rgba(245,240,230,.16); --node:rgba(245,240,230,.18);
-  --hi:rgba(255,252,245,.06);                 /* inset top highlight on lifted surfaces */
-  --text:#f5f0e6; --muted:#b3aa9b; --faint:#968c7c;
+  /* canvas + layered surfaces — neutral-cool dark, to host the navy + gold brand */
+  --bg:#0a0b0e; --surface:#14161c; --surface-2:#1c1f27; --surface-3:#262a33;
+  --line:rgba(234,238,246,.09); --line-2:rgba(234,238,246,.16); --node:rgba(234,238,246,.18);
+  --hi:rgba(255,255,255,.06);                 /* inset top highlight on lifted surfaces */
+  --text:#eef1f6; --muted:#a8aebb; --faint:#949cab;
 
-  /* copper — the one live accent. -deep is the solid fill for white text (AA 5.4:1) */
-  --primary:#cf7333; --primary-strong:#e7944e; --primary-deep:#a8521f;
+  /* gold accent + navy brand. Gold is light, so solid gold fills use navy text (--on-gold). */
+  --primary:#cdab45; --primary-strong:#e6cd7e; --primary-deep:#9b7a22;
+  --gold-1:#d8b54e; --gold-2:#b6912c; --on-gold:#14233c;
+  --navy:#16263f; --navy-2:#223a61; --navy-deep:#0e1b2e;
   --incident:#e6b15a;                          /* findings / amber */
   --danger:#e0594d; --ok:#7fcf92;              /* evidence green */
   --gline:rgba(90,160,100,.34); --gfill:rgba(78,150,92,.14); --gtext:#86d597;
@@ -24,8 +28,8 @@
 
   /* Elevation for a dark canvas: separation comes from a lit-from-above sheen + a crisp
      top highlight + a seated bottom edge + layered (contact + ambient) shadows, not one flat drop. */
-  --sheen:linear-gradient(180deg, rgba(255,251,244,.04), rgba(255,251,244,0) 46%);
-  --edge-top:rgba(255,251,244,.07);   /* light edge catching the top */
+  --sheen:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,0) 46%);
+  --edge-top:rgba(255,255,255,.07);   /* light edge catching the top */
   --edge-bottom:rgba(0,0,0,.24);      /* dark edge seating the bottom */
   --shadow-1:
     inset 0 1px 0 var(--edge-top), inset 0 -1px 0 var(--edge-bottom),
@@ -36,17 +40,18 @@
   --shadow-3:
     inset 0 1px 0 rgba(255,251,244,.07),
     0 10px 24px rgba(0,0,0,.46), 0 38px 66px -18px rgba(0,0,0,.72);
-  --glow-copper:0 0 44px -12px rgba(207,115,51,.28);
+  --glow-gold:0 0 44px -12px rgba(205,171,69,.3);
 
   --font:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
+  --serif:"Cinzel",Georgia,"Times New Roman",serif;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
   color: var(--text);
   background:
-    radial-gradient(135% 72% at 50% -14%, #20160d 0%, rgba(32,22,13,0) 56%) no-repeat,
+    radial-gradient(135% 74% at 50% -16%, #131c30 0%, rgba(19,28,48,0) 58%) no-repeat,
     var(--bg);
   font: 400 16px/1.55 var(--font);
   letter-spacing: -.005em;

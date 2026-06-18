@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110" role="img" aria-label="JobWarden">
+  <path d="M50 6 L88 21 V55 C88 82 70 99 50 106 C30 99 12 82 12 55 V21 Z" fill="#16263f"/>
+  <path d="M50 6 L88 21 V55 C88 82 70 99 50 106 C30 99 12 82 12 55 V21 Z" fill="none" stroke="#c8a23a" stroke-width="2.5"/>
+  <path d="M31 56 L45 70 L80 28" fill="none" stroke="#d8b54e" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

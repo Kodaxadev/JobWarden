@@ -1,11 +1,12 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v18';
+const CACHE = 'jobwarden-v19';
 const ASSETS = [
   './', './index.html', './install.html', './manifest.webmanifest',
   './css/styles.css', './css/tokens.css', './css/shell.css', './css/forms.css', './css/records.css',
   './fonts/geist-sans-latin-400-normal.woff2', './fonts/geist-sans-latin-500-normal.woff2', './fonts/geist-sans-latin-600-normal.woff2',
   './fonts/geist-mono-latin-400-normal.woff2', './fonts/geist-mono-latin-500-normal.woff2',
-  './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png',
+  './fonts/cinzel-latin-600-normal.woff2', './fonts/cinzel-latin-700-normal.woff2',
+  './icons/logo-mark.svg', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png',
   './js/app.js',
   './js/config/infractionTypes.js', './js/config/uiCopy.js',
   './js/domain/timeUtils.js', './js/domain/breakRules.js', './js/domain/incidentModel.js', './js/domain/integrity.js', './js/domain/patterns.js',
