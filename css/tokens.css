@@ -21,9 +21,22 @@
   --gline:rgba(90,160,100,.34); --gfill:rgba(78,150,92,.14); --gtext:#86d597;
 
   --radius:14px; --radius-sm:11px; --radius-lg:18px; --tap:48px;
-  --shadow-1:0 1px 0 var(--hi) inset, 0 2px 5px rgba(0,0,0,.42);
-  --shadow-2:0 1px 0 var(--hi) inset, 0 2px 5px rgba(0,0,0,.45), 0 16px 36px -12px rgba(0,0,0,.6);
-  --glow-copper:0 0 40px -10px rgba(207,115,51,.22);
+
+  /* Elevation for a dark canvas: separation comes from a lit-from-above sheen + a crisp
+     top highlight + a seated bottom edge + layered (contact + ambient) shadows, not one flat drop. */
+  --sheen:linear-gradient(180deg, rgba(255,251,244,.04), rgba(255,251,244,0) 46%);
+  --edge-top:rgba(255,251,244,.07);   /* light edge catching the top */
+  --edge-bottom:rgba(0,0,0,.24);      /* dark edge seating the bottom */
+  --shadow-1:
+    inset 0 1px 0 var(--edge-top), inset 0 -1px 0 var(--edge-bottom),
+    0 2px 4px rgba(0,0,0,.28), 0 12px 26px -10px rgba(0,0,0,.5);
+  --shadow-2:
+    inset 0 1px 0 rgba(255,251,244,.09), inset 0 -1px 0 rgba(0,0,0,.3),
+    0 4px 10px rgba(0,0,0,.35), 0 22px 46px -14px rgba(0,0,0,.62);
+  --shadow-3:
+    inset 0 1px 0 rgba(255,251,244,.07),
+    0 10px 24px rgba(0,0,0,.46), 0 38px 66px -18px rgba(0,0,0,.72);
+  --glow-copper:0 0 44px -12px rgba(207,115,51,.28);
 
   --font:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
@@ -33,9 +46,8 @@ html, body { margin: 0; }
 body {
   color: var(--text);
   background:
-    radial-gradient(135% 72% at 50% -14%, #20160d 0%, rgba(32,22,13,0) 56%),
+    radial-gradient(135% 72% at 50% -14%, #20160d 0%, rgba(32,22,13,0) 56%) no-repeat,
     var(--bg);
-  background-attachment: fixed;
   font: 400 16px/1.55 var(--font);
   letter-spacing: -.005em;
   -webkit-text-size-adjust: 100%; padding-bottom: env(safe-area-inset-bottom);

@@ -1,19 +1,19 @@
 /* forms.css — Log "Evidence Trail" stepper + field bodies. */
-.log-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 0 18px; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 1px 0 var(--hi) inset; }
+.log-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 0 18px; padding: 12px 14px; background: var(--sheen), var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 3px rgba(0,0,0,.3); }
 .log-status span { display: inline-flex; align-items: center; gap: 8px; min-width: 0; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
 .log-status i { width: 1px; height: 16px; background: var(--line-2); }
 .log-status .icon svg { width: 15px; height: 15px; flex: none; color: var(--faint); }
 
 .steps { position: relative; display: flex; flex-direction: column; gap: 13px; }
 .steps::before { content: ""; position: absolute; left: 39px; top: 40px; bottom: 40px; width: 2px; background: linear-gradient(var(--line-2), var(--line)); z-index: 0; }
-.step { position: relative; z-index: 1; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: 0 1px 0 var(--hi) inset; transition: border-color .18s ease, box-shadow .2s ease; }
+.step { position: relative; z-index: 1; background: var(--sheen), var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); transition: border-color .18s ease, box-shadow .2s ease, transform .2s ease; }
 .step-row { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; align-items: center; column-gap: 14px; padding: 16px; cursor: pointer; }
 .rail { display: flex; justify-content: center; }
 .node { width: 46px; height: 46px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 500; font-size: 15px; color: var(--faint); background: var(--surface-3); border: 1.5px solid var(--line-2); transition: .18s ease; }
 .node .icon svg { width: 20px; height: 20px; }
 .step.set .node { background: var(--gfill); border-color: var(--gline); color: var(--ok); }
 .step.active .node { background: linear-gradient(160deg, var(--primary), var(--primary-deep)); border-color: var(--primary-strong); color: #fff; box-shadow: 0 0 0 4px rgba(207,115,51,.14); }
-.step.active { background: linear-gradient(180deg, #211a11, #181208); border-color: rgba(207,115,51,.38); box-shadow: 0 1px 0 var(--hi) inset, 0 0 0 1px rgba(207,115,51,.1), var(--glow-copper), 0 16px 38px -16px rgba(0,0,0,.6); }
+.step.active { background: var(--sheen), linear-gradient(180deg, #241c12, #17110a); border-color: rgba(207,115,51,.4); box-shadow: inset 0 1px 0 rgba(255,251,244,.09), 0 0 0 1px rgba(207,115,51,.12), var(--glow-copper), 0 4px 10px rgba(0,0,0,.35), 0 22px 46px -16px rgba(0,0,0,.62); }
 .txt { min-width: 0; }
 .title { font-size: 18px; font-weight: 600; line-height: 1.16; letter-spacing: -.015em; overflow-wrap: anywhere; }
 .help { color: var(--muted); font-size: 13.5px; line-height: 1.4; margin-top: 4px; overflow-wrap: anywhere; }
@@ -47,14 +47,16 @@
 .grid2 > * { min-width: 0; }
 @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
 input[type=text], input[type=time], input[type=date], input[type=number], select, textarea {
-  display: block; width: 100%; min-width: 0; max-width: 100%; background: #0e0b07; color: var(--text);
+  display: block; width: 100%; min-width: 0; max-width: 100%; background: #0d0a06; color: var(--text);
   border: 1px solid var(--line-2); border-radius: 10px; padding: 13px 14px; font: 400 16px var(--font);
-  min-height: 50px; box-shadow: inset 0 1px 2px rgba(0,0,0,.4); transition: border-color .15s ease, box-shadow .15s ease;
+  min-height: 50px; box-shadow: inset 0 1px 3px rgba(0,0,0,.5), inset 0 -1px 0 rgba(255,251,244,.04); transition: border-color .15s ease, box-shadow .15s ease;
 }
-/* iOS Safari gives date/time inputs an intrinsic min-width that ignores width:100%
-   and overflows narrow containers; appearance:none lets CSS sizing win (picker still opens). */
-input[type=time], input[type=date], input[type=number] { font-family: var(--mono); font-size: 15px; -webkit-appearance: none; appearance: none; }
-input[type=date]::-webkit-date-and-time-value, input[type=time]::-webkit-date-and-time-value { text-align: left; margin: 0; }
+input[type=time], input[type=date], input[type=number] { font-family: var(--mono); font-size: 15px; }
+/* iOS gives DATE inputs an intrinsic min-width that overflows narrow containers; appearance:none
+   lets CSS sizing win. Deliberately NOT on time inputs — appearance:none breaks Android's native
+   clock picker (its "Set" button renders off-screen). Time keeps the native control. */
+input[type=date] { -webkit-appearance: none; appearance: none; }
+input[type=date]::-webkit-date-and-time-value { text-align: left; margin: 0; }
 input[type=date]::-webkit-calendar-picker-indicator { margin-left: 0; }
 textarea { min-height: 104px; resize: vertical; line-height: 1.5; }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: inset 0 1px 2px rgba(0,0,0,.4), 0 0 0 3px rgba(207,115,51,.16); }
@@ -69,7 +71,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .issue-group { margin: 16px 0 0; }
 .issue-group-label { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 0 0 9px; }
 .issue-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-.chip { background: var(--surface-3); color: var(--text); border: 1px solid var(--line-2); border-radius: 11px; padding: 14px 16px; font-size: 15px; min-height: 52px; cursor: pointer; text-align: left; display: inline-flex; align-items: center; gap: 10px; line-height: 1.35; overflow-wrap: anywhere; transition: .15s ease; }
+.chip { background: var(--sheen), var(--surface-3); color: var(--text); border: 1px solid var(--line-2); border-radius: 11px; padding: 14px 16px; font-size: 15px; min-height: 52px; cursor: pointer; text-align: left; display: inline-flex; align-items: center; gap: 10px; line-height: 1.35; overflow-wrap: anywhere; box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(0,0,0,.28); transition: .15s ease; }
 .chip.on { background: linear-gradient(180deg, var(--primary-deep), #8f4519); border-color: var(--primary); font-weight: 500; color: #fff; box-shadow: 0 1px 0 rgba(255,255,255,.12) inset; }
 
 .loc-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
