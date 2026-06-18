@@ -79,9 +79,9 @@ export async function renderCaptureForm(container, { onSaved, existing } = {}) {
     const stat = set
       ? el('div', { class: 'stat set' }, [iconEl('check'), document.createTextNode(' Added')])
       : el('div', { class: 'stat' + (active ? ' on' : '') }, [el('span', { class: 'dot' }), document.createTextNode(' Not set')]);
+    const node = el('div', { class: 'node' }, [set ? iconEl('check') : document.createTextNode(String(idx + 1))]);
     const row = el('div', { class: 'step-row', onclick: toggle }, [
-      el('div', { class: 'rail' }, [el('div', { class: 'num' }, [set ? iconEl('check') : document.createTextNode(String(idx + 1))])]),
-      el('div', { class: 'iconwrap' }, [iconEl(step.icon)]),
+      el('div', { class: 'rail' }, [node]),
       el('div', { class: 'txt' }, [el('div', { class: 'title', text: step.title }), el('div', { class: 'help', text: step.helper })]),
       el('div', { class: 'act' }, [stepBtn, stat]),
     ]);
