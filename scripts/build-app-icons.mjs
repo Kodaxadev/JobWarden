@@ -3,9 +3,10 @@
 import { Resvg } from '@resvg/resvg-js';
 import { writeFileSync } from 'node:fs';
 
+// Shield bounding box is vertically centered in the 512 canvas (top 96, bottom 416 -> center 256).
 const mark = (sw, cw) => `
-  <path d="M256 132 L388 180 V286 C388 372 332 426 256 452 C180 426 124 372 124 286 V180 Z" fill="none" stroke="url(#gd)" stroke-width="${sw}"/>
-  <path d="M204 286 L244 326 L344 214" fill="none" stroke="url(#gd)" stroke-width="${cw}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  <path d="M256 96 L388 144 V250 C388 336 332 390 256 416 C180 390 124 336 124 250 V144 Z" fill="none" stroke="url(#gd)" stroke-width="${sw}"/>
+  <path d="M204 250 L244 290 L344 178" fill="none" stroke="url(#gd)" stroke-width="${cw}" stroke-linecap="round" stroke-linejoin="round"/>`;
 
 const svg = (rx, scale) => `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
   <defs>
@@ -13,7 +14,7 @@ const svg = (rx, scale) => `<svg xmlns="http://www.w3.org/2000/svg" width="512" 
     <linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e7cd7e"/><stop offset="1" stop-color="#b78f2c"/></linearGradient>
   </defs>
   <rect width="512" height="512" rx="${rx}" fill="url(#nv)"/>
-  <g transform="translate(256 292) scale(${scale}) translate(-256 -292)">${mark(13, 30)}</g>
+  <g transform="translate(256 256) scale(${scale}) translate(-256 -256)">${mark(13, 30)}</g>
 </svg>`;
 
 const render = (svgStr, width, out) => {
