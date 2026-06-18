@@ -1,5 +1,5 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v20';
+const CACHE = 'jobwarden-v21';
 const ASSETS = [
   './', './index.html', './install.html', './manifest.webmanifest',
   './css/styles.css', './css/tokens.css', './css/shell.css', './css/forms.css', './css/records.css',
