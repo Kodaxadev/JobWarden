@@ -43,6 +43,7 @@ async function recordHtml(i) {
   add('Clock in / out', `${i.clockIn || '—'}  →  ${i.clockOut || '—'}`);
   if (i.meal?.start || i.meal?.end) add('Lunch', `${i.meal.start || '—'} → ${i.meal.end || '—'}`);
   if (i.meal?.interrupted) add('Interrupted by', i.meal.interruptedBy || 'yes');
+  if (i.meal?.onCall) add('On-call during lunch', 'Yes — had to stay reachable');
   if (i.meal?.detail) add('Detail', i.meal.detail);
   if (i.meal?.relievedOfDuty != null) add('Relieved of duty', i.meal.relievedOfDuty ? 'Yes' : 'No');
   if (i.meal?.waived) add('First meal waived', 'Yes');

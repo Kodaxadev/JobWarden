@@ -59,6 +59,11 @@ test('short second meal is flagged', () => {
   assert.equal(flagsOf(base({ clockIn: '08:00', clockOut: '19:00', meal: { start: '12:00', end: '12:30' }, meal2: { start: '17:00', end: '17:15' } })).secondMealShort, 15);
 });
 
+test('on-call during the meal is flagged (not relieved of all duty)', () => {
+  const fk = flagsOf(base({ clockIn: '09:00', clockOut: '17:30', types: ['interrupted_meal'], meal: { start: '13:00', end: '13:30', onCall: true } }));
+  assert.equal(fk.mealOnCall, true);
+});
+
 test('exempt classification adds a caveat flag', () => {
   assert.equal(flagsOf(base({ clockIn: '09:00', clockOut: '18:00', classification: { payType: 'salary_exempt' } })).exemptCaveat, true);
 });

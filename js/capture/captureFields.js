@@ -11,7 +11,7 @@ export function buildInitialState(existing, settings) {
   const base = {
     types: [], incidentDate: todayDateStr(), workplace: (settings.workplaces || [])[0] || '',
     clockIn: '', clockOut: '',
-    meal: { start: '', end: '', interrupted: false, interruptedBy: '', detail: '', relievedOfDuty: null, taken: null, waived: false },
+    meal: { start: '', end: '', interrupted: false, interruptedBy: '', detail: '', onCall: false, relievedOfDuty: null, taken: null, waived: false },
     meal2: { start: '', end: '', taken: null, waived: false },
     rest: { taken: null, interrupted: false, onCall: false },
     offClock: { start: '', end: '', task: '', directedBy: '', knownBy: '', payPeriod: '', expectedPay: '', employerEdited: null },
@@ -99,6 +99,7 @@ export function mealBody(state) {
     checkbox('I did NOT get a lunch at all', state.meal.taken === false, c => state.meal.taken = c ? false : null),
     checkbox('Someone bothered me during lunch', state.meal.interrupted, c => state.meal.interrupted = c),
     field('Who bothered you (name / role)', textInput(state.meal.interruptedBy, v => state.meal.interruptedBy = v, { placeholder: 'e.g. manager name' })),
+    checkbox('I had to stay reachable (radio / phone / on-call) during lunch', state.meal.onCall, c => state.meal.onCall = c),
     field('Were you free to leave?', triSelect(state.meal.relievedOfDuty, v => state.meal.relievedOfDuty = v)),
     checkbox('Did you skip lunch by choice?', state.meal.waived, c => state.meal.waived = c),
     subHead('Second lunch (shift over 10 hours)'),

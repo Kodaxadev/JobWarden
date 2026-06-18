@@ -74,6 +74,7 @@ function firstMealFlags(i, ci, hrs) {
   }
   if (len.known && len.short) out.push(f('shortMeal', len.minutes, 'First meal under 30 minutes (§512).'));
   if (meal.interrupted) out.push(f('interruptedMeal', true, 'Interrupted / on-duty meal is non-compliant (§512).'));
+  if (meal.onCall) out.push(f('mealOnCall', true, 'Required to stay on-call / reachable during the meal — not relieved of all duty (§512).'));
   if (meal.relievedOfDuty === false) out.push(f('notRelieved', true, 'Not relieved of all duty during meal (§512).'));
   return out;
 }
@@ -152,6 +153,7 @@ export function summarize(flags = []) {
   if (m.missedMeal) p.push('No meal');
   if (m.shortMeal) p.push(`Short meal (${m.shortMeal.value}m)`);
   if (m.interruptedMeal) p.push('Meal interrupted');
+  if (m.mealOnCall) p.push('On-call at lunch');
   if (m.firstMealWaiverInvalid) p.push('Bad 1st-meal waiver');
   if (m.secondMealMissed) p.push('No 2nd meal');
   if (m.secondMealLate) p.push('Late 2nd meal');

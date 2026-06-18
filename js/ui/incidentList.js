@@ -96,6 +96,7 @@ function buildDetail(host, item, { onEdit, onChanged }) {
   if (item.meal?.start || item.meal?.end) add('Lunch', `${item.meal.start || '—'} → ${item.meal.end || '—'}`);
   if (item.meal?.waived) add('Skipped lunch by choice', 'Yes');
   if (item.meal?.interruptedBy) add('Bothered by', item.meal.interruptedBy);
+  if (item.meal?.onCall) add('Stayed reachable at lunch', 'Yes');
   if (item.meal?.detail) add('What happened', item.meal.detail);
   if (item.meal2?.start || item.meal2?.end) add('Second lunch', `${item.meal2.start || '—'} → ${item.meal2.end || '—'}`);
   if (item.meal2?.waived) add('Skipped 2nd lunch by choice', 'Yes');
