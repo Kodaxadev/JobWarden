@@ -33,7 +33,7 @@ function normOffClock(o = {}) {
   };
 }
 function normNotice(n = {}) {
-  return { to: n.to || '', channel: n.channel || '', response: n.response || '' };
+  return { to: n.to || '', channel: n.channel || '', response: n.response || '', adverseAction: n.adverseAction || '' };
 }
 function normClassification(c = {}) {
   return { payType: c.payType || '' };
@@ -105,7 +105,7 @@ const TRACKED = [
   'meal2.start', 'meal2.end', 'meal2.taken', 'meal2.waived',
   'rest.taken', 'rest.interrupted', 'rest.onCall',
   'offClock.start', 'offClock.end', 'offClock.task', 'offClock.directedBy', 'offClock.knownBy', 'offClock.payPeriod', 'offClock.expectedPay', 'offClock.employerEdited',
-  'notice.to', 'notice.channel', 'notice.response',
+  'notice.to', 'notice.channel', 'notice.response', 'notice.adverseAction',
   'witnesses', 'narrative',
 ];
 const getPath = (o, p) => p.split('.').reduce((acc, k) => (acc == null ? undefined : acc[k]), o);

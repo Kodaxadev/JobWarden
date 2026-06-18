@@ -26,7 +26,7 @@
 .flaglist { margin: 12px 0; padding-left: 18px; }
 .flaglist li { color: var(--ok); font-size: 13px; line-height: 1.45; margin-bottom: 6px; }
 .narrative { white-space: pre-wrap; background: var(--surface-2); border-left: 2px solid var(--primary-deep); padding: 12px 14px; border-radius: 0 10px 10px 0; font-size: 14px; line-height: 1.55; }
-.row-actions { display: flex; gap: 12px; margin-top: 16px; }
+.row-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
 .row-detail a { color: var(--primary-strong); }
 
 .seal { font-family: var(--mono); font-size: 12px; margin: 2px 0 12px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line); color: var(--muted); line-height: 1.45; }

@@ -30,10 +30,18 @@ function dateLabel(ds) {
   return (ds === todayDateStr() ? 'Today, ' : '') + nice;
 }
 
-export async function renderCaptureForm(container, { onSaved, existing } = {}) {
+export async function renderCaptureForm(container, { onSaved, existing, template } = {}) {
   clear(container);
   const settings = await getSettings();
-  const state = buildInitialState(existing, settings);
+  const state = buildInitialState(existing || template, settings);
+  // "Log again": pre-fill the recurring facts but keep it a fresh, contemporaneous record —
+  // new date, and clear the per-day evidence (narrative, photos, location, who-told).
+  if (template && !existing) {
+    state.incidentDate = todayDateStr();
+    state.narrative = ''; state.attachments = []; state.location = null; state.witnesses = '';
+    state.notice = { to: '', channel: '', response: '', adverseAction: '' };
+    toast('Filled in from ' + dateLabel(template.incidentDate) + ' — confirm today’s times');
+  }
   let openId = null;
 
   const form = el('form', { class: 'capture', autocomplete: 'off' });

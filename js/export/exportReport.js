@@ -58,6 +58,7 @@ async function recordHtml(i) {
   if (i.classification?.payType) add('Worker pay type', i.classification.payType);
   if (i.notice?.to) add('Reported to', `${i.notice.to} (${i.notice.channel || '—'})`);
   if (i.notice?.response) add('Their response', i.notice.response);
+  if (i.notice?.adverseAction) add('What happened after I spoke up', i.notice.adverseAction);
   if (i.witnesses) add('Witnesses', i.witnesses);
   const hrs = (i.flags || []).find(f => f.key === 'hoursWorked');
   if (hrs) add('Hours worked (computed)', hrs.value);

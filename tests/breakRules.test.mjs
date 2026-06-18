@@ -64,6 +64,10 @@ test('on-call during the meal is flagged (not relieved of all duty)', () => {
   assert.equal(fk.mealOnCall, true);
 });
 
+test('adverse action after a complaint is flagged (§1102.5)', () => {
+  assert.equal(flagsOf(base({ types: ['retaliation'], notice: { adverseAction: 'manager emailed the team blaming me' } })).retaliationNoted, true);
+});
+
 test('exempt classification adds a caveat flag', () => {
   assert.equal(flagsOf(base({ clockIn: '09:00', clockOut: '18:00', classification: { payType: 'salary_exempt' } })).exemptCaveat, true);
 });

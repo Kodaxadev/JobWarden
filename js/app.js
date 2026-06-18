@@ -41,10 +41,11 @@ async function show(name, opts = {}) {
   setActive(name);
   main.scrollTop = 0;
   if (name === 'log') {
-    await renderCaptureForm(main, { existing: opts.existing, onSaved: () => { refreshBanner(); show('records'); } });
+    await renderCaptureForm(main, { existing: opts.existing, template: opts.template, onSaved: () => { refreshBanner(); show('records'); } });
   } else if (name === 'records') {
     await renderIncidentList(main, {
       onEdit: it => show('log', { existing: it }),
+      onRepeat: it => show('log', { template: it }),
       onChanged: () => { refreshBanner(); show('records'); },
     });
   } else if (name === 'export') {

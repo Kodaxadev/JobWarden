@@ -15,7 +15,7 @@ export function buildInitialState(existing, settings) {
     meal2: { start: '', end: '', taken: null, waived: false },
     rest: { taken: null, interrupted: false, onCall: false },
     offClock: { start: '', end: '', task: '', directedBy: '', knownBy: '', payPeriod: '', expectedPay: '', employerEdited: null },
-    notice: { to: '', channel: '', response: '' },
+    notice: { to: '', channel: '', response: '', adverseAction: '' },
     witnesses: '', narrative: '', location: null, attachments: [],
   };
   if (!existing) return base;
@@ -158,5 +158,6 @@ export function storyBody(state) {
     field('Who you told (name / role)', textInput(state.notice.to, v => state.notice.to = v)),
     field('How', channel),
     field('What they said back', textInput(state.notice.response, v => state.notice.response = v)),
+    field('Did anything happen after you spoke up?', textInput(state.notice.adverseAction, v => state.notice.adverseAction = v, { placeholder: 'e.g. write-up, schedule cut, an email blaming me' }), 'Adverse treatment after a complaint can be its own issue. Keep proof + the date.'),
   ]);
 }

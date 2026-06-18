@@ -12,7 +12,7 @@ import { mapsLink, formatLoc } from '../capture/geo.js';
 
 const fmt = v => (Array.isArray(v) ? v.join(', ') : v === true ? 'Yes' : v === false ? 'No' : v === '' || v == null ? '—' : String(v));
 
-export async function renderIncidentList(container, { onEdit, onChanged } = {}) {
+export async function renderIncidentList(container, { onEdit, onChanged, onRepeat } = {}) {
   clear(container);
   const [items, deleted] = await Promise.all([getAllIncidents(), getDeletedIncidents()]);
 
@@ -26,7 +26,7 @@ export async function renderIncidentList(container, { onEdit, onChanged } = {}) 
 
   if (items.length) container.appendChild(glanceCard(items));
   container.appendChild(el('p', { class: 'count', text: `${items.length} record${items.length === 1 ? '' : 's'}` }));
-  items.forEach(item => container.appendChild(row(item, { onEdit, onChanged })));
+  items.forEach(item => container.appendChild(row(item, { onEdit, onChanged, onRepeat })));
 
   if (deleted.length) {
     const wrap = el('details', { class: 'deleted-wrap' }, [el('summary', { text: `Deleted (${deleted.length}) — recoverable` })]);
@@ -62,7 +62,7 @@ function glanceCard(items) {
   ]);
 }
 
-function row(item, { onEdit, onChanged }) {
+function row(item, { onEdit, onChanged, onRepeat }) {
   const flagText = summarize(item.flags || []).join(' · ');
   const meta = [];
   if (item.workplace) meta.push(item.workplace);
@@ -84,12 +84,12 @@ function row(item, { onEdit, onChanged }) {
   head.addEventListener('click', () => {
     detail.hidden = !detail.hidden;
     head.setAttribute('aria-expanded', detail.hidden ? 'false' : 'true');
-    if (!built) { buildDetail(detail, item, { onEdit, onChanged }); built = true; }
+    if (!built) { buildDetail(detail, item, { onEdit, onChanged, onRepeat }); built = true; }
   });
   return el('article', { class: 'row' }, [head, detail]);
 }
 
-function buildDetail(host, item, { onEdit, onChanged }) {
+function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
   const facts = el('dl', { class: 'facts' });
   const add = (k, v) => { if (v == null || v === '') return; facts.appendChild(el('dt', { text: k })); facts.appendChild(el('dd', { text: String(v) })); };
   add('Started work', item.clockIn); add('Stopped work', item.clockOut);
@@ -107,6 +107,7 @@ function buildDetail(host, item, { onEdit, onChanged }) {
   if (item.offClock?.employerEdited === true) add('They changed the time record', 'Yes');
   if (item.notice?.to) add('Told', `${item.notice.to} (${item.notice.channel || '—'})`);
   if (item.notice?.response) add('They said', item.notice.response);
+  if (item.notice?.adverseAction) add('After I spoke up', item.notice.adverseAction);
   if (item.witnesses) add('Who saw it', item.witnesses);
   if ((item.attachments || []).length) add('Proof saved', `${item.attachments.length} photo(s)`);
   add('Saved at', new Date(item.createdAt).toLocaleString());
@@ -149,6 +150,7 @@ function buildDetail(host, item, { onEdit, onChanged }) {
   }
 
   host.appendChild(el('div', { class: 'row-actions' }, [
+    el('button', { class: 'btn', text: 'Log again', onclick: () => onRepeat?.(item) }),
     el('button', { class: 'btn', text: 'Edit', onclick: () => onEdit?.(item) }),
     el('button', { class: 'btn danger', text: 'Delete', onclick: async () => {
       if (await confirmDialog('Move this record to Deleted? It stays recoverable under “Deleted”.')) {

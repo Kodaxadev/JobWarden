@@ -43,6 +43,9 @@ export const INFRACTION_TYPES = [
   { id: 'complaint_raised', label: 'I reported an issue', group: 'notice',
     fields: [FIELD.NOTICE],
     legal: 'Notice undercuts an employer "good-faith" defense. Naranjo (2024).' },
+  { id: 'retaliation', label: 'Treated worse after I spoke up', group: 'notice',
+    fields: [FIELD.NOTICE],
+    legal: 'Adverse action after a protected wage complaint may be unlawful retaliation. Lab. Code §1102.5 / §98.6. Keep proof and the dates.' },
 ];
 
 export const TYPES_BY_ID = Object.fromEntries(INFRACTION_TYPES.map(t => [t.id, t]));

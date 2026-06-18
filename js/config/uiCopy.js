@@ -26,5 +26,8 @@ export const ISSUE_GROUPS = [
     { id: 'rest_interrupted', label: 'Rest break was interrupted' },
   ] },
   { id: 'pay', label: 'Unpaid work', items: [{ id: 'off_clock_work', label: 'Worked but was not paid' }] },
-  { id: 'notice', label: 'I told someone', items: [{ id: 'complaint_raised', label: 'I reported the problem' }] },
+  { id: 'notice', label: 'Speaking up', items: [
+    { id: 'complaint_raised', label: 'I reported the problem' },
+    { id: 'retaliation', label: 'Treated worse after I reported it' },
+  ] },
 ];

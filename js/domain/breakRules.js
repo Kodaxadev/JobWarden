@@ -127,6 +127,15 @@ function offClockFlags(i) {
   return out;
 }
 
+function noticeFlags(i) {
+  const out = [];
+  const n = i.notice || {};
+  if ((i.types || []).includes('retaliation') || n.adverseAction) {
+    out.push(f('retaliationNoted', true, 'Adverse action after a complaint — possible retaliation. Document the timeline (Lab. Code §1102.5 / §98.6).'));
+  }
+  return out;
+}
+
 // Analyze a stored incident -> array of factual flags. Pure; reads i.classification for exempt caveat.
 export function analyze(i) {
   const flags = [];
@@ -141,6 +150,7 @@ export function analyze(i) {
   flags.push(...secondMealFlags(i, ci, hrs));
   flags.push(...restFlags(i, hrs));
   flags.push(...offClockFlags(i));
+  flags.push(...noticeFlags(i));
   return flags;
 }
 
@@ -162,5 +172,6 @@ export function summarize(flags = []) {
   if (m.restShortfall) p.push(`Rest short (${m.restShortfall.value})`);
   if (m.restOnCall) p.push('Rest on-call');
   if (m.offClockMinutes) p.push(`Off-clock ${m.offClockMinutes.value}m`);
+  if (m.retaliationNoted) p.push('Possible retaliation');
   return p;
 }
