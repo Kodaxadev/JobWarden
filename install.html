@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0d1726">
-  <meta name="description" content="Install JobWarden — a private California meal, rest break & unpaid-work field log. Saved on your phone.">
-  <title>Install JobWarden</title>
+  <meta name="theme-color" content="#0c1626">
+  <meta name="description" content="JobWarden — a private California meal, rest break & unpaid-work log. Document what happens at work, sealed so it can't be quietly changed. Free, no account, works offline.">
+  <title>JobWarden — Document. Protect. Empower.</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="./icons/logo-mark.svg">
   <link rel="icon" href="./icons/icon-192.png">
@@ -13,79 +13,193 @@
   <style>
     @font-face { font-family:"Geist"; font-weight:400; font-display:swap; src:url("./fonts/geist-sans-latin-400-normal.woff2") format("woff2"); }
     @font-face { font-family:"Geist"; font-weight:500; font-display:swap; src:url("./fonts/geist-sans-latin-500-normal.woff2") format("woff2"); }
+    @font-face { font-family:"Geist"; font-weight:600; font-display:swap; src:url("./fonts/geist-sans-latin-600-normal.woff2") format("woff2"); }
     @font-face { font-family:"Cinzel"; font-weight:600; font-display:swap; src:url("./fonts/cinzel-latin-600-normal.woff2") format("woff2"); }
-    :root {
-      --bg:#0a0b0e; --navy-2:#223a61; --navy-deep:#0e1b2e;
-      --surface:#14161c; --surface-2:#1c1f27; --line:rgba(234,238,246,.12);
-      --text:#eef1f6; --muted:#a8aebb;
-      --gold:#cdab45; --gold-1:#d8b54e; --gold-2:#b6912c; --gold-bright:#e6cd7e; --on-gold:#14233c;
-      --ok:#7fcf92; --radius:14px;
+    @font-face { font-family:"Cinzel"; font-weight:700; font-display:swap; src:url("./fonts/cinzel-latin-700-normal.woff2") format("woff2"); }
+    :root{
+      --bg:#0a0e16; --navy:#16263f; --navy-2:#22395f; --navy-deep:#0c1626;
+      --surface:#121a2a; --surface-2:#18253b; --line:rgba(214,224,240,.12); --line-2:rgba(214,224,240,.2);
+      --text:#eef2f8; --muted:#9fb0c8; --faint:#7286a3;
+      --gold:#cdab45; --gold-1:#dcc06a; --gold-2:#b6912c; --gold-bright:#e7cd7e; --on-gold:#14233c; --ok:#7fcf92;
       --serif:"Cinzel",Georgia,serif; --sans:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+      --r:16px;
     }
-    * { box-sizing: border-box; }
-    body { margin:0; background: radial-gradient(1100px 580px at 50% -14%, #16243f, var(--bg)); color: var(--text); font: 16px/1.55 var(--sans); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 18px 56px; }
-    .wrap { width: 100%; max-width: 460px; }
-    .logo { width: 78px; height: 78px; border-radius: 22px; background: linear-gradient(160deg, var(--navy-2), var(--navy-deep)); border: 1px solid rgba(205,171,69,.34); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 14px 32px -12px rgba(0,0,0,.6); }
-    .logo svg { width: 44px; height: 44px; color: var(--gold-bright); }
-    .wm { font-family: var(--serif); font-weight: 600; font-size: 32px; letter-spacing: .04em; text-align: center; margin: 0 0 8px; }
-    .wm-warden { color: var(--gold); }
-    .brandtag { font-size: 11.5px; letter-spacing: .26em; text-transform: uppercase; color: var(--gold); text-align: center; margin: 0 0 14px; }
-    .tag { color: var(--muted); text-align: center; margin: 0 0 26px; font-size: 14.5px; }
-    .card { background: linear-gradient(180deg, rgba(255,255,255,.022), rgba(255,255,255,0) 46%), var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; margin: 0 0 16px; box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 2px 4px rgba(0,0,0,.3), 0 14px 30px -14px rgba(0,0,0,.5); }
-    .card h2 { font-size: 15px; margin: 0 0 8px; font-weight: 600; }
-    .btn { display: flex; width: 100%; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(180deg, var(--gold-1), var(--gold-2)); border: 1px solid var(--gold-bright); color: var(--on-gold); font-weight: 600; font-size: 17px; padding: 16px; border-radius: 13px; cursor: pointer; text-decoration: none; min-height: 56px; box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 0 40px -12px rgba(205,171,69,.4); }
-    .btn.secondary { background: var(--surface-2); border-color: var(--line); color: var(--text); font-weight: 500; margin-top: 10px; box-shadow: none; }
-    .btn:disabled { opacity: .5; cursor: default; }
-    .status { font-size: 13px; color: var(--muted); text-align: center; margin: 12px 0 0; min-height: 18px; }
-    .status.ok { color: var(--ok); }
-    ol { margin: 8px 0 0; padding-left: 20px; }
-    ol li { margin: 6px 0; }
-    .muted { color: var(--muted); font-size: 13px; margin: 0; }
-    .badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ok); border: 1px solid rgba(127,207,146,.4); background: rgba(78,150,92,.14); border-radius: 999px; padding: 5px 10px; margin: 0 0 12px; }
-    .foot { color: var(--muted); font-size: 11px; text-align: center; margin-top: 22px; line-height: 1.5; }
-    .hide { display: none; }
+    *{box-sizing:border-box} html,body{margin:0}
+    body{ font:400 16px/1.6 var(--sans); color:var(--text);
+      background: radial-gradient(120% 70% at 50% -10%, #1b2c4a 0%, rgba(27,44,74,0) 52%), var(--bg);
+      -webkit-font-smoothing:antialiased; }
+    .wrap{ max-width:960px; margin:0 auto; padding:0 20px; }
+    a{ color:var(--gold-bright); }
+    h1,h2,h3{ letter-spacing:-.01em; }
+    .gold{ color:var(--gold); }
+
+    /* top wordmark */
+    .top{ display:flex; align-items:center; gap:11px; padding:22px 0 6px; }
+    .top .chip{ width:38px;height:38px;flex:none;border-radius:11px;display:grid;place-items:center;background:linear-gradient(160deg,var(--navy-2),var(--navy-deep));border:1px solid rgba(205,171,69,.32); }
+    .top .chip svg{ width:21px;height:21px;color:var(--gold-bright); }
+    .top .name{ font-family:var(--serif); font-weight:600; font-size:18px; letter-spacing:.05em; }
+    .top .name .w{ color:var(--gold); }
+
+    /* hero */
+    .hero{ text-align:center; padding:34px 0 30px; }
+    .hero .icon{ width:88px;height:88px;border-radius:22px;margin:0 auto 22px;display:grid;place-items:center;
+      background:linear-gradient(160deg,var(--navy-2),var(--navy-deep));border:1px solid rgba(205,171,69,.34);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 18px 40px -14px rgba(0,0,0,.6); }
+    .hero .icon svg{ width:52px;height:52px;color:var(--gold-bright); }
+    .overline{ font-size:11.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin:0 0 14px; }
+    .hero h1{ font-size:40px; line-height:1.1; font-weight:600; margin:0 0 16px; }
+    .lede{ font-size:17.5px; color:var(--muted); max-width:42ch; margin:0 auto 26px; }
+    .cta{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:54px; padding:15px 24px; border-radius:13px; font:600 16.5px var(--sans); cursor:pointer; text-decoration:none; border:1px solid transparent; }
+    .btn.gold{ background:linear-gradient(180deg,var(--gold-1),var(--gold-2)); color:var(--on-gold); border-color:var(--gold-bright); box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 0 44px -12px rgba(205,171,69,.5); }
+    .btn.ghost{ background:var(--surface-2); color:var(--text); border-color:var(--line-2); font-weight:500; }
+    .btn:disabled{ opacity:.5; cursor:default; }
+    .status{ font-size:13px; color:var(--muted); margin:14px 0 0; min-height:18px; }
+    .status.ok{ color:var(--ok); }
+    .badges{ list-style:none; display:flex; flex-wrap:wrap; gap:9px; justify-content:center; padding:0; margin:22px 0 0; }
+    .badges li{ font-size:12.5px; color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:6px 13px; }
+
+    /* install instruction cards */
+    .install-card{ max-width:480px; margin:0 auto 16px; }
+    .card{ background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,0) 46%),var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 14px 34px -16px rgba(0,0,0,.5); }
+    .card h2{ font-size:16px; margin:0 0 10px; }
+    ol{ margin:8px 0 0; padding-left:20px; } ol li{ margin:7px 0; color:var(--muted); }
+
+    /* sections */
+    section.band{ padding:42px 0; }
+    .band h2{ font-size:25px; font-weight:600; margin:0 0 8px; text-align:center; }
+    .band .sub{ color:var(--muted); text-align:center; max-width:46ch; margin:0 auto 26px; }
+    .eyebrow{ text-align:center; font-size:11.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); margin:0 0 10px; }
+
+    .pain-grid{ display:flex; flex-wrap:wrap; gap:11px; justify-content:center; }
+    .pain{ background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--gold-2); border-radius:11px; padding:13px 16px; font-size:15px; color:var(--text); font-style:italic; }
+
+    .steps-grid{ display:grid; gap:14px; grid-template-columns:repeat(3,1fr); }
+    .step{ background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,0) 46%),var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:20px; box-shadow:inset 0 1px 0 rgba(255,255,255,.05); }
+    .step .n{ width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-weight:600;color:var(--on-gold);background:linear-gradient(160deg,var(--gold-1),var(--gold-2));margin-bottom:12px; }
+    .step h3{ font-size:16.5px; margin:0 0 6px; } .step p{ margin:0; color:var(--muted); font-size:14.5px; }
+
+    .feat-grid{ display:grid; gap:13px; grid-template-columns:repeat(3,1fr); }
+    .feat{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px; box-shadow:inset 0 1px 0 rgba(255,255,255,.04); }
+    .feat .fi{ color:var(--gold-bright); margin-bottom:10px; display:block; }
+    .feat .fi svg{ width:24px;height:24px; }
+    .feat h3{ font-size:16px; margin:0 0 5px; } .feat p{ margin:0; color:var(--muted); font-size:14px; line-height:1.5; }
+
+    .privacy{ text-align:center; background:linear-gradient(180deg,#101b30,#0c1626); border:1px solid var(--line); border-radius:20px; padding:34px 22px; margin:8px 0; }
+    .privacy .lock{ color:var(--ok); } .privacy .lock svg{ width:30px;height:30px; }
+    .privacy h2{ margin:12px 0 8px; } .privacy p{ color:var(--muted); max-width:48ch; margin:0 auto; }
+
+    .final{ text-align:center; padding:44px 0 26px; }
+    .final h2{ font-size:26px; margin:0 0 18px; }
+
+    footer{ border-top:1px solid var(--line); padding:26px 0 40px; text-align:center; color:var(--faint); font-size:12px; line-height:1.6; }
+    footer .fmark{ font-family:var(--serif); font-weight:600; letter-spacing:.05em; color:var(--muted); font-size:14px; margin-bottom:8px; }
+    footer .fmark .w{ color:var(--gold); }
+
+    @media (max-width:680px){
+      .hero h1{ font-size:31px; }
+      .steps-grid, .feat-grid{ grid-template-columns:1fr; }
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="logo">
-      <svg viewBox="0 0 100 110" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M50 8 L86 22 V54 C86 79 69 95 50 102 C31 95 14 79 14 54 V22 Z" stroke-width="6"/><path d="M34 55 L46 67 L72 36" stroke-width="9"/></svg>
-    </div>
-    <h1 class="wm"><span class="wm-job">Job</span><span class="wm-warden">Warden</span></h1>
-    <p class="brandtag">Document · Protect · Empower</p>
-    <p class="tag">California meal, rest break &amp; unpaid-work field log. Saved on your phone.</p>
+    <header class="top">
+      <span class="chip"><svg viewBox="0 0 100 110" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M50 9 L84 22 V53 C84 77 68 93 50 100 C32 93 16 77 16 53 V22 Z" stroke-width="6"/><path d="M35 55 L46 66 L70 38" stroke-width="9"/></svg></span>
+      <span class="name"><span>Job</span><span class="w">Warden</span></span>
+    </header>
 
-    <div class="card">
-      <div id="badge" class="badge hide">Already installed</div>
-      <button id="install" class="btn" disabled>Install app</button>
-      <a id="open" class="btn secondary" href="./index.html">Open in browser</a>
-      <p id="status" class="status">Checking your device…</p>
-    </div>
+    <main>
+      <section class="hero">
+        <div class="icon"><svg viewBox="0 0 100 110" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M50 8 L86 22 V54 C86 79 69 95 50 102 C31 95 14 79 14 54 V22 Z" stroke-width="5.5"/><path d="M34 55 L46 67 L72 36" stroke-width="9"/></svg></div>
+        <p class="overline">California meal · rest break · unpaid-work log</p>
+        <h1>Document what happens at work.<br><span class="gold">Keep the proof.</span></h1>
+        <p class="lede">A private log for skipped lunches, off-the-clock work, missed breaks and more — captured the moment they happen, and sealed so it can't be quietly changed.</p>
+        <div class="cta">
+          <button id="install" class="btn gold" disabled>Install the app</button>
+          <a id="open" class="btn ghost" href="./index.html">Open in browser</a>
+        </div>
+        <p id="status" class="status">Checking your device…</p>
+        <ul class="badges"><li>Free</li><li>No account</li><li>Works offline</li><li>Stays on your phone</li></ul>
+      </section>
 
-    <div id="ios" class="card hide">
-      <h2>Install on iPhone or iPad</h2>
-      <ol>
-        <li>In <strong>Safari</strong>, tap the <strong>Share</strong> button.</li>
-        <li>Choose <strong>Add to Home Screen</strong>.</li>
-        <li>Tap <strong>Add</strong> — JobWarden opens like a normal app and works offline.</li>
-      </ol>
-    </div>
+      <section id="ios" class="card install-card hide">
+        <h2>Install on iPhone or iPad</h2>
+        <ol>
+          <li>In <strong>Safari</strong>, tap the <strong>Share</strong> button.</li>
+          <li>Choose <strong>Add to Home Screen</strong>.</li>
+          <li>Tap <strong>Add</strong> — JobWarden opens like a normal app and works offline.</li>
+        </ol>
+      </section>
 
-    <div id="manual" class="card hide">
-      <h2>Install from the browser menu</h2>
-      <ol>
-        <li>Open the browser menu (<strong>⋮</strong> or <strong>···</strong>, usually top-right).</li>
-        <li>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li>
-      </ol>
-    </div>
+      <section id="manual" class="card install-card hide">
+        <h2>Install from the browser menu</h2>
+        <ol>
+          <li>Open the browser menu (<strong>⋮</strong> or <strong>···</strong>, usually top-right).</li>
+          <li>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li>
+        </ol>
+      </section>
 
-    <div class="card">
-      <h2>Private by design</h2>
-      <p class="muted">Everything logged stays on this device — no account, no server, fully offline. Back up from inside the app (Export → Save full backup).</p>
-    </div>
+      <section class="band">
+        <p class="eyebrow">Sound familiar?</p>
+        <h2>You're not imagining it.</h2>
+        <div class="pain-grid">
+          <span class="pain">“They keep making me skip lunch.”</span>
+          <span class="pain">“I end up working off the clock.”</span>
+          <span class="pain">“I'm on-call during my break.”</span>
+          <span class="pain">“My paychecks don't add up.”</span>
+          <span class="pain">“I got blamed after I spoke up.”</span>
+        </div>
+        <p class="sub" style="margin-top:24px">JobWarden turns what happened into a clear, dated record — in your words, with your photos, the moment it happens.</p>
+      </section>
 
-    <p class="foot">Not legal advice. No audio recording (illegal in California without all-party consent).</p>
+      <section class="band">
+        <p class="eyebrow">How it works</p>
+        <h2>Three taps to a real record.</h2>
+        <div class="steps-grid">
+          <div class="step"><div class="n">1</div><h3>Log it</h3><p>Tap what happened. Times fill in to now. Add a photo of the clock, pay stub, or a text. Save in seconds.</p></div>
+          <div class="step"><div class="n">2</div><h3>It builds your case file</h3><p>Your records become a timeline, and the app factually flags the issues — like “lunch began after the 5th hour.”</p></div>
+          <div class="step"><div class="n">3</div><h3>Take it further</h3><p>Export a printable report or a one-page summary, or email it to yourself, an attorney, or the Labor Commissioner.</p></div>
+        </div>
+      </section>
+
+      <section class="band">
+        <p class="eyebrow">Built for this</p>
+        <h2>Made to hold up.</h2>
+        <div class="feat-grid">
+          <div class="feat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg></span><h3>California-specific</h3><p>Meal &amp; rest timing (§512, §226.7), off-the-clock work, and adverse action after you speak up.</p></div>
+          <div class="feat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><h3>Private by design</h3><p>Everything stays on your phone. No account, no server, no tracking. Only you can see it.</p></div>
+          <div class="feat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span><h3>Tamper-evident</h3><p>Each record is fingerprinted (SHA-256) and timestamped, so it can't be quietly changed later.</p></div>
+          <div class="feat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span><h3>Facts, not legal advice</h3><p>It records what happened. You and an attorney decide what it means — the way good evidence should work.</p></div>
+          <div class="feat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span><h3>See the pattern</h3><p>One late lunch is a story. “12 late lunches in 6 weeks” is a record — JobWarden builds it for you.</p></div>
+          <div class="feat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></span><h3>Never lose it</h3><p>Email a backup to yourself in one tap, and restore it on any phone. Your record follows you.</p></div>
+        </div>
+      </section>
+
+      <section class="band">
+        <div class="privacy">
+          <span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <h2>Saved on your phone. Only you can see it.</h2>
+          <p>No account to make, nothing uploaded, no one watching. Your records never leave your phone unless you choose to share them.</p>
+        </div>
+      </section>
+
+      <section class="final">
+        <h2>Start your record today.</h2>
+        <div class="cta">
+          <a class="btn gold" href="./index.html">Open JobWarden</a>
+        </div>
+        <p class="status" style="margin-top:14px">Free · Private · Works offline · No sign-up. Install it from the top of this page to keep it on your home screen.</p>
+      </section>
+    </main>
   </div>
+
+  <footer>
+    <div class="wrap">
+      <div class="fmark"><span>Job</span><span class="w">Warden</span> · Document · Protect · Empower</div>
+      Not legal advice. A self-kept log is structured testimony — its strength comes from being contemporaneous, factual, and corroborated. No audio recording (illegal in California without all-party consent). Confirm classification and strategy with an employment attorney or the California Labor Commissioner.
+    </div>
+  </footer>
 
   <script>
     const $ = id => document.getElementById(id);
@@ -118,7 +232,6 @@
 
     (function init() {
       if (isStandalone) {
-        $('badge').classList.remove('hide');
         $('install').classList.add('hide');
         $('open').textContent = 'Open JobWarden';
         $('status').textContent = 'The app is installed on this device.';
@@ -128,14 +241,13 @@
       if (isiOS) {
         $('install').classList.add('hide');
         $('ios').classList.remove('hide');
-        $('status').textContent = 'On iPhone / iPad, install from the Share menu below.';
+        $('status').textContent = 'On iPhone / iPad, install from the Share menu (steps below).';
         return;
       }
-      // Android / desktop: if the browser never fires the prompt, show manual steps.
       setTimeout(() => {
         if (!deferred) {
           $('manual').classList.remove('hide');
-          $('status').textContent = 'If the Install button stays greyed out, use the browser menu.';
+          $('status').textContent = 'If the Install button stays greyed out, use the browser menu (steps below).';
         }
       }, 1500);
     })();
