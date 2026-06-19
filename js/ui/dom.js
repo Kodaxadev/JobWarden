@@ -35,7 +35,7 @@ export function toast(msg, ms = 2600) {
 
 // Accessible confirm dialog (returns a Promise<boolean>). role=dialog + aria-modal,
 // focus moves into the dialog and is trapped, Escape cancels, focus returns to the trigger.
-export function confirmDialog(message, { confirmText = 'Delete', cancelText = 'Cancel' } = {}) {
+export function confirmDialog(message, { confirmText = 'Delete', cancelText = 'Cancel', danger = true } = {}) {
   return new Promise(resolve => {
     const prevFocus = document.activeElement;
     const close = (val) => {
@@ -45,7 +45,7 @@ export function confirmDialog(message, { confirmText = 'Delete', cancelText = 'C
       resolve(val);
     };
     const cancelBtn = el('button', { class: 'btn', text: cancelText, onclick: () => close(false) });
-    const okBtn = el('button', { class: 'btn danger', text: confirmText, onclick: () => close(true) });
+    const okBtn = el('button', { class: 'btn ' + (danger ? 'danger' : 'primary'), text: confirmText, onclick: () => close(true) });
     const msgId = 'dlg-' + Math.random().toString(16).slice(2);
     const box = el('div', { class: 'dialog', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': msgId }, [
       el('p', { id: msgId, text: message }),

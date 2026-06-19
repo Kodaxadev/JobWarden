@@ -1,9 +1,10 @@
 // exportView.js — export & backup screen. One concern: export UI.
-import { el, clear, toast } from './dom.js';
+import { el, clear, toast, confirmDialog } from './dom.js';
 import { getAllIncidents } from '../data/incidentRepo.js';
 import { getSettings, markBackedUp } from '../data/settingsRepo.js';
 import { exportJson } from '../export/exportJson.js';
 import { emailRecords } from '../export/emailExport.js';
+import { importBackup, parseBackup } from '../export/importBackup.js';
 import { exportCsv } from '../export/exportCsv.js';
 import { openPrintReport } from '../export/exportReport.js';
 import { openPrintSummary } from '../export/exportSummary.js';
@@ -37,5 +38,31 @@ export async function renderExportView(container, { onChanged } = {}) {
       action('Make summary report', 'A one-page overview — the patterns and a timeline — a lawyer can read in 30 seconds.', 'btn',
         guard(async () => { const ok = await openPrintSummary(items, settings); if (!ok) toast('Allow pop-ups to print'); })),
     ]),
+  ]));
+
+  // Restore — the counterpart to backup. Not guarded by record count (she may be restoring
+  // onto a fresh install with nothing here yet).
+  const fileInput = el('input', { type: 'file', accept: 'application/json,.json' });
+  fileInput.style.display = 'none';
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files && fileInput.files[0];
+    fileInput.value = '';
+    if (!file) return;
+    let text, parsed;
+    try { text = await file.text(); parsed = parseBackup(text); }
+    catch (e) { return toast(e.message || 'Could not read that file'); }
+    if (!await confirmDialog(`Restore ${parsed.records.length} record(s) from this backup? Your current records stay; duplicates are skipped.`, { confirmText: 'Restore', danger: false })) return;
+    try {
+      const r = await importBackup(text);
+      toast(`Restored ${r.added} · skipped ${r.skipped} duplicate(s)` + (r.changed ? ` · ${r.changed} fingerprint warning(s)` : ''));
+      onChanged?.();
+    } catch (e) { toast('Could not restore: ' + (e?.message || e)); }
+  });
+
+  container.appendChild(el('section', { class: 'card' }, [
+    el('h2', { text: 'Restore from a backup' }),
+    el('p', { class: 'hint', text: 'Bring records back from a backup file — after reinstalling or on a new phone. Adds to what is here; duplicates are skipped.' }),
+    el('div', { class: 'actions' }, [el('button', { class: 'btn', text: 'Choose a backup file', onclick: () => fileInput.click() })]),
+    fileInput,
   ]));
 }

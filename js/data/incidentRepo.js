@@ -17,6 +17,12 @@ export async function putIncident(incident) {
   return tx(STORE_INCIDENTS, 'readwrite', s => reqToPromise(s.put(sealed)));
 }
 
+// Raw put without re-sealing — restore/import uses this to keep a record's ORIGINAL
+// fingerprints + sealedAt exactly as they were backed up.
+export function putIncidentRaw(incident) {
+  return tx(STORE_INCIDENTS, 'readwrite', s => reqToPromise(s.put(incident)));
+}
+
 export function getIncident(id) {
   return tx(STORE_INCIDENTS, 'readonly', async s => {
     const item = await reqToPromise(s.get(id));
