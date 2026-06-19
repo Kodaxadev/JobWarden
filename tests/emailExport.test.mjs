@@ -8,9 +8,9 @@ test('emailSummary reads as a mini report with counts + who', () => {
     createIncident({ incidentDate: '2026-06-10', types: ['late_meal'], clockIn: '09:00', clockOut: '17:30', meal: { start: '14:45', end: '15:10' } }),
     createIncident({ incidentDate: '2026-06-12', types: ['missed_meal'], clockIn: '09:00', clockOut: '15:30' }),
   ];
-  const body = emailSummary(items, { employeeName: 'A. Worker', employer: 'Penske Automotive' });
+  const body = emailSummary(items, { employeeName: 'A. Worker', employer: 'Acme Warehouse' });
   assert.match(body, /Employee: A\. Worker/);
-  assert.match(body, /Employer: Penske Automotive/);
+  assert.match(body, /Employer: Acme Warehouse/);
   assert.match(body, /2 record\(s\)/);
   assert.match(body, /Late lunch/);
   assert.match(body, /not legal advice/i);

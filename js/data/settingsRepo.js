@@ -5,10 +5,10 @@ const KEY = 'app';
 const DEFAULTS = {
   key: KEY,
   employeeName: '',
-  role: 'Cashier / Admin (BDC)',
-  payType: 'hourly',     // confirmed non-exempt hourly. 'salary_exempt' | 'commission' | ''
-  employer: 'Penske Automotive Group',
-  workplaces: [],        // [string] dealership names / locations
+  role: '',
+  payType: 'hourly',     // sensible default for this audience; 'commission' | 'salary_exempt' | ''
+  employer: '',
+  workplaces: [],        // [string] workplace names / locations
   lastBackupAt: '',
   backupReminderDays: 7,
   onboardedAt: '',       // ISO timestamp set once the first-run setup is completed

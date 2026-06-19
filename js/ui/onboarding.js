@@ -21,7 +21,7 @@ export async function renderOnboarding(container, { onDone } = {}) {
 
   const name = text(s.employeeName, 'Your name');
   const employer = text(s.employer, 'Employer');
-  const role = text(s.role, 'e.g. cashier, service advisor');
+  const role = text(s.role, 'e.g. cashier, server, caregiver');
 
   const pay = el('select', {});
   PAY_OPTIONS.forEach(([v, t]) => pay.appendChild(el('option', { value: v, text: t, selected: s.payType === v })));
@@ -58,12 +58,12 @@ export async function renderOnboarding(container, { onDone } = {}) {
   container.appendChild(el('section', { class: 'onboard' }, [
     el('div', { class: 'onboard-head' }, [
       iconEl('shield-check'),
-      el('h1', { text: 'Welcome' }),
-      el('p', { class: 'onboard-tag', text: 'Log it the moment it happens. Everything stays on this phone — only you can see it.' }),
+      el('h1', { text: 'Welcome to JobWarden' }),
+      el('p', { class: 'onboard-tag', text: 'Keep a private record of meal breaks, rest breaks, and unpaid work — the moment it happens. It stays on this phone; only you can see it.' }),
     ]),
     el('section', { class: 'card' }, [
       el('h2', { text: 'Quick setup' }),
-      el('p', { class: 'hint', text: 'This fills in your records and reports so they are ready to share later.' }),
+      el('p', { class: 'hint', text: 'All optional — it just makes your records and reports more complete. You can skip this and add it later in Settings.' }),
       field('Your name', name, 'Goes on your printable report.'),
       field('Employer', employer),
       field('Role', role),

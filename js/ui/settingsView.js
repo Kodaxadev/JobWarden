@@ -14,7 +14,7 @@ export async function renderSettingsView(container) {
   const s = await getSettings();
 
   const name = text(s.employeeName, 'Your name');
-  const role = text(s.role, 'e.g. cashier, BDC, service advisor');
+  const role = text(s.role, 'e.g. cashier, server, caregiver');
   const employer = text(s.employer, 'Employer');
   const pay = el('select', {});
   [['', 'Select…'], ['hourly', 'Hourly'], ['commission', 'Commissioned'], ['salary_exempt', 'Salaried']]

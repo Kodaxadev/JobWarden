@@ -2,7 +2,7 @@
 
 A private, offline-first PWA for logging California meal/rest-break and wage infractions **the moment they happen** — built for in-the-moment capture on a phone, review and export on any device.
 
-Built for one person's records (Penske Automotive Group, California). Captures **facts, not legal conclusions** — see the legal basis and the adversarial stress test in `../IdeaWarden/docs/RESEARCH_AND_STRESS_TEST.md`.
+For California hourly workers — meal/rest-break timing (§512, §226.7), off-the-clock work, and adverse action after speaking up. Captures **facts, not legal conclusions**; not legal advice.
 
 ## Privacy model (read this)
 - **All data stays in the browser on the device** (IndexedDB). Nothing is sent to any server. There is no account, no tracking, no network call.

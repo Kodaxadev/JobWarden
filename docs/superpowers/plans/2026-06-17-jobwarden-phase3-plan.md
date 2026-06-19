@@ -151,13 +151,13 @@ into *provable*, which materially strengthens authentication under CA Evidence C
 
 ## 4. Cold-user onboarding  *(de-couple from the founder's wife)*
 
-Today the defaults are hardcoded to one worker (`Penske Automotive Group`, `Cashier / Admin
-(BDC)`, hourly). For a stranger downloading it:
+**Done (2026-06-19):** `settingsRepo` defaults are now blank (employer/role no longer pre-filled
+to a specific worker; pay type still defaults to hourly), the onboarding welcome orients a cold
+user ("Welcome to JobWarden" + what it logs + privacy + clearly-optional setup), and Penske/BDC
+references were scrubbed from the app + README. Remaining cold-user polish:
 
-- **De-hardcode** `settingsRepo` defaults to generic/empty; employer/role become free entry
-  (the first-run gate already collects them — just neutralize the seeds).
-- Add a 2–3 screen intro: *what this is* (a private record of your own work facts), *what it is
-  NOT* (not a lawyer, not legal advice), the privacy promise, and a **guided first capture**.
+- A short intro: *what this is* (a private record of your own work facts), *what it is NOT*
+  (not a lawyer, not legal advice), the privacy promise, and a **guided first capture**.
 - Real empty states + a "see an example record" so the value is legible before data exists.
 - Trauma-informed tone: calm, plain language, no alarmism (consistent with the current copy).
 
