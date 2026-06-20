@@ -1,5 +1,7 @@
 # JobWarden
 
+[![tests](https://github.com/Kodaxadev/JobWarden/actions/workflows/test.yml/badge.svg)](https://github.com/Kodaxadev/JobWarden/actions/workflows/test.yml)
+
 A private, offline-first PWA for documenting California wage-and-hour problems **the moment they happen** — fast capture on a phone, review and export on any device. Built for hourly workers; it currently covers **California** rules, with more states planned.
 
 It records **facts, not legal conclusions** — meal/rest-break timing (§512, §226.7), off-the-clock work, on-duty meals, final-pay timing (§§201–203), and adverse action after speaking up. It is **not legal advice**.
