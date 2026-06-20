@@ -76,6 +76,13 @@ function firstMealFlags(i, ci, hrs) {
   if (meal.interrupted) out.push(f('interruptedMeal', true, 'Interrupted / on-duty meal is non-compliant (§512).'));
   if (meal.onCall) out.push(f('mealOnCall', true, 'Required to stay on-call / reachable during the meal — not relieved of all duty (§512).'));
   if (meal.relievedOfDuty === false) out.push(f('notRelieved', true, 'Not relieved of all duty during meal (§512).'));
+  // On-duty meal: California permits it only with a written, revocable agreement (IWC Wage Orders §11).
+  const onDuty = meal.interrupted || meal.onCall || meal.relievedOfDuty === false;
+  if (onDuty && meal.writtenAgreement === 'no') {
+    out.push(f('onDutyNoAgreement', true, 'Worked / stayed on duty during the meal and reported no written, revocable on-duty meal agreement. California permits an on-duty meal only with such an agreement. Factual observation, not a legal conclusion.'));
+  } else if (onDuty && meal.writtenAgreement === 'yes') {
+    out.push(f('onDutyAgreement', true, 'Reported a written on-duty meal agreement existed — an on-duty meal may be permissible if that agreement is valid and revocable.'));
+  }
   return out;
 }
 
@@ -170,6 +177,7 @@ export function summarize(flags = []) {
   if (m.shortMeal) p.push(`Short meal (${m.shortMeal.value}m)`);
   if (m.interruptedMeal) p.push('Meal interrupted');
   if (m.mealOnCall) p.push('On-call at lunch');
+  if (m.onDutyNoAgreement) p.push('No on-duty meal agreement');
   if (m.firstMealWaiverInvalid) p.push('Bad 1st-meal waiver');
   if (m.secondMealMissed) p.push('No 2nd meal');
   if (m.secondMealLate) p.push('Late 2nd meal');

@@ -16,6 +16,7 @@ function normMeal(m = {}) {
     start: m.start || '', end: m.end || '',
     interrupted: !!m.interrupted, interruptedBy: m.interruptedBy || '', detail: m.detail || '',
     onCall: !!m.onCall, relievedOfDuty: m.relievedOfDuty ?? null, taken: m.taken ?? null, waived: !!m.waived,
+    writtenAgreement: m.writtenAgreement || '', // on-duty meal agreement: '' unknown | 'yes' | 'no'
   };
 }
 function normMeal2(m = {}) {
@@ -101,7 +102,7 @@ export function hydrateIncident(stored = {}) {
 
 const TRACKED = [
   'incidentDate', 'workplace', 'clockIn', 'clockOut', 'types',
-  'meal.start', 'meal.end', 'meal.interrupted', 'meal.interruptedBy', 'meal.detail', 'meal.onCall', 'meal.relievedOfDuty', 'meal.taken', 'meal.waived',
+  'meal.start', 'meal.end', 'meal.interrupted', 'meal.interruptedBy', 'meal.detail', 'meal.onCall', 'meal.relievedOfDuty', 'meal.taken', 'meal.waived', 'meal.writtenAgreement',
   'meal2.start', 'meal2.end', 'meal2.taken', 'meal2.waived',
   'rest.taken', 'rest.interrupted', 'rest.onCall',
   'offClock.start', 'offClock.end', 'offClock.task', 'offClock.directedBy', 'offClock.knownBy', 'offClock.payPeriod', 'offClock.expectedPay', 'offClock.employerEdited',

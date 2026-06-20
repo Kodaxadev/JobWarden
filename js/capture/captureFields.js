@@ -11,7 +11,7 @@ export function buildInitialState(existing, settings) {
   const base = {
     types: [], incidentDate: todayDateStr(), workplace: (settings.workplaces || [])[0] || '',
     clockIn: '', clockOut: '',
-    meal: { start: '', end: '', interrupted: false, interruptedBy: '', detail: '', onCall: false, relievedOfDuty: null, taken: null, waived: false },
+    meal: { start: '', end: '', interrupted: false, interruptedBy: '', detail: '', onCall: false, relievedOfDuty: null, taken: null, waived: false, writtenAgreement: '' },
     meal2: { start: '', end: '', taken: null, waived: false },
     rest: { taken: null, interrupted: false, onCall: false },
     offClock: { start: '', end: '', task: '', directedBy: '', knownBy: '', payPeriod: '', expectedPay: '', employerEdited: null },
@@ -91,16 +91,27 @@ export function timeBody(state) {
   ]);
 }
 export function mealBody(state) {
-  return el('div', {}, [
+  // The written-agreement question only matters for an on-duty meal — show it only when the
+  // entry already looks on-duty (worked through / on-call / not free to leave).
+  const onDuty = () => state.meal.interrupted || state.meal.onCall || state.meal.relievedOfDuty === false;
+  const agreeSel = el('select', { onchange: e => state.meal.writtenAgreement = e.target.value });
+  [['', 'Not sure'], ['yes', 'Yes'], ['no', 'No']].forEach(([v, t]) =>
+    agreeSel.appendChild(el('option', { value: v, text: t, selected: (state.meal.writtenAgreement || '') === v })));
+  const agreeField = field('Was there a written, revocable on-duty meal agreement?', agreeSel,
+    'California allows working through a meal only with a signed, revocable agreement.');
+  const syncAgree = () => { agreeField.hidden = !onDuty(); };
+
+  const body = el('div', {}, [
     el('div', { class: 'grid2' }, [
       timeRow('Lunch started', state.meal.start, v => state.meal.start = v),
       timeRow('Lunch ended', state.meal.end, v => state.meal.end = v),
     ]),
     checkbox('I did NOT get a lunch at all', state.meal.taken === false, c => state.meal.taken = c ? false : null),
-    checkbox('Someone bothered me during lunch', state.meal.interrupted, c => state.meal.interrupted = c),
+    checkbox('Someone bothered me during lunch', state.meal.interrupted, c => { state.meal.interrupted = c; syncAgree(); }),
     field('Who bothered you (name / role)', textInput(state.meal.interruptedBy, v => state.meal.interruptedBy = v, { placeholder: 'e.g. manager name' })),
-    checkbox('I had to stay reachable (radio / phone / on-call) during lunch', state.meal.onCall, c => state.meal.onCall = c),
-    field('Were you free to leave?', triSelect(state.meal.relievedOfDuty, v => state.meal.relievedOfDuty = v)),
+    checkbox('I had to stay reachable (radio / phone / on-call) during lunch', state.meal.onCall, c => { state.meal.onCall = c; syncAgree(); }),
+    field('Were you free to leave?', triSelect(state.meal.relievedOfDuty, v => { state.meal.relievedOfDuty = v; syncAgree(); })),
+    agreeField,
     checkbox('Did you skip lunch by choice?', state.meal.waived, c => state.meal.waived = c),
     subHead('Second lunch (shift over 10 hours)'),
     el('div', { class: 'grid2' }, [
@@ -108,6 +119,8 @@ export function mealBody(state) {
       timeRow('2nd lunch ended', state.meal2.end, v => state.meal2.end = v),
     ]),
   ]);
+  syncAgree();
+  return body;
 }
 export function offClockBody(state) {
   const o = state.offClock;

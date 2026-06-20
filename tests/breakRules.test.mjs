@@ -64,6 +64,23 @@ test('on-call during the meal is flagged (not relieved of all duty)', () => {
   assert.equal(fk.mealOnCall, true);
 });
 
+test('on-duty meal with no written agreement is flagged (factual)', () => {
+  const fk = flagsOf(base({ clockIn: '09:00', clockOut: '17:30', meal: { start: '13:00', end: '13:30', interrupted: true, writtenAgreement: 'no' } }));
+  assert.equal(fk.onDutyNoAgreement, true);
+  assert.equal(fk.onDutyAgreement, undefined);
+});
+
+test('on-duty meal WITH a written agreement gets a neutral note, not a violation', () => {
+  const fk = flagsOf(base({ clockIn: '09:00', clockOut: '17:30', meal: { start: '13:00', end: '13:30', onCall: true, writtenAgreement: 'yes' } }));
+  assert.equal(fk.onDutyAgreement, true);
+  assert.equal(fk.onDutyNoAgreement, undefined);
+});
+
+test('the agreement question does not fire on a normal (relieved) meal', () => {
+  const fk = flagsOf(base({ clockIn: '09:00', clockOut: '17:30', meal: { start: '13:00', end: '13:30', writtenAgreement: 'no' } }));
+  assert.equal(fk.onDutyNoAgreement, undefined);
+});
+
 test('adverse action after a complaint is flagged (§1102.5)', () => {
   assert.equal(flagsOf(base({ types: ['retaliation'], notice: { adverseAction: 'manager emailed the team blaming me' } })).retaliationNoted, true);
 });

@@ -47,6 +47,8 @@ async function recordHtml(i) {
   if (i.meal?.onCall) add('On-call during lunch', 'Yes — had to stay reachable');
   if (i.meal?.detail) add('Detail', i.meal.detail);
   if (i.meal?.relievedOfDuty != null) add('Relieved of duty', i.meal.relievedOfDuty ? 'Yes' : 'No');
+  if (i.meal?.writtenAgreement === 'yes') add('Written on-duty meal agreement', 'Employee response: Yes');
+  if (i.meal?.writtenAgreement === 'no') add('Written on-duty meal agreement', 'Employee response: No');
   if (i.meal?.waived) add('First meal waived', 'Yes');
   if (i.meal2?.start || i.meal2?.end) add('Second meal', `${i.meal2.start || '—'} → ${i.meal2.end || '—'}`);
   if (i.meal2?.waived) add('Second meal waived', 'Yes');
