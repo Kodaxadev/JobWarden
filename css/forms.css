@@ -81,3 +81,17 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .thumb-meta { display: block; font-family: var(--mono); font-size: 10px; color: var(--faint); text-align: center; margin-top: 3px; }
 .thumb-x { position: absolute; top: -8px; right: -8px; width: 32px; height: 32px; border-radius: 50%; background: var(--danger); color: #fff; border: 2px solid var(--bg); font-size: 18px; cursor: pointer; line-height: 1; }
 .savewrap { padding: 22px 0 4px; }
+
+/* Live shift tracker (top of Log) */
+.shift-host { margin: 0 0 18px; }
+.shift-start { width: 100%; }
+.shift-panel { background: var(--sheen), linear-gradient(180deg, #1b2a44, #121a2c); border: 1px solid rgba(205,171,69,.32); border-radius: var(--radius-lg); padding: 16px; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), var(--glow-gold), 0 14px 32px -16px rgba(0,0,0,.55); }
+.shift-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.shift-live { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14.5px; }
+.shift-live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.shift-since { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.shift-meal { font-size: 14.5px; line-height: 1.4; padding: 11px 13px; border-radius: 11px; margin-bottom: 12px; border: 1px solid var(--line-2); color: var(--muted); }
+.shift-meal.soon { color: var(--incident); border-color: rgba(230,177,90,.42); background: rgba(230,177,90,.08); }
+.shift-meal.over { color: #ffc1c1; border-color: rgba(224,89,77,.45); background: rgba(224,89,77,.1); font-weight: 500; }
+.shift-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.shift-actions .btn { flex: 1 1 0; min-width: 108px; }

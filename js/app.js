@@ -9,6 +9,8 @@ import { renderSettingsView } from './ui/settingsView.js';
 import { renderOnboarding } from './ui/onboarding.js';
 import { renderBackupBanner } from './export/backup.js';
 import { exportJson } from './export/exportJson.js';
+import { getActiveShift, saveActiveShift } from './data/shiftRepo.js';
+import { dueAlerts } from './domain/shiftClock.js';
 import { qs, clear, toast } from './ui/dom.js';
 
 const main = qs('#view');
@@ -73,9 +75,33 @@ async function showOnboarding() {
   });
 }
 
+// Shift alerts fire app-wide (any screen), so they reach her even off the Log tab.
+function notifyShift(title, body) {
+  try {
+    if ('Notification' in window && Notification.permission === 'granted' && document.visibilityState !== 'visible') {
+      new Notification(title, { body, tag: 'jobwarden-shift', icon: './icons/icon-192.png' });
+      return;
+    }
+  } catch { /* fall back to a toast */ }
+  toast(title);
+}
+async function monitorShift() {
+  let shift;
+  try { shift = await getActiveShift(); } catch { return; }
+  if (!shift) return;
+  const alerts = dueAlerts(shift);
+  if (!alerts.length) return;
+  shift.notified = shift.notified || {};
+  for (const a of alerts) { notifyShift(a.title, a.body); shift.notified[a.key] = true; }
+  try { await saveActiveShift(shift); } catch { /* ignore */ }
+}
+
 async function boot() {
   try { await openDb(); requestPersistence(); }
   catch (e) { toast('Storage unavailable: ' + (e?.message || e)); }
+  setInterval(monitorShift, 60000);
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') monitorShift(); });
+  monitorShift();
   const [settings, count] = await Promise.all([getSettings(), countIncidents()]);
   if (!settings.onboardedAt && count === 0) { await showOnboarding(); return; }
   await refreshBanner();

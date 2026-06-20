@@ -7,6 +7,7 @@ import { createIncident, reviseIncident, validateIncident } from '../domain/inci
 import { addIncident, putIncident } from '../data/incidentRepo.js';
 import { getSettings } from '../data/settingsRepo.js';
 import { todayDateStr } from '../domain/timeUtils.js';
+import { renderShiftPanel } from '../ui/shiftPanel.js';
 import { buildInitialState, issueBody, timeBody, mealBody, offClockBody, proofBody, storyBody } from './captureFields.js';
 
 const BODY = { issue: issueBody, time: timeBody, meal: mealBody, offClock: offClockBody, proof: proofBody, story: storyBody };
@@ -30,10 +31,18 @@ function dateLabel(ds) {
   return (ds === todayDateStr() ? 'Today, ' : '') + nice;
 }
 
-export async function renderCaptureForm(container, { onSaved, existing, template } = {}) {
+export async function renderCaptureForm(container, { onSaved, existing, template, prefill } = {}) {
   clear(container);
   const settings = await getSettings();
-  const state = buildInitialState(existing || template, settings);
+
+  // Live shift tracker sits atop a fresh Log (not when editing, duplicating, or prefilling).
+  if (!existing && !template && !prefill) {
+    const panelHost = el('div', { class: 'shift-host' });
+    container.appendChild(panelHost);
+    await renderShiftPanel(panelHost, { settings, onEndShift: (draft) => renderCaptureForm(container, { onSaved, prefill: draft }) });
+  }
+
+  const state = buildInitialState(existing || template || prefill, settings);
   // "Log again": pre-fill the recurring facts but keep it a fresh, contemporaneous record —
   // new date, and clear the per-day evidence (narrative, photos, location, who-told).
   if (template && !existing) {
@@ -42,6 +51,7 @@ export async function renderCaptureForm(container, { onSaved, existing, template
     state.notice = { to: '', channel: '', response: '', adverseAction: '' };
     toast('Filled in from ' + dateLabel(template.incidentDate) + ' — confirm today’s times');
   }
+  if (prefill && !existing) toast('Filled in from your shift — review and save');
   let openId = null;
 
   const form = el('form', { class: 'capture', autocomplete: 'off' });
