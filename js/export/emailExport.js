@@ -57,6 +57,9 @@ export async function emailRecords(incidents, settings = {}) {
 
   // Fallback: save the file, then open the mail client with the summary pre-filled.
   downloadText(filename, text, 'application/json');
+  // Belt-and-suspenders: also put the summary on the clipboard, so if the device has no
+  // mail handler at all, the user still has the text to paste somewhere.
+  try { await navigator.clipboard?.writeText(body); } catch { /* best-effort */ }
   const href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body + '\n\n(Attach the backup file that just downloaded.)')}`;
   openMailClient(href);
   return 'fallback';

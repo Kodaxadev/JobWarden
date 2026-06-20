@@ -1,16 +1,19 @@
 # JobWarden
 
-A private, offline-first PWA for logging California meal/rest-break and wage infractions **the moment they happen** — built for in-the-moment capture on a phone, review and export on any device.
+A private, offline-first PWA for documenting California wage-and-hour problems **the moment they happen** — fast capture on a phone, review and export on any device. Built for hourly workers; it currently covers **California** rules, with more states planned.
 
-For California hourly workers — meal/rest-break timing (§512, §226.7), off-the-clock work, and adverse action after speaking up. Captures **facts, not legal conclusions**; not legal advice.
+It records **facts, not legal conclusions** — meal/rest-break timing (§512, §226.7), off-the-clock work, on-duty meals, final-pay timing (§§201–203), and adverse action after speaking up. It is **not legal advice**.
+
+Live: <https://jobwarden.kodaxa.dev>
 
 ## Privacy model (read this)
-- **All data stays in the browser on the device** (IndexedDB). Nothing is sent to any server. There is no account, no tracking, no network call.
-- Hosting the *app code* (to install it on a phone) does **not** upload her *records* — the records never leave the device unless she taps Export.
-- **Back up often.** Local-only means a lost/wiped phone = lost evidence. The app nags you after 7 days. Email the JSON backup to yourself so a copy lives off-device.
+- **All data stays in the browser on the device** (IndexedDB). Nothing is sent to any server. No account, no tracking, no analytics, no network calls.
+- Hosting the *app code* (so it can be installed) does **not** upload anyone's *records* — records never leave the device unless the user taps Export / Email / Print / Share.
+- **No audio recording** — California is all-party-consent (Penal Code §632); covert recording can be a crime.
+- **Back up often.** Local-only means a lost or wiped phone loses the records. The app nags after 7 days; "Email to myself" or "Save full backup" keeps a copy off-device, and "Restore from a backup" brings it back.
 
 ## How to run it
-ES modules + the service worker require it to be served over `http(s)` — double-clicking `index.html` will **not** work.
+ES modules + the service worker require serving over `http(s)` — double-clicking `index.html` will **not** work.
 
 **Local (desktop, quick look):**
 ```bash
@@ -19,46 +22,54 @@ python3 -m http.server 8099
 # open http://localhost:8099
 ```
 
-**On her phone (the real use case):** host the folder on any free static HTTPS host (Netlify drop, GitHub Pages, Vercel — the static files only, no backend). Open the URL on her phone → browser menu → **Add to Home Screen**. It installs as an app and works fully offline afterward. The data she enters stays on her phone.
+**Install on a phone:** deploy the static files to any HTTPS static host (Vercel, Netlify, GitHub Pages — static only, no backend). Open the URL on the phone → browser menu → **Add to Home Screen**. It installs as an app and works fully offline; the entered data stays on the phone. `install.html` is an in-app marketing + install guide.
 
 ## Using it
-- **Log** — tap the issue type(s), times prefill to *now* (one-tap "Now" buttons), add the lunch/clock details that appear, capture GPS + photos (timeclock, paystub, manager texts), write what happened in plain facts. Save in seconds.
-- **Records** — every entry, newest first, with the computed findings (e.g. "Meal began after the 5th hour"). Tap to expand, edit, or delete. Edits are logged; the original `createdAt` never changes (contemporaneity).
-- **Export** — JSON backup (full, with photos), CSV (spreadsheet), or a printable **PDF report** to hand to the Labor Commissioner, an attorney, or HR.
-- **Settings** — name, role, pay type (flags exempt-status caveats), employer, and workplace list.
+- **Log** — pick *what happened*; the form then asks **only** for the details those issues need (hours, lunch, rest, unpaid work, final pay, what happened after you spoke up), each with a one-line "why," and the rest tucked behind "More details." Add GPS + photos (timeclock, paystub, manager texts) and write plain facts. Also here: a live **shift tracker** (start a shift → get meal-deadline alerts) and a **Quick log** for capturing an interrupted lunch in seconds.
+- **Records** — every entry, newest first, with the computed findings and a tamper-evident SHA-256 fingerprint seal, plus an at-a-glance pattern roll-up (e.g. "lunch interrupted 4× — Manager (3)"). Expand to edit, delete, or duplicate; edits are logged and the original `createdAt` never changes (contemporaneity).
+- **Export** — Email to myself (summary + backup file), full JSON backup (with photos), CSV spreadsheet, a printable **PDF report**, a one-page **pattern summary**, and **Restore from a backup**.
+- **Settings** — profile (name, role, employer, pay type); schedule & coverage (alternative workweek / union contract, so findings don't overstate); workplaces; a **"Know your rights"** offline California guide; a **"Legal & privacy"** disclosure; and a storage-protection toggle.
 
 ## What it does NOT do (by design)
-- **No dollar/damage math.** Premium pay is the "regular rate" (incl. bonuses/commissions) — getting that wrong hurts credibility. The app records the inputs; let DLSE/counsel compute. (Research doc §1.3, stress-test #8.)
-- **No audio recording.** California is all-party-consent (Penal Code §632); covert recording can be a crime. (Stress-test #5.)
-- **No cloud sync.** Privacy and longevity over convenience. (Decision log in research doc §4.)
+- **No dollar/damage math.** Premium pay turns on the "regular rate" (incl. bonuses/commissions) — getting that wrong hurts credibility. The app records the inputs; let DLSE/counsel compute.
+- **No audio recording.** California is all-party-consent (Penal Code §632).
+- **No cloud sync, no account.** Local-first by design — it is the privacy model *and* the trust model.
+- **No legal advice or filings.** General information plus the user's own records — not the practice of law. See [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md).
 
 ## Architecture (for maintainers)
-Vanilla ES modules, no build step, no runtime dependencies. One concern per file, every source file under the 400-line cap.
+Vanilla ES modules, no build step, no runtime dependencies. One concern per file, every source file under the 400-line cap. The evidence engine (capture, model, integrity, patterns, export) is jurisdiction-agnostic; per-state **rules** live behind a thin seam (`config/jurisdictions.js`, `domain/breakRules.js`).
 
 ```
-index.html · manifest.webmanifest · service-worker.js · css/styles.css
+index.html · install.html · manifest.webmanifest · service-worker.js
+css/   styles · tokens · shell · forms · records
 js/
-  app.js                     bootstrap + view routing
-  config/infractionTypes.js  type catalog + field map + 1-line legal refs
-  domain/  timeUtils · breakRules (meal/rest/2nd-meal/waiver/off-clock logic) · incidentModel (schema, edit-diff, soft-delete)
-  data/    db (IndexedDB) · incidentRepo · settingsRepo
-  capture/ captureForm · captureFields · geo · media
-  ui/      dom · incidentList · exportView · settingsView
-  export/  download · exportJson · exportCsv · exportReport · backup
-tests/     breakRules · incidentModel · exportCsv   (Node built-in runner)
+  app.js                       bootstrap · view routing · app-wide shift-alert monitor
+  config/  infractionTypes (type catalog + field map) · uiCopy · jurisdictions
+  domain/  timeUtils · breakRules (meal/rest/2nd-meal/waiver/off-clock/on-duty/final-pay) ·
+           incidentModel (schema, edit-diff, soft-delete) · integrity (SHA-256 content+record seals) ·
+           patterns (aggregate roll-ups) · shiftClock (live shift math)
+  data/    db (IndexedDB) · incidentRepo · settingsRepo · shiftRepo (active shift)
+  capture/ captureForm · captureFields · quickCapture (interrupted-lunch) · geo · media
+  ui/      dom · icons · onboarding · incidentList · exportView · settingsView ·
+           shiftPanel · rightsFaq · legalView
+  export/  download · exportJson · exportCsv · exportReport · exportSummary ·
+           reportBrand · emailExport · importBackup · backup
+tests/     Node built-in runner — 60 tests
+docs/      LEGAL_FOUNDATION.md · superpowers/plans/ (design + Phase 3 plan)
+scripts/   build-app-icons.mjs (SVG → PNG app icons)
 ```
 
 ### Tests
-Rule-engine and export logic are covered by committed tests under `tests/` — no dependencies, using Node's built-in runner:
+Rule-engine and export logic are covered by committed tests under `tests/`, no dependencies, using Node's built-in runner:
 
 ```bash
 npm test          # alias for: node --test
 ```
 
-They cover meal timing, first/second-meal waivers (valid vs. invalid), the >10h second-meal requirement, off-the-clock minutes, the exempt caveat, legacy-record hydration, the edit-diff/soft-delete audit trail, CSV formula-injection neutralization (CWE-1236), and a plain-language copy guard. 21 tests at last run. After changing any cached asset, bump `CACHE` in `service-worker.js` so installed clients update.
+The suite (**60 tests** at last run) covers meal timing and waivers, the >10h second-meal rule, on-duty-meal agreements, final-pay/waiting-time timing, off-the-clock minutes, the exempt/AWS/CBA caveats, content + record hashing and verification, the pattern + interruption roll-ups, the live shift clock, the quick-capture draft, email summary + backup import round-trips, CSV formula-injection neutralization (CWE-1236), and a plain-language copy guard. After changing any cached asset, bump `CACHE` in `service-worker.js` so installed clients update.
 
 ## Design
-JobWarden uses the Evidence Trail Field Log UI: plain-language steps, rugged dark surfaces, local-only privacy copy, and offline-safe icons generated from `lucide-static`.
+The "Field Log" UI: plain-language, navy-and-gold "legal authority" branding on a dark canvas, self-hosted fonts (Geist / Geist Mono / Cinzel), offline-safe icons from `lucide-static`, and WCAG 2.1 AA contrast/structure.
 
 ## Disclaimer
-Not legal advice. A self-kept log is structured testimony, not automatic proof. Its strength comes from being contemporaneous, factual, and corroborated (timeclock/paystub photos, manager texts). Confirm classification and strategy with an employment attorney or the CA Labor Commissioner.
+Not legal advice. A self-kept log is structured testimony, not automatic proof — its strength comes from being contemporaneous, factual, and corroborated (timeclock/paystub photos, manager texts). Confirm classification and strategy with an employment attorney or the California Labor Commissioner.

@@ -1,7 +1,7 @@
 // legalView.js — in-app legal & privacy disclosure. One concern: telling the user plainly what
 // JobWarden is (a documentation tool + general info, NOT legal advice) and what it does with
 // their data (nothing leaves the device unless they export it). Plain-language summary; the
-// formal privacy policy + terms still need an attorney before public launch (see LEGAL_FOUNDATION.md).
+// formal privacy policy + terms still need an attorney before public launch (see docs/LEGAL_FOUNDATION.md).
 import { el, clear } from './dom.js';
 import { jurisdictionLabel, rulesAsOf } from '../config/jurisdictions.js';
 
@@ -21,6 +21,7 @@ export function renderLegal(container, { settings = {}, onBack } = {}) {
 
   container.appendChild(el('section', { class: 'card legal-disclaim' }, [
     el('p', { text: `JobWarden gives you general information about ${region} labor law and helps you keep your own records. It is not legal advice, not a law firm, and not a substitute for a lawyer or the Labor Commissioner.` }),
+    el('p', { text: `These cover ${region} only — rules in other states differ.` }),
     el('p', { text: 'Rules have exceptions and deadlines. For advice about your situation, talk to a licensed employment attorney or your state Labor Commissioner.' }),
   ]));
 
