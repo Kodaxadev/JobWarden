@@ -29,6 +29,14 @@
 .rights-link { color: var(--primary); text-decoration: none; font-size: 14px; font-weight: 500; }
 .rights-link:hover { text-decoration: underline; }
 
+/* Legal & privacy */
+.card h3 { margin: 0 0 8px; font-size: 15px; font-weight: 600; }
+.legal-disclaim { border-color: rgba(205,171,69,.3); }
+.legal-disclaim p { color: var(--text); font-size: 14px; line-height: 1.6; margin: 0 0 10px; }
+.legal-disclaim p:last-child { margin: 0; color: var(--muted); }
+.legal-p { color: var(--muted); font-size: 14px; line-height: 1.6; margin: 0 0 10px; }
+.legal-p:last-child { margin-bottom: 0; }
+
 .row { background: var(--sheen), var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); margin: 0 0 12px; overflow: hidden; box-shadow: var(--shadow-1); }
 .row-head { width: 100%; text-align: left; background: none; border: none; color: var(--text); padding: 16px; display: flex; justify-content: space-between; gap: 12px; cursor: pointer; }
 .row-head.static { cursor: default; align-items: center; }

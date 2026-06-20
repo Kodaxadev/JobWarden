@@ -10,7 +10,7 @@ const field = (label, input, hint) => el('label', { class: 'field' }, [
 ]);
 const text = (v, ph) => el('input', { type: 'text', value: v || '', placeholder: ph || '' });
 
-export async function renderSettingsView(container, { onShowRights } = {}) {
+export async function renderSettingsView(container, { onShowRights, onShowLegal } = {}) {
   clear(container);
   const s = await getSettings();
 
@@ -70,6 +70,13 @@ export async function renderSettingsView(container, { onShowRights } = {}) {
     el('p', { class: 'hint', text: `Rules region: ${jurisdictionLabel(s.jurisdiction)} — more states are coming.` }),
     el('div', { class: 'actions' }, [
       el('button', { type: 'button', class: 'btn', text: 'Open the rights guide', onclick: () => onShowRights?.() }),
+    ]),
+  ]));
+  container.appendChild(el('section', { class: 'card' }, [
+    el('h2', { text: 'Legal & privacy' }),
+    el('p', { class: 'hint', text: 'What JobWarden is and isn’t, and how your data is kept. Not legal advice.' }),
+    el('div', { class: 'actions' }, [
+      el('button', { type: 'button', class: 'btn', text: 'Legal, privacy & terms', onclick: () => onShowLegal?.() }),
     ]),
   ]));
   container.appendChild(el('section', { class: 'card' }, [

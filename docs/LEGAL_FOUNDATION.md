@@ -88,9 +88,9 @@ UPL posture, (d) the app correctly scopes findings to the user's selected state.
 
 ## Launch checklist (California, v1 public)
 
-- [ ] Disclaimer line added to onboarding + a Settings "Legal" entry.
-- [ ] Privacy policy written **[ATTORNEY]** and linked in-app (Settings) + store listing.
-- [ ] Terms of Service written **[ATTORNEY]** and linked.
-- [ ] "Rules current as of <date>" stamp surfaced.
-- [ ] CA employment-attorney review of findings language + UPL posture **[ATTORNEY]**.
+- [x] Disclaimer line on onboarding + a Settings "Legal & privacy" screen (`js/ui/legalView.js`, SW v38): disclaimer, plain-language privacy summary, facts-not-a-calculator, "as is," and "information last updated" stamp.
+- [ ] **[ATTORNEY]** Formal privacy policy — review/replace the in-app plain-language summary; linked in-app + in the store listing.
+- [ ] **[ATTORNEY]** Formal Terms of Service — review/replace the in-app "as is" summary; linked.
+- [x] "Information last updated <date>" stamp surfaced (per jurisdiction, via `jurisdictions.rulesAsOf`).
+- [ ] **[ATTORNEY]** CA employment-attorney review of findings language + UPL posture.
 - [ ] Final copy sweep for banned UPL phrasing.

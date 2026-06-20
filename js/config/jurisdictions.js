@@ -4,10 +4,10 @@
 // EXTRACTED from the second state (New York) — not guessed from California alone — so this file
 // stays deliberately thin (labels/scope only, no rules abstraction) until there are two states.
 export const JURISDICTIONS = {
-  CA: { code: 'CA', label: 'California', status: 'live' },
+  CA: { code: 'CA', label: 'California', status: 'live', rulesAsOf: 'June 2026' },
 };
 export const DEFAULT_JURISDICTION = 'CA';
 
-export function jurisdictionLabel(code) {
-  return (JURISDICTIONS[code] || JURISDICTIONS[DEFAULT_JURISDICTION]).label;
-}
+const at = (code) => JURISDICTIONS[code] || JURISDICTIONS[DEFAULT_JURISDICTION];
+export function jurisdictionLabel(code) { return at(code).label; }
+export function rulesAsOf(code) { return at(code).rulesAsOf; }

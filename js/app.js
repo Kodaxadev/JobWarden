@@ -8,6 +8,7 @@ import { renderIncidentList } from './ui/incidentList.js';
 import { renderExportView } from './ui/exportView.js';
 import { renderSettingsView } from './ui/settingsView.js';
 import { renderRightsFaq } from './ui/rightsFaq.js';
+import { renderLegal } from './ui/legalView.js';
 import { renderOnboarding } from './ui/onboarding.js';
 import { renderBackupBanner } from './export/backup.js';
 import { exportJson } from './export/exportJson.js';
@@ -42,7 +43,7 @@ function setActive(name) {
 }
 
 async function show(name, opts = {}) {
-  setActive(name === 'rights' ? 'settings' : name);
+  setActive(name === 'rights' || name === 'legal' ? 'settings' : name);
   main.scrollTop = 0;
   if (name === 'log') {
     await renderCaptureForm(main, { existing: opts.existing, template: opts.template, onSaved: () => { refreshBanner(); show('records'); } });
@@ -55,9 +56,11 @@ async function show(name, opts = {}) {
   } else if (name === 'export') {
     await renderExportView(main, { onChanged: refreshBanner });
   } else if (name === 'settings') {
-    await renderSettingsView(main, { onShowRights: () => show('rights') });
+    await renderSettingsView(main, { onShowRights: () => show('rights'), onShowLegal: () => show('legal') });
   } else if (name === 'rights') {
     renderRightsFaq(main, { onBack: () => show('settings') });
+  } else if (name === 'legal') {
+    renderLegal(main, { settings: await getSettings(), onBack: () => show('settings') });
   }
 }
 
