@@ -8,6 +8,7 @@ export const FIELD = {
   REST: 'rest',        // rest breaks owed/taken/on-call
   OFFCLOCK: 'offclock',// unpaid work start/end, task, who directed/knew, pay period
   NOTICE: 'notice',    // who she told, channel, response
+  FINALPAY: 'finalpay',// separation type, last day, date paid, paid-in-full
 };
 
 // Each type carries a ONE-LINE legal reference. These are plain-language pointers,
@@ -47,7 +48,7 @@ export const INFRACTION_TYPES = [
     fields: [FIELD.NOTICE],
     legal: 'Adverse action after a protected wage complaint may be unlawful retaliation. Lab. Code §1102.5 / §98.6. Keep proof and the dates.' },
   { id: 'final_pay', label: 'Final pay problem', group: 'final',
-    fields: [],
+    fields: [FIELD.FINALPAY],
     legal: 'Final wages are due immediately if fired, within 72h if you quit without notice; late pay can trigger waiting-time penalties. Lab. Code §§201–203.' },
 ];
 

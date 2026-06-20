@@ -1,43 +1,6 @@
-/* forms.css — Log "Evidence Trail" stepper + field bodies. */
-.log-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0 0 18px; padding: 12px 14px; background: var(--sheen), var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 3px rgba(0,0,0,.3); }
-.log-status span { display: inline-flex; align-items: center; gap: 8px; min-width: 0; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
-.log-status i { width: 1px; height: 16px; background: var(--line-2); }
-.log-status .icon svg { width: 15px; height: 15px; flex: none; color: var(--faint); }
+/* forms.css — Log capture: live bar, adaptive sections, field bodies. */
 
-.steps { position: relative; display: flex; flex-direction: column; gap: 13px; }
-.steps::before { content: ""; position: absolute; left: 39px; top: 40px; bottom: 40px; width: 2px; background: linear-gradient(var(--line-2), var(--line)); z-index: 0; }
-.step { position: relative; z-index: 1; background: var(--sheen), var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); transition: border-color .18s ease, box-shadow .2s ease, transform .2s ease; }
-.step-row { display: grid; grid-template-columns: 46px minmax(0, 1fr) auto; align-items: center; column-gap: 14px; padding: 16px; cursor: pointer; }
-.rail { display: flex; justify-content: center; }
-.node { width: 46px; height: 46px; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 500; font-size: 15px; color: var(--faint); background: var(--surface-3); border: 1.5px solid var(--line-2); transition: .18s ease; }
-.node .icon svg { width: 20px; height: 20px; }
-.step.set .node { background: var(--gfill); border-color: var(--gline); color: var(--ok); }
-.step.active .node { background: linear-gradient(160deg, var(--gold-1), var(--gold-2)); border-color: var(--primary-strong); color: var(--on-gold); box-shadow: 0 0 0 4px rgba(205,171,69,.18); }
-.step.active { background: var(--sheen), linear-gradient(180deg, #1b2a44, #111a2c); border-color: rgba(205,171,69,.42); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 0 0 1px rgba(205,171,69,.16), var(--glow-gold), 0 4px 10px rgba(0,0,0,.4), 0 22px 46px -16px rgba(0,0,0,.62); }
-.txt { min-width: 0; }
-.title { font-size: 18px; font-weight: 600; line-height: 1.16; letter-spacing: -.015em; overflow-wrap: anywhere; }
-.help { color: var(--muted); font-size: 13.5px; line-height: 1.4; margin-top: 4px; overflow-wrap: anywhere; }
-.act { display: flex; flex-direction: column; align-items: stretch; gap: 8px; min-width: 0; }
-.stepbtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: var(--surface-2); border: 1px solid var(--line-2); color: var(--text); border-radius: 11px; padding: 10px 13px; font: 500 13.5px var(--font); white-space: nowrap; cursor: pointer; min-height: 44px; transition: .15s ease; }
-.stepbtn .icon svg { width: 16px; height: 16px; flex: none; transition: transform .2s ease; }
-.step.open .stepbtn .icon svg { transform: rotate(90deg); }
-.stepbtn.on { background: linear-gradient(180deg, var(--gold-1), var(--gold-2)); border-color: var(--primary-strong); color: var(--on-gold); box-shadow: 0 1px 0 rgba(255,255,255,.35) inset; }
-.stat { display: flex; align-items: center; justify-content: flex-end; gap: 6px; color: var(--faint); font-size: 12.5px; white-space: nowrap; }
-.stat .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); flex: none; }
-.stat.on { color: var(--primary-strong); } .stat.on .dot { background: var(--primary-strong); box-shadow: 0 0 8px var(--primary); }
-.stat.set { color: var(--ok); } .stat.set .icon svg { width: 15px; height: 15px; }
-.step-body { padding: 4px 16px 20px 56px; }
-@media (max-width: 480px) { .step-body { padding-left: 16px; } }
-@media (max-width: 380px) {
-  .step-row { grid-template-columns: 40px minmax(0, 1fr); grid-template-areas: "num txt" "act act"; column-gap: 12px; row-gap: 12px; }
-  .rail { grid-area: num; align-self: start; }
-  .node { width: 40px; height: 40px; }
-  .txt { grid-area: txt; } .title { font-size: 17px; }
-  .act { grid-area: act; flex-direction: row; align-items: center; justify-content: space-between; gap: 12px; }
-  .steps::before { left: 36px; }
-}
-
-/* fields inside expanded step bodies — hardened against mobile overflow */
+/* form fields — hardened against mobile overflow */
 .field { display: flex; flex-direction: column; gap: 8px; margin: 0 0 16px; min-width: 0; }
 .field:last-child { margin-bottom: 0; }
 .field-label { font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--faint); }
@@ -82,6 +45,31 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .thumb-x { position: absolute; top: -8px; right: -8px; width: 32px; height: 32px; border-radius: 50%; background: var(--danger); color: #fff; border: 2px solid var(--bg); font-size: 18px; cursor: pointer; line-height: 1; }
 .savewrap { padding: 22px 0 4px; }
 
+/* "Right now" bar: quick log + shift tracker share a row; the live panel takes the full width */
+.live-bar { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 18px; }
+.live-quick { flex: 1 1 140px; justify-content: center; gap: 8px; font-weight: 600; min-height: 50px; color: #ffd9d4; border-color: rgba(224,89,77,.5); background: var(--sheen), linear-gradient(180deg, rgba(224,89,77,.16), rgba(224,89,77,.06)); }
+.live-quick:hover { border-color: rgba(224,89,77,.72); }
+.live-bar .shift-host { flex: 1 1 140px; margin: 0; }
+.live-bar .shift-host:has(.shift-panel) { flex-basis: 100%; }
+
+/* Adaptive capture sections */
+.capture-body { display: flex; flex-direction: column; gap: 14px; }
+.logsec { background: var(--sheen), var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px 17px; box-shadow: var(--shadow-1); }
+.logsec.what { border-color: rgba(205,171,69,.32); box-shadow: inset 0 1px 0 rgba(255,255,255,.07), var(--glow-gold), var(--shadow-1); }
+.logsec-head { display: flex; align-items: center; gap: 10px; }
+.logsec-head .icon svg { width: 20px; height: 20px; flex: none; color: var(--primary); }
+.logsec-title { font-size: 17px; font-weight: 600; letter-spacing: -.012em; margin: 0; }
+.logsec-why { color: var(--muted); font-size: 13px; line-height: 1.45; margin: 7px 0 14px; }
+.logsec .field:last-of-type { margin-bottom: 0; }
+.logsec-more { margin-top: 8px; border-top: 1px solid var(--line); }
+.logsec-more > summary { display: flex; align-items: center; gap: 8px; cursor: pointer; list-style: none; padding: 12px 0 2px; font-size: 14px; color: var(--primary-strong); min-height: 44px; }
+.logsec-more > summary::-webkit-details-marker { display: none; }
+.logsec-more > summary::before { content: "+"; font-size: 19px; line-height: 1; color: var(--primary); width: 14px; text-align: center; }
+.logsec-more[open] > summary::before { content: "\2013"; }
+.logsec-more > summary .opt { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--faint); }
+.logsec-more-body { padding: 8px 0 4px; }
+.what-when { margin-top: 16px; }
+
 /* Live shift tracker (top of Log) */
 .shift-host { margin: 0 0 18px; }
 .shift-start { width: 100%; }
@@ -96,9 +84,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .shift-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .shift-actions .btn { flex: 1 1 0; min-width: 108px; }
 
-/* Quick capture: interrupted lunch */
-.quick-interrupt { width: 100%; margin: 0 0 14px; justify-content: center; gap: 8px; font-weight: 600; color: #ffd9d4; border-color: rgba(224,89,77,.5); background: var(--sheen), linear-gradient(180deg, rgba(224,89,77,.16), rgba(224,89,77,.06)); }
-.quick-interrupt:hover { border-color: rgba(224,89,77,.72); }
+/* Quick capture sheet (interrupted lunch) */
 .quick-sheet { max-width: 460px; text-align: left; }
 .quick-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0 0 8px; }
 .quick-head h2 { margin: 0; font-size: 17px; }
