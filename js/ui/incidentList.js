@@ -52,12 +52,17 @@ function glanceCard(items) {
   const range = s.range.from
     ? `${formatDate(s.range.from)} – ${formatDate(s.range.to)} (${s.range.span})`
     : '';
+  const intr = s.interruptions;
+  const interruptLine = intr.total > 0 && intr.byActor.length
+    ? el('p', { class: 'glance-interrupt', text: `Lunch interrupted ${intr.total}× — ${intr.byActor.map(a => `${a.actor} (${a.count})`).join(', ')}` })
+    : null;
   return el('section', { class: 'card glance' }, [
     el('h2', { text: 'Your records at a glance' }),
     el('p', { class: 'glance-range', text: `${items.length} shift${items.length === 1 ? '' : 's'} logged${range ? ` · ${range}` : ''}` }),
     stats.length
       ? el('div', { class: 'kpi-grid' }, stats)
       : el('p', { class: 'hint', text: 'No possible issues flagged yet.' }),
+    interruptLine,
     el('p', { class: 'glance-foot hint', text: `${s.reportedCount} reported · ${s.withProofCount} with photo proof. Make a one-page summary in Export.` }),
   ]);
 }

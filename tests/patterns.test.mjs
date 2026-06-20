@@ -54,6 +54,32 @@ test('timeline is chronological, oldest first, with labels + findings', () => {
   assert.ok(t[0].findings.some(f => /Late meal/i.test(f)));
 });
 
+// An interrupted lunch, attributable to someone.
+const interrupted = (date, by) => createIncident({
+  incidentDate: date, types: ['interrupted_meal'], clockIn: '09:00', clockOut: '17:30',
+  meal: { start: '13:00', end: '13:30', interrupted: true, interruptedBy: by },
+});
+
+test('interruption rollup groups by who interrupted, biggest first', () => {
+  const s = summarizePatterns([
+    interrupted('2026-06-01', 'Manager — Smith'),
+    interrupted('2026-06-02', 'Manager'),
+    interrupted('2026-06-03', 'Customer'),
+    lateShort('2026-06-04'),
+  ]);
+  assert.equal(s.interruptions.total, 3);
+  assert.equal(s.interruptions.byActor[0].actor, 'Manager');
+  assert.equal(s.interruptions.byActor[0].count, 2);
+  assert.equal(s.interruptions.byActor[1].actor, 'Customer');
+  assert.equal(s.interruptions.byActor[1].count, 1);
+});
+
+test('no interrupted lunches yields an empty rollup', () => {
+  const s = summarizePatterns([lateShort('2026-06-01')]);
+  assert.equal(s.interruptions.total, 0);
+  assert.equal(s.interruptions.byActor.length, 0);
+});
+
 test('empty input yields zeroed summary', () => {
   const s = summarizePatterns([]);
   assert.equal(s.count, 0);

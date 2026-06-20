@@ -45,6 +45,30 @@ const hasFlag = (i, key) => (i.flags || []).some(f => f.key === key);
 const flagValue = (i, key) => (i.flags || []).find(f => f.key === key)?.value;
 const isReported = i => !!(i.notice && i.notice.to) || (i.types || []).includes('complaint_raised');
 
+// Who interrupted the meal, normalized so the structured quick-capture categories and
+// free-text entries roll up together. "Manager — Smith" -> "Manager".
+const INTERRUPT_ACTORS = ['Manager', 'Supervisor', 'Coworker', 'Customer', 'Other'];
+function canonActor(raw) {
+  const s = String(raw || '').split('—')[0].trim();
+  if (!s) return 'Unspecified';
+  const low = s.toLowerCase();
+  for (const a of INTERRUPT_ACTORS) if (low === a.toLowerCase() || low.includes(a.toLowerCase())) return a;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+// Roll up interrupted meals by who interrupted them — turns scattered facts into a pattern.
+function interruptionRollup(incidents) {
+  const actors = {};
+  let total = 0;
+  for (const i of incidents) {
+    if (!hasFlag(i, 'interruptedMeal')) continue;
+    total++;
+    const a = canonActor(i.meal?.interruptedBy);
+    actors[a] = (actors[a] || 0) + 1;
+  }
+  const byActor = Object.entries(actors).map(([actor, count]) => ({ actor, count })).sort((a, b) => b.count - a.count);
+  return { total, byActor };
+}
+
 // Roll a set of incidents up into counts. Excludes soft-deleted records by contract:
 // callers pass the active list (getAllIncidents already filters deleted).
 export function summarizePatterns(incidents = []) {
@@ -81,6 +105,7 @@ export function summarizePatterns(incidents = []) {
     findings,
     headline,
     offClock: { records: offClockRecords, totalMinutes: offClockMinutes },
+    interruptions: interruptionRollup(incidents),
     reportedCount: incidents.filter(isReported).length,
     withProofCount: incidents.filter(i => (i.attachments || []).length > 0).length,
     byType,

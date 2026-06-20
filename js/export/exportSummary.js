@@ -42,6 +42,8 @@ export async function buildSummaryHtml(incidents, settings = {}) {
 
   const places = s.byWorkplace.length > 1
     ? `<p class="meta">By location: ${s.byWorkplace.map(w => `${esc(w.name)} (${w.count})`).join(' · ')}</p>` : '';
+  const interrupters = s.interruptions.total > 0 && s.interruptions.byActor.length
+    ? `<p class="meta">Lunch interrupted ${s.interruptions.total} time(s) — by: ${s.interruptions.byActor.map(a => `${esc(a.actor)} (${a.count})`).join(' · ')}</p>` : '';
 
   const rows = timeline.map(t => `<tr>
       <td>${esc(t.dateLabel)}</td>
@@ -60,6 +62,7 @@ export async function buildSummaryHtml(incidents, settings = {}) {
     ${integrity}
     <p class="meta">${s.count} shift(s) logged · ${s.issueRecords} with a possible issue · ${s.reportedCount} reported · ${s.withProofCount} with photo proof.</p>
     ${places}
+    ${interrupters}
     <h2>Totals (counts only — no dollar amounts)</h2>
     ${totals ? `<ul class="totals">${totals}</ul>` : '<p class="meta">No possible issues flagged.</p>'}
     <h2>Timeline</h2>
