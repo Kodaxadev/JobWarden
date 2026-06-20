@@ -8,6 +8,7 @@ import { addIncident, putIncident } from '../data/incidentRepo.js';
 import { getSettings } from '../data/settingsRepo.js';
 import { todayDateStr } from '../domain/timeUtils.js';
 import { renderShiftPanel } from '../ui/shiftPanel.js';
+import { openInterruptedLunch } from './quickCapture.js';
 import { buildInitialState, issueBody, timeBody, mealBody, offClockBody, proofBody, storyBody } from './captureFields.js';
 
 const BODY = { issue: issueBody, time: timeBody, meal: mealBody, offClock: offClockBody, proof: proofBody, story: storyBody };
@@ -37,6 +38,9 @@ export async function renderCaptureForm(container, { onSaved, existing, template
 
   // Live shift tracker sits atop a fresh Log (not when editing, duplicating, or prefilling).
   if (!existing && !template && !prefill) {
+    // Moment-of-incident quick capture — one tap, sealed at the interruption.
+    container.appendChild(el('button', { type: 'button', class: 'btn quick-interrupt', onclick: () => openInterruptedLunch({ onSaved }) },
+      [iconEl('alert'), document.createTextNode(' Interrupted lunch — log it now')]));
     const panelHost = el('div', { class: 'shift-host' });
     container.appendChild(panelHost);
     await renderShiftPanel(panelHost, { settings, onEndShift: (draft) => renderCaptureForm(container, { onSaved, prefill: draft }) });

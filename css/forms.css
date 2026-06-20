@@ -95,3 +95,16 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .shift-meal.over { color: #ffc1c1; border-color: rgba(224,89,77,.45); background: rgba(224,89,77,.1); font-weight: 500; }
 .shift-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .shift-actions .btn { flex: 1 1 0; min-width: 108px; }
+
+/* Quick capture: interrupted lunch */
+.quick-interrupt { width: 100%; margin: 0 0 14px; justify-content: center; gap: 8px; font-weight: 600; color: #ffd9d4; border-color: rgba(224,89,77,.5); background: var(--sheen), linear-gradient(180deg, rgba(224,89,77,.16), rgba(224,89,77,.06)); }
+.quick-interrupt:hover { border-color: rgba(224,89,77,.72); }
+.quick-sheet { max-width: 460px; text-align: left; }
+.quick-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 0 0 8px; }
+.quick-head h2 { margin: 0; font-size: 17px; }
+.quick-now { font-family: var(--mono); font-size: 13px; color: var(--primary); white-space: nowrap; }
+.quick-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 12px; }
+.quick-sheet > textarea, .quick-sheet > input[type=text] { width: 100%; margin: 8px 0 0; }
+.quick-sheet .check { margin-top: 10px; }
+.quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; align-items: center; }
+.quick-actions .primary { margin-left: auto; }

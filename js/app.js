@@ -3,6 +3,7 @@ import { openDb, requestPersistence } from './data/db.js';
 import { getSettings, markBackedUp } from './data/settingsRepo.js';
 import { countIncidents, getAllIncidents } from './data/incidentRepo.js';
 import { renderCaptureForm } from './capture/captureForm.js';
+import { openInterruptedLunch } from './capture/quickCapture.js';
 import { renderIncidentList } from './ui/incidentList.js';
 import { renderExportView } from './ui/exportView.js';
 import { renderSettingsView } from './ui/settingsView.js';
@@ -106,6 +107,11 @@ async function boot() {
   if (!settings.onboardedAt && count === 0) { await showOnboarding(); return; }
   await refreshBanner();
   await show('log');
+  // App-shortcut / deep link: open the interrupted-lunch sheet straight away.
+  if (new URLSearchParams(location.search).get('quick') === 'interrupted') {
+    history.replaceState(null, '', './index.html');
+    openInterruptedLunch({ onSaved: () => { refreshBanner(); show('records'); } });
+  }
 }
 
 if ('serviceWorker' in navigator) {
