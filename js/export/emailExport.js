@@ -9,6 +9,18 @@ import { buildBackupPayload } from './exportJson.js';
 import { downloadText, dateStamp } from './download.js';
 import { summarizePatterns } from '../domain/patterns.js';
 
+// Hand off to the device's mail app. A real anchor click is far more reliable than
+// `window.location.href` for protocol links — the latter is routinely swallowed inside an
+// installed PWA and right after a download is triggered (both true on this screen).
+function openMailClient(href) {
+  const a = document.createElement('a');
+  a.href = href;
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
 // Plain-text summary that reads as a mini report in the email body.
 export function emailSummary(incidents, settings = {}) {
   const s = summarizePatterns(incidents);
@@ -46,6 +58,6 @@ export async function emailRecords(incidents, settings = {}) {
   // Fallback: save the file, then open the mail client with the summary pre-filled.
   downloadText(filename, text, 'application/json');
   const href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body + '\n\n(Attach the backup file that just downloaded.)')}`;
-  window.location.href = href;
+  openMailClient(href);
   return 'fallback';
 }
