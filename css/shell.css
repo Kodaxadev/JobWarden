@@ -46,6 +46,7 @@
 .onboard-head .icon svg { width: 46px; height: 46px; color: var(--gtext); }
 .onboard-head h1 { font-size: 27px; font-weight: 600; letter-spacing: -.02em; margin: 12px 0 6px; }
 .onboard-tag { color: var(--muted); font-size: 14.5px; line-height: 1.5; margin: 0 auto; max-width: 38ch; }
+.onboard-scope { display: inline-block; margin: 12px auto 0; padding: 5px 12px; font-family: var(--mono); font-size: 12px; color: var(--primary); background: rgba(205,171,69,.08); border: 1px solid rgba(205,171,69,.28); border-radius: 999px; }
 .onboard-foot { text-align: center; color: var(--faint); font-size: 12.5px; margin: 14px 0 0; }
 body.onboarding .tabbar { display: none; }
 body.onboarding .disclaimer { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }

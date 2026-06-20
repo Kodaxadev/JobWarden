@@ -2,6 +2,7 @@
 import { el, clear, toast } from './dom.js';
 import { getSettings, saveSettings } from '../data/settingsRepo.js';
 import { requestPersistence } from '../data/db.js';
+import { jurisdictionLabel } from '../config/jurisdictions.js';
 
 const field = (label, input, hint) => el('label', { class: 'field' }, [
   el('span', { class: 'field-label', text: label }), input,
@@ -66,6 +67,7 @@ export async function renderSettingsView(container, { onShowRights } = {}) {
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Know your rights' }),
     el('p', { class: 'hint', text: 'Plain-language California wage-and-hour basics — general information, not legal advice.' }),
+    el('p', { class: 'hint', text: `Rules region: ${jurisdictionLabel(s.jurisdiction)} — more states are coming.` }),
     el('div', { class: 'actions' }, [
       el('button', { type: 'button', class: 'btn', text: 'Open the rights guide', onclick: () => onShowRights?.() }),
     ]),

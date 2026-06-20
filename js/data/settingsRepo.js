@@ -8,6 +8,7 @@ const DEFAULTS = {
   role: '',
   payType: 'hourly',     // sensible default for this audience; 'commission' | 'salary_exempt' | ''
   employer: '',
+  jurisdiction: 'CA',    // which state's rule set applies (California-only today)
   awsElection: '',       // alternative workweek schedule (e.g. 4/10): '' unknown | 'yes' | 'no'
   cbaCovered: '',        // covered by a collective bargaining agreement: '' | 'yes' | 'no'
   workplaces: [],        // [string] workplace names / locations

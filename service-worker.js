@@ -1,5 +1,5 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v35';
+const CACHE = 'jobwarden-v36';
 const ASSETS = [
   './', './index.html', './install.html', './manifest.webmanifest',
   './css/styles.css', './css/tokens.css', './css/shell.css', './css/forms.css', './css/records.css',
@@ -8,7 +8,7 @@ const ASSETS = [
   './fonts/cinzel-latin-600-normal.woff2', './fonts/cinzel-latin-700-normal.woff2',
   './icons/logo-mark.svg', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png',
   './js/app.js',
-  './js/config/infractionTypes.js', './js/config/uiCopy.js',
+  './js/config/infractionTypes.js', './js/config/uiCopy.js', './js/config/jurisdictions.js',
   './js/domain/timeUtils.js', './js/domain/breakRules.js', './js/domain/incidentModel.js', './js/domain/integrity.js', './js/domain/patterns.js', './js/domain/shiftClock.js',
   './js/data/db.js', './js/data/incidentRepo.js', './js/data/settingsRepo.js', './js/data/shiftRepo.js',
   './js/capture/geo.js', './js/capture/media.js', './js/capture/captureFields.js', './js/capture/captureForm.js', './js/capture/quickCapture.js',

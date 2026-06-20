@@ -60,6 +60,7 @@ export async function renderOnboarding(container, { onDone } = {}) {
       iconEl('shield-check'),
       el('h1', { text: 'Welcome to JobWarden' }),
       el('p', { class: 'onboard-tag', text: 'Keep a private record of meal breaks, rest breaks, and unpaid work — the moment it happens. It stays on this phone; only you can see it.' }),
+      el('p', { class: 'onboard-scope', text: 'Currently built for California rules. More states are coming.' }),
     ]),
     el('section', { class: 'card' }, [
       el('h2', { text: 'Quick setup' }),
