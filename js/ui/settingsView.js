@@ -23,13 +23,22 @@ export async function renderSettingsView(container) {
     text: 'Some pay types have different rules. If you are not sure, ask a lawyer or the Labor Commissioner.' });
   pay.addEventListener('change', () => { payWarn.hidden = pay.value !== 'salary_exempt'; });
 
+  const sched = (val) => {
+    const sel = el('select', {});
+    [['', 'Not sure / N/A'], ['yes', 'Yes'], ['no', 'No']].forEach(([v, t]) => sel.appendChild(el('option', { value: v, text: t, selected: val === v })));
+    return sel;
+  };
+  const aws = sched(s.awsElection);
+  const cba = sched(s.cbaCovered);
+
   const places = el('textarea', { rows: '3', placeholder: 'One place per line' });
   places.value = (s.workplaces || []).join('\n');
 
   const save = el('button', { class: 'btn primary', text: 'Save settings', onclick: async () => {
     await saveSettings({
       employeeName: name.value.trim(), role: role.value.trim(), employer: employer.value.trim(),
-      payType: pay.value, workplaces: places.value.split('\n').map(x => x.trim()).filter(Boolean),
+      payType: pay.value, awsElection: aws.value, cbaCovered: cba.value,
+      workplaces: places.value.split('\n').map(x => x.trim()).filter(Boolean),
     });
     toast('Settings saved');
   } });
@@ -42,6 +51,12 @@ export async function renderSettingsView(container) {
     el('h2', { text: 'About you' }),
     field('Name', name), field('Role', role), field('Employer', employer),
     field('Pay type', pay, 'Hourly workers get the strongest break protections.'), payWarn,
+  ]));
+  container.appendChild(el('section', { class: 'card' }, [
+    el('h2', { text: 'Schedule & coverage' }),
+    el('p', { class: 'hint', text: 'Optional — helps the app avoid flagging rules that may not apply to you.' }),
+    field('Alternative workweek (e.g. four 10-hour days)?', aws, 'If validly adopted by a vote, daily overtime after 8 hours may not apply.'),
+    field('Covered by a union contract (CBA)?', cba, 'A union agreement can change the meal/rest rules.'),
   ]));
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Workplaces' }),

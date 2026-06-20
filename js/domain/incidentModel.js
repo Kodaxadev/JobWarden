@@ -36,7 +36,7 @@ function normNotice(n = {}) {
   return { to: n.to || '', channel: n.channel || '', response: n.response || '', adverseAction: n.adverseAction || '' };
 }
 function normClassification(c = {}) {
-  return { payType: c.payType || '' };
+  return { payType: c.payType || '', awsElection: c.awsElection || '', cbaCovered: c.cbaCovered || '' };
 }
 
 export function createIncident(input = {}) {

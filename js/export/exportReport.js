@@ -57,6 +57,8 @@ async function recordHtml(i) {
   if (i.offClock?.employerEdited === true) add('Time record edited by employer', 'Yes');
   if (i.offClock?.payPeriod) add('Pay period', i.offClock.payPeriod);
   if (i.classification?.payType) add('Worker pay type', i.classification.payType);
+  if (i.classification?.awsElection === 'yes') add('Alternative workweek', 'Yes — daily OT after 8h may not apply');
+  if (i.classification?.cbaCovered === 'yes') add('Union contract (CBA)', 'Yes — break rules may differ');
   if (i.notice?.to) add('Reported to', `${i.notice.to} (${i.notice.channel || '—'})`);
   if (i.notice?.response) add('Their response', i.notice.response);
   if (i.notice?.adverseAction) add('What happened after I spoke up', i.notice.adverseAction);

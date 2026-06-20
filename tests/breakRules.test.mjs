@@ -68,6 +68,14 @@ test('adverse action after a complaint is flagged (§1102.5)', () => {
   assert.equal(flagsOf(base({ types: ['retaliation'], notice: { adverseAction: 'manager emailed the team blaming me' } })).retaliationNoted, true);
 });
 
+test('alternative workweek adds an honest note (no OT computed)', () => {
+  assert.equal(flagsOf(base({ clockIn: '09:00', clockOut: '19:00', classification: { awsElection: 'yes' } })).awsNote, true);
+});
+
+test('union contract (CBA) adds a caveat flag', () => {
+  assert.equal(flagsOf(base({ classification: { cbaCovered: 'yes' } })).cbaCaveat, true);
+});
+
 test('exempt classification adds a caveat flag', () => {
   assert.equal(flagsOf(base({ clockIn: '09:00', clockOut: '18:00', classification: { payType: 'salary_exempt' } })).exemptCaveat, true);
 });

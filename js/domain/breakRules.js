@@ -142,6 +142,12 @@ export function analyze(i) {
   if (i.classification?.payType === 'salary_exempt') {
     flags.push(f('exemptCaveat', true, 'Worker marked salaried-exempt — meal/rest rules may not apply. Confirm classification before relying on findings.'));
   }
+  if (i.classification?.cbaCovered === 'yes') {
+    flags.push(f('cbaCaveat', true, 'Covered by a union contract (CBA) — meal/rest rules may differ under the agreement. Confirm its terms.'));
+  }
+  if (i.classification?.awsElection === 'yes') {
+    flags.push(f('awsNote', true, 'On an alternative workweek schedule — daily overtime after 8 hours may not apply (hours up to the scheduled day are straight time). Meal/rest rules are unaffected.'));
+  }
   const { ci, hrs } = computeHours(i);
   if (hrs != null) flags.push(f('hoursWorked', Number(hrs.toFixed(2))));
   const rm = mealsRequired(hrs);

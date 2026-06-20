@@ -8,6 +8,8 @@ const DEFAULTS = {
   role: '',
   payType: 'hourly',     // sensible default for this audience; 'commission' | 'salary_exempt' | ''
   employer: '',
+  awsElection: '',       // alternative workweek schedule (e.g. 4/10): '' unknown | 'yes' | 'no'
+  cbaCovered: '',        // covered by a collective bargaining agreement: '' | 'yes' | 'no'
   workplaces: [],        // [string] workplace names / locations
   lastBackupAt: '',
   backupReminderDays: 7,
