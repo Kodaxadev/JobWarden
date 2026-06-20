@@ -46,6 +46,9 @@ export const INFRACTION_TYPES = [
   { id: 'retaliation', label: 'Treated worse after I spoke up', group: 'notice',
     fields: [FIELD.NOTICE],
     legal: 'Adverse action after a protected wage complaint may be unlawful retaliation. Lab. Code §1102.5 / §98.6. Keep proof and the dates.' },
+  { id: 'final_pay', label: 'Final pay problem', group: 'final',
+    fields: [],
+    legal: 'Final wages are due immediately if fired, within 72h if you quit without notice; late pay can trigger waiting-time penalties. Lab. Code §§201–203.' },
 ];
 
 export const TYPES_BY_ID = Object.fromEntries(INFRACTION_TYPES.map(t => [t.id, t]));

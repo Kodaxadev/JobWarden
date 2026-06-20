@@ -21,7 +21,7 @@ function isSet(id, s) {
     case 'meal': return !!(s.meal.start || s.meal.taken === false || s.meal.waived || s.meal2.start);
     case 'offClock': return !!(s.offClock.start || s.offClock.task);
     case 'proof': return !!((s.attachments || []).length || s.location || s.witnesses);
-    case 'story': return !!((s.narrative || '').trim() || s.notice.to);
+    case 'story': return !!((s.narrative || '').trim() || s.notice.to || s.finalPay?.separation || s.finalPay?.lastDay);
     default: return false;
   }
 }
@@ -118,6 +118,7 @@ export async function renderCaptureForm(container, { onSaved, existing, template
       clockIn: state.clockIn, clockOut: state.clockOut, types: state.types,
       classification: { payType: settings.payType, awsElection: settings.awsElection, cbaCovered: settings.cbaCovered },
       meal: state.meal, meal2: state.meal2, rest: state.rest, offClock: state.offClock, notice: state.notice,
+      finalPay: state.finalPay,
       witnesses: state.witnesses, narrative: state.narrative, attachments: state.attachments,
     };
     const draft = existing ? reviseIncident(existing, input) : createIncident(input);

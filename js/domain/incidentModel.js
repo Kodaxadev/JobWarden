@@ -39,6 +39,10 @@ function normNotice(n = {}) {
 function normClassification(c = {}) {
   return { payType: c.payType || '', awsElection: c.awsElection || '', cbaCovered: c.cbaCovered || '' };
 }
+function normFinalPay(p = {}) {
+  // separation: '' | 'fired' | 'quit_notice' | 'quit_no_notice'; dates 'YYYY-MM-DD'; fullyPaid tri.
+  return { separation: p.separation || '', lastDay: p.lastDay || '', datePaid: p.datePaid || '', fullyPaid: p.fullyPaid ?? null };
+}
 
 export function createIncident(input = {}) {
   const i = {
@@ -58,6 +62,7 @@ export function createIncident(input = {}) {
     rest: normRest(input.rest),
     offClock: normOffClock(input.offClock),
     notice: normNotice(input.notice),
+    finalPay: normFinalPay(input.finalPay),
     witnesses: input.witnesses || '',
     narrative: input.narrative || '',
     attachments: input.attachments || [],
@@ -87,6 +92,7 @@ export function hydrateIncident(stored = {}) {
     rest: normRest(stored.rest),
     offClock: normOffClock(stored.offClock),
     notice: normNotice(stored.notice),
+    finalPay: normFinalPay(stored.finalPay),
     witnesses: stored.witnesses || '',
     narrative: stored.narrative || '',
     attachments: stored.attachments || [],
@@ -107,6 +113,7 @@ const TRACKED = [
   'rest.taken', 'rest.interrupted', 'rest.onCall',
   'offClock.start', 'offClock.end', 'offClock.task', 'offClock.directedBy', 'offClock.knownBy', 'offClock.payPeriod', 'offClock.expectedPay', 'offClock.employerEdited',
   'notice.to', 'notice.channel', 'notice.response', 'notice.adverseAction',
+  'finalPay.separation', 'finalPay.lastDay', 'finalPay.datePaid', 'finalPay.fullyPaid',
   'witnesses', 'narrative',
 ];
 const getPath = (o, p) => p.split('.').reduce((acc, k) => (acc == null ? undefined : acc[k]), o);
@@ -140,6 +147,7 @@ export function reviseIncident(existing, changes = {}) {
     rest: normRest({ ...existing.rest, ...(changes.rest || {}) }),
     offClock: normOffClock({ ...existing.offClock, ...(changes.offClock || {}) }),
     notice: normNotice({ ...existing.notice, ...(changes.notice || {}) }),
+    finalPay: normFinalPay({ ...existing.finalPay, ...(changes.finalPay || {}) }),
   };
   merged.id = existing.id;
   merged.createdAt = existing.createdAt;

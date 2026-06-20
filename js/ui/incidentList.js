@@ -113,6 +113,10 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
   if (item.notice?.to) add('Told', `${item.notice.to} (${item.notice.channel || '—'})`);
   if (item.notice?.response) add('They said', item.notice.response);
   if (item.notice?.adverseAction) add('After I spoke up', item.notice.adverseAction);
+  if (item.finalPay?.separation) add('How the job ended', { fired: 'Fired or laid off', quit_notice: 'Quit with 3+ days notice', quit_no_notice: 'Quit without notice' }[item.finalPay.separation] || item.finalPay.separation);
+  if (item.finalPay?.lastDay) add('Last day worked', formatDate(item.finalPay.lastDay));
+  if (item.finalPay?.datePaid) add('Final pay arrived', formatDate(item.finalPay.datePaid));
+  if (item.finalPay && item.finalPay.fullyPaid != null) add('Paid everything owed', item.finalPay.fullyPaid ? 'Yes' : 'No');
   if (item.witnesses) add('Who saw it', item.witnesses);
   if ((item.attachments || []).length) add('Proof saved', `${item.attachments.length} photo(s)`);
   add('Saved at', new Date(item.createdAt).toLocaleString());

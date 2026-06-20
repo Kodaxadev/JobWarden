@@ -61,6 +61,10 @@ async function recordHtml(i) {
   if (i.classification?.payType) add('Worker pay type', i.classification.payType);
   if (i.classification?.awsElection === 'yes') add('Alternative workweek', 'Yes — daily OT after 8h may not apply');
   if (i.classification?.cbaCovered === 'yes') add('Union contract (CBA)', 'Yes — break rules may differ');
+  if (i.finalPay?.separation) add('How the job ended', { fired: 'Fired or laid off', quit_notice: 'Quit with 3+ days notice', quit_no_notice: 'Quit without notice' }[i.finalPay.separation] || i.finalPay.separation);
+  if (i.finalPay?.lastDay) add('Last day worked', formatDate(i.finalPay.lastDay));
+  if (i.finalPay?.datePaid) add('Final pay arrived', formatDate(i.finalPay.datePaid));
+  if (i.finalPay && i.finalPay.fullyPaid != null) add('Paid everything owed', i.finalPay.fullyPaid ? 'Yes' : 'No');
   if (i.notice?.to) add('Reported to', `${i.notice.to} (${i.notice.channel || '—'})`);
   if (i.notice?.response) add('Their response', i.notice.response);
   if (i.notice?.adverseAction) add('What happened after I spoke up', i.notice.adverseAction);

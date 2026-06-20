@@ -2,7 +2,7 @@
 // Returns FACTUAL flags only — never dollar amounts (research doc §1.3, stress-test #8).
 // Flags are framed as "potential" issues: waivers/classification can change the result,
 // so the app records facts and flags possibilities; it does not render a verdict.
-import { combine, minutesBetween, hoursWorked } from './timeUtils.js';
+import { combine, minutesBetween, hoursWorked, formatDate } from './timeUtils.js';
 
 export const FIFTH_HOUR_MIN = 300;   // first meal must begin before 300 min in (§512)
 export const TENTH_HOUR_MIN = 600;   // second meal must begin before 600 min in (§512)
@@ -143,6 +143,32 @@ function noticeFlags(i) {
   return out;
 }
 
+const parseDay = d => (d ? Date.parse(String(d) + 'T00:00:00') : NaN);
+function addDays(dateStr, n) {
+  const d = new Date(String(dateStr) + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  const p = x => String(x).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+// Final-pay timing — FACTS only (days late), never the dollar penalty (§§201–203).
+function finalPayFlags(i) {
+  const fp = i.finalPay || {};
+  if (!((i.types || []).includes('final_pay') || fp.separation || fp.lastDay)) return [];
+  const out = [];
+  if (fp.separation && fp.lastDay) {
+    // Due immediately (last day) if fired / quit with notice; within 72h if quit without notice.
+    const dueStr = fp.separation === 'quit_no_notice' ? addDays(fp.lastDay, 3) : fp.lastDay;
+    if (fp.datePaid) {
+      const daysLate = Math.round((parseDay(fp.datePaid) - parseDay(dueStr)) / 86400000);
+      if (daysLate > 0) out.push(f('finalPayLate', daysLate, `Final pay was due ${formatDate(dueStr)} and arrived ${formatDate(fp.datePaid)} — ${daysLate} day(s) late. Potential §203 waiting-time issue.`));
+    } else {
+      out.push(f('finalPayUnpaid', true, 'Final pay reported as not yet received after separation. Potential §203 waiting-time issue.'));
+    }
+  }
+  if (fp.fullyPaid === false) out.push(f('finalPayShort', true, 'Reported the final paycheck did not include everything owed at separation (§§201–203).'));
+  return out;
+}
+
 // Analyze a stored incident -> array of factual flags. Pure; reads i.classification for exempt caveat.
 export function analyze(i) {
   const flags = [];
@@ -164,6 +190,7 @@ export function analyze(i) {
   flags.push(...restFlags(i, hrs));
   flags.push(...offClockFlags(i));
   flags.push(...noticeFlags(i));
+  flags.push(...finalPayFlags(i));
   return flags;
 }
 
@@ -187,5 +214,8 @@ export function summarize(flags = []) {
   if (m.restOnCall) p.push('Rest on-call');
   if (m.offClockMinutes) p.push(`Off-clock ${m.offClockMinutes.value}m`);
   if (m.retaliationNoted) p.push('Possible retaliation');
+  if (m.finalPayLate) p.push(`Final pay ${m.finalPayLate.value}d late`);
+  if (m.finalPayUnpaid) p.push('Final pay not received');
+  if (m.finalPayShort) p.push('Final pay short');
   return p;
 }

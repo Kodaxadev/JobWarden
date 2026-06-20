@@ -30,4 +30,7 @@ export const ISSUE_GROUPS = [
     { id: 'complaint_raised', label: 'I reported the problem' },
     { id: 'retaliation', label: 'Treated worse after I reported it' },
   ] },
+  { id: 'final', label: 'Leaving the job', items: [
+    { id: 'final_pay', label: 'Final paycheck was wrong or late' },
+  ] },
 ];

@@ -16,6 +16,7 @@ export function buildInitialState(existing, settings) {
     rest: { taken: null, interrupted: false, onCall: false },
     offClock: { start: '', end: '', task: '', directedBy: '', knownBy: '', payPeriod: '', expectedPay: '', employerEdited: null },
     notice: { to: '', channel: '', response: '', adverseAction: '' },
+    finalPay: { separation: '', lastDay: '', datePaid: '', fullyPaid: null },
     witnesses: '', narrative: '', location: null, attachments: [],
   };
   if (!existing) return base;
@@ -26,6 +27,7 @@ export function buildInitialState(existing, settings) {
     meal: { ...base.meal, ...(existing.meal || {}) }, meal2: { ...base.meal2, ...(existing.meal2 || {}) },
     rest: { ...base.rest, ...(existing.rest || {}) }, offClock: { ...base.offClock, ...(existing.offClock || {}) },
     notice: { ...base.notice, ...(existing.notice || {}) },
+    finalPay: { ...base.finalPay, ...(existing.finalPay || {}) },
     witnesses: existing.witnesses || '', narrative: existing.narrative || '',
     location: existing.location || null, attachments: [...(existing.attachments || [])],
   };
@@ -159,6 +161,23 @@ export function proofBody(state) {
     field('Who saw it?', textInput(state.witnesses, v => state.witnesses = v, { placeholder: 'Names of anyone who saw it' })),
   ]);
 }
+// Final-pay fields appear only when "Final pay problem" is one of the selected issues.
+function finalPaySection(state) {
+  const fp = state.finalPay;
+  const sep = el('select', { onchange: e => fp.separation = e.target.value });
+  [['', 'How did the job end?'], ['fired', 'Fired or laid off'], ['quit_notice', 'I quit with 3+ days notice'], ['quit_no_notice', 'I quit without notice']]
+    .forEach(([v, t]) => sep.appendChild(el('option', { value: v, text: t, selected: fp.separation === v })));
+  const dateInput = (val, setter) => el('input', { type: 'date', value: val || '', oninput: e => setter(e.target.value) });
+  return el('div', { class: 'final-pay' }, [
+    subHead('Final paycheck'),
+    field('How the job ended', sep),
+    el('div', { class: 'grid2' }, [
+      field('Last day you worked', dateInput(fp.lastDay, v => fp.lastDay = v)),
+      field('Date final pay arrived', dateInput(fp.datePaid, v => fp.datePaid = v), 'Leave blank if you still have not been paid.'),
+    ]),
+    field('Were you paid everything you were owed?', triSelect(fp.fullyPaid, v => fp.fullyPaid = v)),
+  ]);
+}
 export function storyBody(state) {
   const narrative = el('textarea', { rows: '4', placeholder: 'Short facts. Names, times, and what was said help.', oninput: e => state.narrative = e.target.value });
   narrative.value = state.narrative || '';
@@ -166,6 +185,7 @@ export function storyBody(state) {
   ['', 'Said it', 'Text', 'Email', 'HR portal', 'Wrote it down'].forEach(o =>
     channel.appendChild(el('option', { value: o, text: o || 'How did you tell them?', selected: state.notice.channel === o })));
   return el('div', {}, [
+    (state.types || []).includes('final_pay') ? finalPaySection(state) : null,
     field('Tell what happened', narrative),
     subHead('Did you report it?'),
     field('Who you told (name / role)', textInput(state.notice.to, v => state.notice.to = v)),

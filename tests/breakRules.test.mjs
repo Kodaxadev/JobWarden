@@ -97,6 +97,25 @@ test('exempt classification adds a caveat flag', () => {
   assert.equal(flagsOf(base({ clockIn: '09:00', clockOut: '18:00', classification: { payType: 'salary_exempt' } })).exemptCaveat, true);
 });
 
+test('final pay late is measured in days, never dollars (§203)', () => {
+  const fk = flagsOf(base({ types: ['final_pay'], finalPay: { separation: 'fired', lastDay: '2026-06-01', datePaid: '2026-06-10' } }));
+  assert.equal(fk.finalPayLate, 9);
+});
+
+test('quitting without notice gets a 72-hour grace before pay is “late”', () => {
+  assert.equal(flagsOf(base({ types: ['final_pay'], finalPay: { separation: 'quit_no_notice', lastDay: '2026-06-01', datePaid: '2026-06-03' } })).finalPayLate, undefined);
+  assert.equal(flagsOf(base({ types: ['final_pay'], finalPay: { separation: 'quit_no_notice', lastDay: '2026-06-01', datePaid: '2026-06-06' } })).finalPayLate, 2);
+});
+
+test('final pay not yet received, and not-fully-paid, are each flagged', () => {
+  assert.equal(flagsOf(base({ types: ['final_pay'], finalPay: { separation: 'fired', lastDay: '2026-06-01', datePaid: '' } })).finalPayUnpaid, true);
+  assert.equal(flagsOf(base({ types: ['final_pay'], finalPay: { separation: 'fired', lastDay: '2026-06-01', datePaid: '2026-06-01', fullyPaid: false } })).finalPayShort, true);
+});
+
+test('on-time final pay produces no late flag', () => {
+  assert.equal(flagsOf(base({ types: ['final_pay'], finalPay: { separation: 'fired', lastDay: '2026-06-01', datePaid: '2026-06-01' } })).finalPayLate, undefined);
+});
+
 test('off-the-clock minutes are computed', () => {
   assert.equal(flagsOf(base({ types: ['off_clock_work'], offClock: { start: '08:30', end: '09:00' } })).offClockMinutes, 30);
 });
