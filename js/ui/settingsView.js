@@ -9,7 +9,7 @@ const field = (label, input, hint) => el('label', { class: 'field' }, [
 ]);
 const text = (v, ph) => el('input', { type: 'text', value: v || '', placeholder: ph || '' });
 
-export async function renderSettingsView(container) {
+export async function renderSettingsView(container, { onShowRights } = {}) {
   clear(container);
   const s = await getSettings();
 
@@ -62,6 +62,13 @@ export async function renderSettingsView(container) {
     el('h2', { text: 'Workplaces' }),
     field('Your workplaces', places, 'These fill in the place box when you log.'),
     el('div', { class: 'actions' }, [save]),
+  ]));
+  container.appendChild(el('section', { class: 'card' }, [
+    el('h2', { text: 'Know your rights' }),
+    el('p', { class: 'hint', text: 'Plain-language California wage-and-hour basics — general information, not legal advice.' }),
+    el('div', { class: 'actions' }, [
+      el('button', { type: 'button', class: 'btn', text: 'Open the rights guide', onclick: () => onShowRights?.() }),
+    ]),
   ]));
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Data safety' }),

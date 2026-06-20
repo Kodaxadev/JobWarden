@@ -7,6 +7,7 @@ import { openInterruptedLunch } from './capture/quickCapture.js';
 import { renderIncidentList } from './ui/incidentList.js';
 import { renderExportView } from './ui/exportView.js';
 import { renderSettingsView } from './ui/settingsView.js';
+import { renderRightsFaq } from './ui/rightsFaq.js';
 import { renderOnboarding } from './ui/onboarding.js';
 import { renderBackupBanner } from './export/backup.js';
 import { exportJson } from './export/exportJson.js';
@@ -41,7 +42,7 @@ function setActive(name) {
 }
 
 async function show(name, opts = {}) {
-  setActive(name);
+  setActive(name === 'rights' ? 'settings' : name);
   main.scrollTop = 0;
   if (name === 'log') {
     await renderCaptureForm(main, { existing: opts.existing, template: opts.template, onSaved: () => { refreshBanner(); show('records'); } });
@@ -54,7 +55,9 @@ async function show(name, opts = {}) {
   } else if (name === 'export') {
     await renderExportView(main, { onChanged: refreshBanner });
   } else if (name === 'settings') {
-    await renderSettingsView(main);
+    await renderSettingsView(main, { onShowRights: () => show('rights') });
+  } else if (name === 'rights') {
+    renderRightsFaq(main, { onBack: () => show('settings') });
   }
 }
 
