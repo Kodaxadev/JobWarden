@@ -43,9 +43,9 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
     });
     toast('Settings saved');
   } });
-  const persistBtn = el('button', { class: 'btn', text: 'Keep records on this phone', onclick: async () => {
+  const persistBtn = el('button', { class: 'btn', text: 'Protect records from being deleted', onclick: async () => {
     const ok = await requestPersistence();
-    toast(ok ? 'Storage set to persistent' : 'Browser said no — back up often');
+    toast(ok ? 'Protected — your browser won’t auto-delete these records' : 'Your browser declined — back up often');
   } });
 
   container.appendChild(el('section', { class: 'card' }, [
@@ -81,7 +81,7 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
   ]));
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Data safety' }),
-    el('p', { class: 'hint', text: 'Records stay on this phone only. Keeping storage persistent lowers the chance the browser clears them — but it is not a backup. Export often.' }),
+    el('p', { class: 'hint', text: 'Records stay on this phone only. This asks your browser not to auto-delete them (some browsers clear unused data after a while) — it is not a backup, so export often.' }),
     el('p', { class: 'hint', text: 'Not legal advice. No audio recording (illegal in California without all-party consent).' }),
     el('div', { class: 'actions' }, [persistBtn]),
   ]));
