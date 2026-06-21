@@ -25,6 +25,8 @@
   --gline:rgba(90,160,100,.34); --gfill:rgba(78,150,92,.14); --gtext:#86d597;
 
   --radius:14px; --radius-sm:11px; --radius-lg:18px; --tap:48px;
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px;
+  --field-bg:#0d0e13;  /* recessed input fill — cool, matched to the navy canvas (was a warm relic) */
 
   /* Elevation for a dark canvas: separation comes from a lit-from-above sheen + a crisp
      top highlight + a seated bottom edge + layered (contact + ambient) shadows, not one flat drop. */
@@ -41,6 +43,7 @@
     inset 0 1px 0 rgba(255,251,244,.07),
     0 10px 24px rgba(0,0,0,.46), 0 38px 66px -18px rgba(0,0,0,.72);
   --glow-gold:0 0 44px -12px rgba(205,171,69,.3);
+  --elev-gold:var(--glow-gold), var(--shadow-2);   /* the single "elevated gold" recipe (one source of truth) */
 
   --font:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;

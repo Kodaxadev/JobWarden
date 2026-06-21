@@ -1,17 +1,17 @@
 /* forms.css — Log capture: live bar, adaptive sections, field bodies. */
 
 /* form fields — hardened against mobile overflow */
-.field { display: flex; flex-direction: column; gap: 8px; margin: 0 0 16px; min-width: 0; }
+.field { display: flex; flex-direction: column; gap: var(--space-2); margin: 0 0 var(--space-4); min-width: 0; }
 .field:last-child { margin-bottom: 0; }
 .field-label { font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--faint); }
 .hint { font-size: 12px; color: var(--muted); line-height: 1.45; overflow-wrap: anywhere; }
 .warn-text { color: var(--incident); }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; min-width: 0; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); min-width: 0; }
 .grid2 > * { min-width: 0; }
 @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
 input[type=text], input[type=time], input[type=date], input[type=number], select, textarea {
-  display: block; width: 100%; min-width: 0; max-width: 100%; background: #0d0a06; color: var(--text);
-  border: 1px solid var(--line-2); border-radius: 10px; padding: 13px 14px; font: 400 16px var(--font);
+  display: block; width: 100%; min-width: 0; max-width: 100%; background: var(--field-bg); color: var(--text);
+  border: 1px solid var(--line-2); border-radius: var(--radius-sm); padding: 13px 14px; font: 400 16px var(--font);
   min-height: 50px; box-shadow: inset 0 1px 3px rgba(0,0,0,.5), inset 0 -1px 0 rgba(255,251,244,.04); transition: border-color .15s ease, box-shadow .15s ease;
 }
 input[type=time], input[type=date], input[type=number] { font-family: var(--mono); font-size: 15px; }
@@ -34,7 +34,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .issue-group { margin: 16px 0 0; }
 .issue-group-label { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 0 0 9px; }
 .issue-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-.chip { background: var(--sheen), var(--surface-3); color: var(--text); border: 1px solid var(--line-2); border-radius: 11px; padding: 14px 16px; font-size: 15px; min-height: 52px; cursor: pointer; text-align: left; display: inline-flex; align-items: center; gap: 10px; line-height: 1.35; overflow-wrap: anywhere; box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(0,0,0,.28); transition: .15s ease; }
+.chip { background: var(--sheen), var(--surface-3); color: var(--text); border: 1px solid var(--line-2); border-radius: var(--radius-sm); padding: 14px 16px; font-size: 15px; min-height: 52px; cursor: pointer; text-align: left; display: inline-flex; align-items: center; gap: 10px; line-height: 1.35; overflow-wrap: anywhere; box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(0,0,0,.28); transition: .15s ease; }
 .chip.on { background: var(--sheen), linear-gradient(180deg, var(--navy-2), var(--navy)); border-color: var(--primary); font-weight: 500; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 1px 2px rgba(0,0,0,.3); }
 
 .loc-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -46,16 +46,18 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .savewrap { padding: 22px 0 4px; }
 
 /* "Right now" bar: quick log + shift tracker share a row; the live panel takes the full width */
-.live-bar { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 18px; }
+.live-bar { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 var(--space-4); }
 .live-quick { flex: 1 1 140px; justify-content: center; gap: 8px; font-weight: 600; min-height: 50px; color: #ffd9d4; border-color: rgba(224,89,77,.5); background: var(--sheen), linear-gradient(180deg, rgba(224,89,77,.16), rgba(224,89,77,.06)); }
 .live-quick:hover { border-color: rgba(224,89,77,.72); }
 .live-bar .shift-host { flex: 1 1 140px; margin: 0; }
 .live-bar .shift-host:has(.shift-panel) { flex-basis: 100%; }
 
 /* Adaptive capture sections */
-.capture-body { display: flex; flex-direction: column; gap: 14px; }
-.logsec { background: var(--sheen), var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px 17px; box-shadow: var(--shadow-1); }
-.logsec.what { border-color: rgba(205,171,69,.32); box-shadow: inset 0 1px 0 rgba(255,255,255,.07), var(--glow-gold), var(--shadow-1); }
+.capture-body { display: flex; flex-direction: column; gap: var(--space-4); }
+.logsec { background: var(--sheen), var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-4); box-shadow: var(--shadow-1); }
+.logsec.what { border-color: rgba(205,171,69,.32); box-shadow: var(--elev-gold); }
+/* Only one gold-glow element on screen at a time: when a shift is running, the panel owns it. */
+.live-bar:has(.shift-panel) ~ .capture .logsec.what { border-color: var(--line); box-shadow: var(--shadow-1); }
 .logsec-head { display: flex; align-items: center; gap: 10px; }
 .logsec-head .icon svg { width: 20px; height: 20px; flex: none; color: var(--primary); }
 .logsec-title { font-size: 17px; font-weight: 600; letter-spacing: -.012em; margin: 0; }
@@ -68,12 +70,12 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .logsec-more[open] > summary::before { content: "\2013"; }
 .logsec-more > summary .opt { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--faint); }
 .logsec-more-body { padding: 8px 0 4px; }
-.what-when { margin-top: 16px; }
+.what-when { margin-top: var(--space-4); }
 
 /* Live shift tracker (top of Log) */
-.shift-host { margin: 0 0 18px; }
+.shift-host { margin: 0 0 var(--space-4); }
 .shift-start { width: 100%; }
-.shift-panel { background: var(--sheen), linear-gradient(180deg, #1b2a44, #121a2c); border: 1px solid rgba(205,171,69,.32); border-radius: var(--radius-lg); padding: 16px; box-shadow: inset 0 1px 0 rgba(255,255,255,.08), var(--glow-gold), 0 14px 32px -16px rgba(0,0,0,.55); }
+.shift-panel { background: var(--sheen), linear-gradient(180deg, #1b2a44, #121a2c); border: 1px solid rgba(205,171,69,.32); border-radius: var(--radius-lg); padding: var(--space-4); box-shadow: var(--elev-gold); }
 .shift-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
 .shift-live { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14.5px; }
 .shift-live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); }
