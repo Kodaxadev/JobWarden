@@ -99,12 +99,12 @@ export function whatHappenedSection(state, { onChange } = {}) {
   const place = textInput(state.workplace, v => state.workplace = v, { list: 'workplaces', placeholder: 'Dealership / place' });
   return el('section', { class: 'logsec what' }, [
     el('div', { class: 'logsec-head' }, [iconEl('triangle-alert'), el('h3', { class: 'logsec-title', text: 'What happened?' })]),
-    el('p', { class: 'logsec-why', text: 'Tap everything that applies — this decides what we ask next.' }),
-    issueChips(state, onChange),
     el('div', { class: 'grid2 what-when' }, [
       dateField('Date', state.incidentDate, v => state.incidentDate = v),
       field('Place', place),
     ]),
+    el('p', { class: 'logsec-why', text: 'Tap everything that applies — this decides what we ask next.' }),
+    issueChips(state, onChange),
   ]);
 }
 

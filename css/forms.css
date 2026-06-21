@@ -3,7 +3,7 @@
 /* form fields — hardened against mobile overflow */
 .field { display: flex; flex-direction: column; gap: var(--space-2); margin: 0 0 var(--space-4); min-width: 0; }
 .field:last-child { margin-bottom: 0; }
-.field-label { font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase; color: var(--faint); }
+.field-label { font-size: 12.5px; font-weight: 500; color: var(--muted); }
 .hint { font-size: 12px; color: var(--muted); line-height: 1.45; overflow-wrap: anywhere; }
 .warn-text { color: var(--incident); }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); min-width: 0; }
@@ -47,8 +47,10 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 
 /* "Right now" bar: quick log + shift tracker share a row; the live panel takes the full width */
 .live-bar { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 var(--space-4); }
-.live-quick { flex: 1 1 140px; justify-content: center; gap: 8px; font-weight: 600; min-height: 50px; color: #ffd9d4; border-color: rgba(224,89,77,.5); background: var(--sheen), linear-gradient(180deg, rgba(224,89,77,.16), rgba(224,89,77,.06)); }
-.live-quick:hover { border-color: rgba(224,89,77,.72); }
+/* Quiet peer of "Start a shift" — present and recognizable (red alert icon), not shouting. */
+.live-quick { flex: 1 1 140px; justify-content: center; gap: 8px; min-height: 50px; color: var(--text); border-color: rgba(224,89,77,.34); background: var(--sheen), var(--surface-2); }
+.live-quick .icon svg { color: var(--danger); }
+.live-quick:hover { border-color: rgba(224,89,77,.6); }
 .live-bar .shift-host { flex: 1 1 140px; margin: 0; }
 .live-bar .shift-host:has(.shift-panel) { flex-basis: 100%; }
 
@@ -70,7 +72,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .logsec-more[open] > summary::before { content: "\2013"; }
 .logsec-more > summary .opt { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--faint); }
 .logsec-more-body { padding: 8px 0 4px; }
-.what-when { margin-top: var(--space-4); }
+.what-when { margin: var(--space-3) 0 0; }
 
 /* Live shift tracker (top of Log) */
 .shift-host { margin: 0 0 var(--space-4); }
