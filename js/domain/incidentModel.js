@@ -2,7 +2,7 @@
 // One concern: the record shape and its integrity. createdAt is immutable; edits append
 // field-level old->new diffs; deletes are recoverable (soft) so nothing is silently destroyed.
 import { nowIso, localTimezone } from './timeUtils.js';
-import { analyze } from './breakRules.js';
+import { getRules } from '../rules/index.js';
 
 export const SCHEMA_VERSION = 3;
 
@@ -50,6 +50,7 @@ export function createIncident(input = {}) {
     schemaVersion: SCHEMA_VERSION,
     createdAt: nowIso(),
     capturedTz: localTimezone(),
+    jurisdiction: input.jurisdiction || 'CA',   // which state's rules apply (analysis metadata, not sealed content)
     incidentDate: input.incidentDate || '',
     workplace: input.workplace || '',
     location: input.location || null,
@@ -70,7 +71,7 @@ export function createIncident(input = {}) {
     editLog: [],
     contentHash: '', recordHash: '', sealedAt: '', // set by the repo when persisted (see integrity.js)
   };
-  i.flags = analyze(i);
+  i.flags = getRules(i.jurisdiction).analyze(i);
   return i;
 }
 
@@ -80,6 +81,7 @@ export function hydrateIncident(stored = {}) {
     schemaVersion: SCHEMA_VERSION,
     createdAt: stored.createdAt || nowIso(),
     capturedTz: stored.capturedTz || localTimezone(),
+    jurisdiction: stored.jurisdiction || 'CA',
     incidentDate: stored.incidentDate || '',
     workplace: stored.workplace || '',
     location: stored.location || null,
@@ -102,7 +104,7 @@ export function hydrateIncident(stored = {}) {
     editLog: Array.isArray(stored.editLog) ? [...stored.editLog] : [],
     contentHash: stored.contentHash || '', recordHash: stored.recordHash || '', sealedAt: stored.sealedAt || '',
   };
-  i.flags = analyze(i);
+  i.flags = getRules(i.jurisdiction).analyze(i);
   return i;
 }
 
@@ -154,7 +156,7 @@ export function reviseIncident(existing, changes = {}) {
   merged.schemaVersion = existing.schemaVersion;
   const fieldChanges = diffFields(existing, merged);
   merged.editLog = [...(existing.editLog || []), { at: nowIso(), note: changes._editNote || 'edited', changes: fieldChanges }];
-  merged.flags = analyze(merged);
+  merged.flags = getRules(merged.jurisdiction).analyze(merged);
   return merged;
 }
 

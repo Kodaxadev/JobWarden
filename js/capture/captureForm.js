@@ -74,6 +74,7 @@ export async function renderCaptureForm(container, { onSaved, existing, template
     const input = {
       incidentDate: state.incidentDate, workplace: state.workplace, location: state.location,
       clockIn: state.clockIn, clockOut: state.clockOut, types: state.types,
+      jurisdiction: settings.jurisdiction,
       classification: { payType: settings.payType, awsElection: settings.awsElection, cbaCovered: settings.cbaCovered },
       meal: state.meal, meal2: state.meal2, rest: state.rest, offClock: state.offClock, notice: state.notice,
       finalPay: state.finalPay,
