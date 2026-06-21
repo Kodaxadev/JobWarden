@@ -1,6 +1,10 @@
 # JobWarden Phase 3 Plan — Productization (California)
 
-**Date:** 2026-06-17 · **Status:** planning · **Scope:** California only (legal + market) for now.
+**Date:** 2026-06-17 · **Status:** living doc (status notes added inline) · **Last status check:** 2026-06-21 · **Scope:** California first.
+
+> Note: the multi-state pivot (2026-06-20) supersedes the "California only" framing here — see
+> `2026-06-20-newyork-rules-research.md`. Local-first is preserved; E2EE sync + Drive export
+> were cut as trust/complexity risks (see memory `jobwarden-direction`).
 
 > Not legal advice. The legal sections below are research to *confirm with a California
 > employment attorney* before any public launch — they shape product decisions, they are
@@ -42,6 +46,8 @@ substantiate and for generating legal documents. The takeaways become a hard pro
 
 **Action:** write a one-page `docs/CLAIMS_POLICY.md` (what the app + marketing may/may not say)
 and audit all copy + the landing page against it.
+**[Superseded 2026-06-21:** this is covered by `docs/LEGAL_FOUNDATION.md` §1 (UPL guardrails — what
+the app may/may not say) + §2 (disclaimers). No separate `CLAIMS_POLICY.md` file; don't proliferate docs.**]**
 
 ### 1.2 Keep California wage-and-hour law current
 - **Meal/rest premium is "wages"** → **3-year statute of limitations** (often 4 via the UCL
@@ -172,6 +178,9 @@ slot in without a rewrite:
 
 - Introduce a `jurisdiction: 'CA'` constant; thread it through `breakRules` / legal refs as a
   parameter rather than a baked-in assumption.
+  **[Partly done 2026-06-21:** `js/config/jurisdictions.js` ships the constant + threads it through
+  the legal refs/scoping (onboarding, Settings, legal screen). The `breakRules` parameterization
+  is the pending **NY-scaffolding slice** — see `2026-06-20-newyork-rules-research.md` §3.**]**
 - Keep CA as the only implemented ruleset. This is a small factoring, not a feature.
 
 ---

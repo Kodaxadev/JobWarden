@@ -40,7 +40,7 @@ export async function renderExportView(container, { onChanged } = {}) {
     ]),
   ]));
 
-  // Restore — the counterpart to backup. Not guarded by record count (she may be restoring
+  // Restore — the counterpart to backup. Not guarded by record count (the user may be restoring
   // onto a fresh install with nothing here yet).
   const fileInput = el('input', { type: 'file', accept: 'application/json,.json' });
   fileInput.style.display = 'none';

@@ -1,5 +1,5 @@
 // breakRules.js — pure California meal/rest analysis. One concern: rule logic.
-// Returns FACTUAL flags only — never dollar amounts (research doc §1.3, stress-test #8).
+// Returns FACTUAL flags only — never dollar amounts (see docs/LEGAL_FOUNDATION.md).
 // Flags are framed as "potential" issues: waivers/classification can change the result,
 // so the app records facts and flags possibilities; it does not render a verdict.
 import { combine, minutesBetween, hoursWorked, formatDate } from './timeUtils.js';

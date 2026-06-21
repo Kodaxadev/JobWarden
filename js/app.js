@@ -82,7 +82,7 @@ async function showOnboarding() {
   });
 }
 
-// Shift alerts fire app-wide (any screen), so they reach her even off the Log tab.
+// Shift alerts fire app-wide (any screen), so they're seen even off the Log tab.
 function notifyShift(title, body) {
   try {
     if ('Notification' in window && Notification.permission === 'granted' && document.visibilityState !== 'visible') {

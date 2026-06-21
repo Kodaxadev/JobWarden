@@ -1,5 +1,5 @@
 // rightsFaq.js — offline "Know your rights" reference. One concern: plain-language California
-// wage-and-hour basics so the facts she logs make sense. GENERAL INFORMATION ONLY, not legal
+// wage-and-hour basics so the facts they log make sense. GENERAL INFORMATION ONLY, not legal
 // advice about anyone's situation (kept deliberately educational to stay clear of UPL). Bundled
 // so it works with no network. Mirrors the rules the app already encodes in breakRules.
 import { el, clear } from './dom.js';

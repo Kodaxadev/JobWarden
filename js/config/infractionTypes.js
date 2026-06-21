@@ -7,7 +7,7 @@ export const FIELD = {
   MEAL2: 'meal2',      // second meal (shifts over 10h) start/end/waived
   REST: 'rest',        // rest breaks owed/taken/on-call
   OFFCLOCK: 'offclock',// unpaid work start/end, task, who directed/knew, pay period
-  NOTICE: 'notice',    // who she told, channel, response
+  NOTICE: 'notice',    // who was told, channel, response
   FINALPAY: 'finalpay',// separation type, last day, date paid, paid-in-full
 };
 

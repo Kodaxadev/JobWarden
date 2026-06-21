@@ -35,7 +35,7 @@ A consistent, plain disclaimer — *"General information about your state's labo
 legal advice. Rules have exceptions and deadlines. For advice about your situation, contact
 the Labor Commissioner or a licensed employment attorney."*
 
-- Onboarding (first run). _(Scope pill exists; add the legal disclaimer line.)_
+- Onboarding (first run). _(Done — scope pill + a "general information, not legal advice" line.)_
 - The rights guide footer. _(Present.)_
 - Every printable report + pattern summary footer. _(Present for CA.)_
 - A persistent, dismissible-once line or an "About / Legal" entry in Settings.
@@ -87,6 +87,10 @@ UPL posture, (d) the app correctly scopes findings to the user's selected state.
 ---
 
 ## Launch checklist (California, v1 public)
+
+> **Attorney status (2026-06-21): not yet engaged.** The `[ATTORNEY]` items below need a
+> California employment-attorney referral; none is retained yet. They are the only launch-blocking
+> work remaining — the in-app, non-attorney pieces are done.
 
 - [x] Disclaimer line on onboarding + a Settings "Legal & privacy" screen (`js/ui/legalView.js`, SW v38): disclaimer, plain-language privacy summary, facts-not-a-calculator, "as is," and "information last updated" stamp.
 - [ ] **[ATTORNEY]** Formal privacy policy — review/replace the in-app plain-language summary; linked in-app + in the store listing.

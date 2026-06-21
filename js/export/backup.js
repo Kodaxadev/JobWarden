@@ -1,5 +1,5 @@
 // backup.js — backup-due logic + reminder banner. One concern: nudging the user to back up.
-// Data loss on a single device is the biggest practical risk (research doc, stress-test #4).
+// Data loss on a single device is the biggest practical risk for a local-first app.
 import { el } from '../ui/dom.js';
 
 export function daysSince(iso) {
