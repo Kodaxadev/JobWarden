@@ -21,10 +21,11 @@
   --gold-1:#d8b54e; --gold-2:#b6912c; --on-gold:#14233c;
   --navy:#16263f; --navy-2:#223a61; --navy-deep:#0e1b2e;
   --incident:#e6b15a;                          /* findings / amber */
-  --danger:#e0594d; --ok:#7fcf92;              /* evidence green */
+  --danger:#e0594d; --danger-text:#ffc1c1;     /* readable light red on a danger tint */
+  --ok:#7fcf92;                                /* evidence green */
   --gline:rgba(90,160,100,.34); --gfill:rgba(78,150,92,.14); --gtext:#86d597;
 
-  --radius:14px; --radius-sm:11px; --radius-lg:18px; --tap:48px;
+  --radius-xs:4px; --radius:14px; --radius-sm:11px; --radius-lg:18px; --radius-pill:999px; --tap:48px;
   --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px;
   --field-bg:#0d0e13;  /* recessed input fill — cool, matched to the navy canvas (was a warm relic) */
 
@@ -60,7 +61,7 @@ body {
   letter-spacing: -.005em;
   -webkit-text-size-adjust: 100%; padding-bottom: env(safe-area-inset-bottom);
 }
-:focus-visible { outline: 2px solid var(--primary-strong); outline-offset: 2px; border-radius: 4px; }
+:focus-visible { outline: 2px solid var(--primary-strong); outline-offset: 2px; border-radius: var(--radius-xs); }
 a { color: var(--primary-strong); }
 .icon { display: inline-flex; vertical-align: -0.15em; }
 .icon svg { width: 1.2em; height: 1.2em; }
