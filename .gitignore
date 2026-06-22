@@ -8,7 +8,10 @@ outputs/
 .claude/settings.local.json
 .claude/launch.json
 
-# impeccable design tooling — kept local, not committed to the repo
+# impeccable design tooling + its generated artifacts — kept local, not committed to the repo
 .claude/skills/
 .github/hooks/
 .github/skills/
+.impeccable/
+PRODUCT.md
+DESIGN.md
