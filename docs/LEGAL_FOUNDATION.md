@@ -57,6 +57,12 @@ require one regardless. Must state plainly and truthfully:
 - Children: not directed at users under 13.
 - Contact + effective date + how changes are communicated.
 
+**Drafted 2026-06-22:** [`privacy.html`](../privacy.html) — full policy covering all of the
+above, written to match how the app actually behaves (no collection, no servers, local-only).
+Linked from the in-app Legal screen (`legalView.js` "Full policies" card) and the landing
+footer. Placeholders to fill before launch: operating entity name + contact email. Still
+needs **[ATTORNEY]** review of the final wording.
+
 ## 4. Terms of Service **[ATTORNEY]**
 
 - Provided **"as is,"** no warranty that findings are complete, current, or correct;
@@ -64,6 +70,11 @@ require one regardless. Must state plainly and truthfully:
 - Limitation of liability; not a substitute for legal counsel or for the Labor Commissioner.
 - Acceptable use; the user owns their data.
 - Governing law; changes.
+
+**Drafted 2026-06-22:** [`terms.html`](../terms.html) — full ToS with the not-legal-advice /
+no-attorney-client clause, "as is" / no-warranty, limitation of liability, acceptable use
+(incl. the no-audio-recording rule), IP/license, governing law (California), and severability.
+Same two placeholders (entity + contact email). Still needs **[ATTORNEY]** review.
 
 ## 5. Accuracy & currency of the law **[ATTORNEY]**
 

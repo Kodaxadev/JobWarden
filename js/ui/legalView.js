@@ -25,6 +25,15 @@ export function renderLegal(container, { settings = {}, onBack } = {}) {
     el('p', { text: 'Rules have exceptions and deadlines. For advice about your situation, talk to a licensed employment attorney or your state Labor Commissioner.' }),
   ]));
 
+  container.appendChild(card('Full policies', [
+    'The summary below is the short version. Read the complete documents:',
+  ], [
+    el('div', { class: 'rights-links' }, [
+      link('Privacy Policy', './privacy.html'),
+      link('Terms of Service', './terms.html'),
+    ]),
+  ]));
+
   container.appendChild(card('Your privacy', [
     'Your records and profile are stored only on this device. There is no account, no server, no cloud sync, no analytics, and no tracking — nothing is sent anywhere on its own.',
     'Your information leaves this device only when you choose to export, email, print, or share it. After that, it is in your hands.',
