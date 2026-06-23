@@ -8,7 +8,7 @@ test('getRules returns California by default and for unknown jurisdictions', () 
   assert.equal(typeof ca.analyze, 'function');
   assert.equal(getRules(undefined), ca);   // missing -> CA
   assert.equal(getRules('XX'), ca);         // unknown -> CA
-  assert.equal(getRules('NY'), ca);         // NY not implemented yet (slice 1) -> CA fallback
+  assert.notEqual(getRules('NY'), ca);      // NY now implemented (slice 2) -> its own rule set
 });
 
 test('records carry a jurisdiction (default CA) and flags come through the dispatch', () => {

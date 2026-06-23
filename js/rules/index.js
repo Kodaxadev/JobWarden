@@ -4,8 +4,9 @@
 // an unknown or missing jurisdiction falls back to California. New York slots in here as
 // './newYork.js' + RULES.NY once its rules are implemented (NY research doc §3).
 import * as california from './california.js';
+import * as newYork from './newYork.js';
 
-const RULES = { CA: california };
+const RULES = { CA: california, NY: newYork };
 
 export function getRules(jurisdiction) {
   return RULES[jurisdiction] || RULES.CA;
