@@ -1,4 +1,4 @@
-/* tokens.css — design foundations: self-hosted type, layered warm-dark palette,
+/* tokens.css — design foundations: self-hosted type, layered cool-dark palette,
    elevation, motion. One concern: the design language every other file builds on. */
 
 @font-face { font-family:"Geist"; font-style:normal; font-weight:400; font-display:swap; src:url("../fonts/geist-sans-latin-400-normal.woff2") format("woff2"); }
@@ -29,22 +29,37 @@
   --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px;
   --field-bg:#0d0e13;  /* recessed input fill — cool, matched to the navy canvas (was a warm relic) */
 
-  /* Elevation for a dark canvas: separation comes from a lit-from-above sheen + a crisp
-     top highlight + a seated bottom edge + layered (contact + ambient) shadows, not one flat drop. */
-  --sheen:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,0) 46%);
+  /* Elevation for a dark canvas: one cool light, always from above (the One-Light Rule).
+     Separation comes from a lit-from-above sheen (with a hairline of ambient bounce at the
+     foot), a crisp top edge, a seated bottom edge, and a three-layer shadow — contact
+     (grounds it), key (gives it a face), ambient (gives the room depth) — never one flat drop. */
+  --sheen:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0) 42%, rgba(255,255,255,0) 86%, rgba(255,255,255,.016));
   --edge-top:rgba(255,255,255,.07);   /* light edge catching the top */
-  --edge-bottom:rgba(0,0,0,.24);      /* dark edge seating the bottom */
+  --edge-bottom:rgba(0,0,0,.26);      /* dark edge seating the bottom */
   --shadow-1:
     inset 0 1px 0 var(--edge-top), inset 0 -1px 0 var(--edge-bottom),
-    0 2px 4px rgba(0,0,0,.28), 0 12px 26px -10px rgba(0,0,0,.5);
+    0 1px 2px rgba(0,0,0,.3), 0 3px 7px -2px rgba(0,0,0,.26), 0 14px 30px -12px rgba(0,0,0,.52);
   --shadow-2:
-    inset 0 1px 0 rgba(255,251,244,.09), inset 0 -1px 0 rgba(0,0,0,.3),
-    0 4px 10px rgba(0,0,0,.35), 0 22px 46px -14px rgba(0,0,0,.62);
+    inset 0 1px 0 rgba(255,255,255,.09), inset 0 -1px 0 rgba(0,0,0,.32),
+    0 2px 4px rgba(0,0,0,.32), 0 8px 18px -6px rgba(0,0,0,.38), 0 26px 52px -16px rgba(0,0,0,.64);
   --shadow-3:
-    inset 0 1px 0 rgba(255,251,244,.07),
-    0 10px 24px rgba(0,0,0,.46), 0 38px 66px -18px rgba(0,0,0,.72);
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 4px 10px rgba(0,0,0,.4), 0 16px 34px -8px rgba(0,0,0,.5), 0 44px 80px -20px rgba(0,0,0,.74);
   --glow-gold:0 0 44px -12px rgba(205,171,69,.3);
   --elev-gold:var(--glow-gold), var(--shadow-2);   /* the single "elevated gold" recipe (one source of truth) */
+
+  /* Machined gold: a bright catch at the top edge, the body, a deep base — seated by a
+     bevel. The material for the one gold action on a screen (the Rare Gold Rule). */
+  --gold-face:linear-gradient(180deg, #e3c464, #d2af49 45%, #b28b29);
+  --gold-face-hover:linear-gradient(180deg, #eccf74, #d9b752 45%, #b9922e);
+  --gold-bevel:inset 0 1px 0 rgba(255,255,255,.42), inset 0 -1px 0 rgba(74,52,9,.45);
+  --ring-gold:0 0 0 3px rgba(205,171,69,.2);       /* the shared gold focus ring */
+
+  /* Navy instrument panel (the live shift) — brand-deep, lit like every other surface. */
+  --navy-panel:linear-gradient(180deg, #1d2e4b, #121b2d);
+
+  /* Semantic stacking order — never arbitrary values. */
+  --z-header:5; --z-tabbar:6; --z-toast:20; --z-overlay:30;
 
   --font:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   --mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
@@ -54,8 +69,11 @@
 html, body { margin: 0; }
 body {
   color: var(--text);
+  /* Atmosphere: a cool navy cast from the light above, and a quiet vignette seating the
+     foot of the page — the canvas has air, not just a hex value. Cool only (Cool-Canvas Rule). */
   background:
     radial-gradient(135% 74% at 50% -16%, #131c30 0%, rgba(19,28,48,0) 58%) no-repeat,
+    radial-gradient(140% 44% at 50% 112%, rgba(0,0,0,.5), rgba(0,0,0,0) 62%) no-repeat,
     var(--bg);
   font: 400 16px/1.55 var(--font);
   letter-spacing: -.005em;

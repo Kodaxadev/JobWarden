@@ -9,10 +9,12 @@
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); min-width: 0; }
 .grid2 > * { min-width: 0; }
 @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
+/* Recessed wells: inputs invert the light — sunk below the card, a shaded lip at the top,
+   a hairline of caught light at the bottom rim (the One-Light Rule, inverted). */
 input[type=text], input[type=time], input[type=date], input[type=number], select, textarea {
   display: block; width: 100%; min-width: 0; max-width: 100%; background: var(--field-bg); color: var(--text);
   border: 1px solid var(--line-2); border-radius: var(--radius-sm); padding: 13px 14px; font: 400 16px var(--font);
-  min-height: 50px; box-shadow: inset 0 1px 3px rgba(0,0,0,.5), inset 0 -1px 0 rgba(255,251,244,.04); transition: border-color .15s ease, box-shadow .15s ease;
+  min-height: 50px; box-shadow: inset 0 1px 3px rgba(0,0,0,.5), inset 0 6px 12px -8px rgba(0,0,0,.35), inset 0 -1px 0 rgba(255,255,255,.045); transition: border-color .15s ease, box-shadow .15s ease;
 }
 input[type=time], input[type=date], input[type=number] { font-family: var(--mono); font-size: 15px; }
 /* iOS gives DATE inputs an intrinsic min-width that overflows narrow containers; appearance:none
@@ -22,7 +24,7 @@ input[type=date] { -webkit-appearance: none; appearance: none; }
 input[type=date]::-webkit-date-and-time-value { text-align: left; margin: 0; }
 input[type=date]::-webkit-calendar-picker-indicator { margin-left: 0; }
 textarea { min-height: 104px; resize: vertical; line-height: 1.5; }
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: inset 0 1px 2px rgba(0,0,0,.4), 0 0 0 3px rgba(205,171,69,.2); }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: inset 0 1px 2px rgba(0,0,0,.4), var(--ring-gold); }
 .time-row { display: flex; gap: 10px; align-items: center; min-width: 0; }
 .time-row input { flex: 1 1 0; min-width: 0; }
 .time-row .btn { flex: none; min-height: 50px; }
@@ -35,12 +37,15 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .issue-group-label { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 0 0 9px; }
 .issue-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
 .chip { background: var(--sheen), var(--surface-3); color: var(--text); border: 1px solid var(--line-2); border-radius: var(--radius-sm); padding: 14px 16px; font-size: 15px; min-height: 52px; cursor: pointer; text-align: left; display: inline-flex; align-items: center; gap: 10px; line-height: 1.35; overflow-wrap: anywhere; box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(0,0,0,.28); transition: .15s ease; }
-.chip.on { background: var(--sheen), linear-gradient(180deg, var(--navy-2), var(--navy)); border-color: var(--primary); font-weight: 500; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 1px 2px rgba(0,0,0,.3); }
+.chip:hover { border-color: var(--node); box-shadow: inset 0 1px 0 var(--edge-top), 0 2px 5px rgba(0,0,0,.32); }
+.chip:active { transform: translateY(1px); box-shadow: inset 0 1px 2px rgba(0,0,0,.36); }
+.chip.on { background: var(--sheen), linear-gradient(180deg, var(--navy-2), var(--navy)); border-color: var(--primary); font-weight: 500; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.3); }
+.chip.on:hover { border-color: var(--primary-strong); }
 
 .loc-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0 0; }
 .thumb { position: relative; }
-.thumb img, .thumb-img { width: 84px; height: 84px; object-fit: cover; border-radius: 10px; border: 1px solid var(--line-2); }
+.thumb img, .thumb-img { width: 84px; height: 84px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--line-2); box-shadow: 0 2px 6px rgba(0,0,0,.35); }
 .thumb-meta { display: block; font-family: var(--mono); font-size: 10px; color: var(--faint); text-align: center; margin-top: 3px; }
 .thumb-x { position: absolute; top: -8px; right: -8px; width: 32px; height: 32px; border-radius: 50%; background: var(--danger); color: #fff; border: 2px solid var(--bg); font-size: 18px; cursor: pointer; line-height: 1; }
 .savewrap { padding: 22px 0 4px; }
@@ -77,12 +82,12 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 /* Live shift tracker (top of Log) */
 .shift-host { margin: 0 0 var(--space-4); }
 .shift-start { width: 100%; }
-.shift-panel { background: var(--sheen), linear-gradient(180deg, #1b2a44, #121a2c); border: 1px solid rgba(205,171,69,.32); border-radius: var(--radius-lg); padding: var(--space-4); box-shadow: var(--elev-gold); }
+.shift-panel { background: var(--sheen), var(--navy-panel); border: 1px solid rgba(205,171,69,.32); border-radius: var(--radius-lg); padding: var(--space-4); box-shadow: var(--elev-gold); }
 .shift-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
 .shift-live { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14.5px; }
 .shift-live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); }
 .shift-since { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
-.shift-meal { font-size: 14.5px; line-height: 1.4; padding: 11px 13px; border-radius: 11px; margin-bottom: 12px; border: 1px solid var(--line-2); color: var(--muted); }
+.shift-meal { font-size: 14.5px; line-height: 1.4; padding: 11px 13px; border-radius: var(--radius-sm); margin-bottom: 12px; border: 1px solid var(--line-2); color: var(--muted); background: rgba(0,0,0,.14); box-shadow: inset 0 1px 2px rgba(0,0,0,.22); }
 .shift-meal.soon { color: var(--incident); border-color: rgba(230,177,90,.42); background: rgba(230,177,90,.08); }
 .shift-meal.over { color: #ffc1c1; border-color: rgba(224,89,77,.45); background: rgba(224,89,77,.1); font-weight: 500; }
 .shift-actions { display: flex; flex-wrap: wrap; gap: 10px; }
