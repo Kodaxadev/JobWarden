@@ -18,13 +18,22 @@
 }
 *{box-sizing:border-box} html,body{margin:0}
 body{ font:400 16px/1.6 var(--sans); color:var(--text);
-  background: radial-gradient(120% 70% at 50% -10%, #1b2c4a 0%, rgba(27,44,74,0) 52%), var(--bg);
+  /* One light from above (navy cast) + a quiet vignette seating the page foot — the same
+     lit-instrument atmosphere as the app. */
+  background:
+    radial-gradient(120% 70% at 50% -10%, #1b2c4a 0%, rgba(27,44,74,0) 52%) no-repeat,
+    radial-gradient(140% 30% at 50% 108%, rgba(0,0,0,.45), rgba(0,0,0,0) 62%) no-repeat,
+    var(--bg);
   -webkit-font-smoothing:antialiased; }
 .wrap{ max-width:980px; margin:0 auto; padding:0 20px; }
 a{ color:var(--gold-bright); }
 h1,h2,h3{ letter-spacing:-.01em; }
 .gold{ color:var(--gold); }
 .hide{ display:none !important; }
+:focus-visible{ outline:2px solid var(--gold-bright); outline-offset:2px; border-radius:4px; }
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ transition-duration:.001ms !important; animation-duration:.001ms !important; }
+}
 
 .top{ display:flex; align-items:center; gap:11px; padding:22px 0 6px; }
 .top .chip{ width:38px;height:38px;flex:none;border-radius:11px;display:grid;place-items:center;background:linear-gradient(160deg,var(--navy-2),var(--navy-deep));border:1px solid rgba(205,171,69,.32); }
@@ -38,10 +47,15 @@ h1,h2,h3{ letter-spacing:-.01em; }
 .hero h1{ font-size:40px; line-height:1.08; font-weight:600; margin:0 0 16px; }
 .lede{ font-size:17.5px; color:var(--muted); max-width:44ch; margin:0 0 24px; }
 .cta{ display:flex; flex-wrap:wrap; gap:12px; }
-.btn{ display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:54px; padding:15px 24px; border-radius:13px; font:600 16.5px var(--sans); cursor:pointer; text-decoration:none; border:1px solid transparent; }
-.btn.gold{ background:linear-gradient(180deg,var(--gold-1),var(--gold-2)); color:var(--on-gold); border-color:var(--gold-bright); box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 0 44px -12px rgba(205,171,69,.5); }
-.btn.ghost{ background:var(--surface-2); color:var(--text); border-color:var(--line-2); font-weight:500; }
-.btn:disabled{ opacity:.5; cursor:default; }
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:54px; padding:15px 24px; border-radius:13px; font:600 16.5px var(--sans); cursor:pointer; text-decoration:none; border:1px solid transparent; transition:transform .12s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease; }
+/* Machined gold, same material as the app: bright catch, body, deep base, seated bevel. */
+.btn.gold{ background:linear-gradient(180deg,#e3c464,#d2af49 45%,#b28b29); color:var(--on-gold); border-color:var(--gold-bright); box-shadow: inset 0 1px 0 rgba(255,255,255,.42), inset 0 -1px 0 rgba(74,52,9,.45), 0 0 44px -12px rgba(205,171,69,.5), 0 8px 18px -8px rgba(0,0,0,.5); }
+.btn.gold:hover{ background:linear-gradient(180deg,#eccf74,#d9b752 45%,#b9922e); }
+.btn.gold:active{ transform:translateY(1px); background:linear-gradient(180deg,#c4a13c,#a9832a); box-shadow:inset 0 2px 4px rgba(66,46,8,.5); }
+.btn.ghost{ background:var(--surface-2); color:var(--text); border-color:var(--line-2); font-weight:500; box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 2px 6px -3px rgba(0,0,0,.4); }
+.btn.ghost:hover{ border-color:rgba(214,224,240,.34); background:#1d2c45; }
+.btn.ghost:active{ transform:translateY(1px); box-shadow:inset 0 2px 3px rgba(0,0,0,.35); }
+.btn:disabled{ opacity:.5; cursor:default; transform:none; }
 .status{ font-size:13px; color:var(--muted); margin:14px 0 0; min-height:18px; }
 .status.ok{ color:var(--ok); }
 .badges{ list-style:none; display:flex; flex-wrap:wrap; gap:9px; padding:0; margin:22px 0 0; }
@@ -112,9 +126,9 @@ ol{ margin:8px 0 0; padding-left:20px; } ol li{ margin:7px 0; color:var(--muted)
 section.band{ padding:42px 0; }
 .band h2{ font-size:25px; font-weight:600; margin:0 0 8px; text-align:center; }
 .band .sub{ color:var(--muted); text-align:center; max-width:46ch; margin:0 auto 26px; }
-.eyebrow{ text-align:center; font-size:11.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); margin:0 0 10px; }
 .pain-grid{ display:flex; flex-wrap:wrap; gap:11px; justify-content:center; }
-.pain{ background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--gold-2); border-radius:11px; padding:13px 16px; font-size:15px; color:var(--text); font-style:italic; }
+/* Worker quotes: a faint gold wash on a lit card — never a side-stripe. */
+.pain{ background:linear-gradient(180deg,rgba(205,171,69,.06),rgba(205,171,69,.015) 60%),var(--surface); border:1px solid rgba(205,171,69,.22); border-radius:11px; padding:13px 16px; font-size:15px; color:var(--text); font-style:italic; box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 4px 12px -6px rgba(0,0,0,.4); }
 
 .showcase{ display:grid; grid-template-columns:1fr; gap:26px; align-items:center; padding:30px 0; }
 .showcase .sc-copy h2{ text-align:left; font-size:23px; margin:0 0 10px; }
@@ -126,11 +140,11 @@ section.band{ padding:42px 0; }
 .shot-wrap{ display:flex; justify-content:center; }
 
 .feat-grid{ display:grid; gap:13px; grid-template-columns:repeat(3,1fr); }
-.feat{ background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px; box-shadow:inset 0 1px 0 rgba(255,255,255,.04); }
+.feat{ background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,0) 46%),var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px; box-shadow:inset 0 1px 0 rgba(255,255,255,.05), inset 0 -1px 0 rgba(0,0,0,.22), 0 6px 16px -10px rgba(0,0,0,.45); }
 .feat .fi{ color:var(--gold-bright); margin-bottom:10px; display:block; } .feat .fi svg{ width:24px;height:24px; }
 .feat h3{ font-size:16px; margin:0 0 5px; } .feat p{ margin:0; color:var(--muted); font-size:14px; line-height:1.5; }
 
-.privacy{ text-align:center; background:linear-gradient(180deg,#101b30,#0c1626); border:1px solid var(--line); border-radius:20px; padding:34px 22px; margin:8px 0; }
+.privacy{ text-align:center; background:linear-gradient(180deg,#101b30,#0c1626); border:1px solid var(--line); border-radius:20px; padding:34px 22px; margin:8px 0; box-shadow:inset 0 1px 0 rgba(255,255,255,.06), inset 0 -1px 0 rgba(0,0,0,.28), 0 18px 40px -18px rgba(0,0,0,.55); }
 .privacy .lock{ color:var(--ok); } .privacy .lock svg{ width:30px;height:30px; }
 .privacy h2{ margin:12px 0 8px; } .privacy p{ color:var(--muted); max-width:48ch; margin:0 auto; }
 .final{ text-align:center; padding:44px 0 26px; } .final h2{ font-size:26px; margin:0 0 18px; }

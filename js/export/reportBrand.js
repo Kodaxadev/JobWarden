@@ -1,25 +1,44 @@
-// reportBrand.js — shared letterhead + brand styling for the printable documents
-// (full report + pattern summary). One concern: making the exports look like a real
-// product. Print-safe: web-safe serif (Georgia) + inline SVG mark, no font loading
-// needed in the popup print window; navy + gold, minimal ink.
+// reportBrand.js — shared letterhead + the "paper mode" styles for the printable
+// documents (full report + pattern summary). One concern: making the exports look like
+// one product on paper. Print-safe: web-safe serif (Georgia) + inline SVG mark, no font
+// loading needed in the popup print window; navy + gold on white, minimal ink.
+//
+// PAPER_CSS is the documented light palette for printed documents (see DESIGN.md
+// "Paper mode") — the one place these values live. Both export files consume it and
+// keep only their own layout rules, referencing the tokens.
+
+export const PAPER_CSS = `
+  :root {
+    --paper-navy:#16263f; --paper-gold:#b78f2c; --paper-gold-2:#c8a23a; --paper-gold-deep:#8a6a12;
+    --paper-ink:#1a2230; --paper-ink-2:#444; --paper-muted:#555; --paper-faint:#5f6673;
+    --paper-line:#ccc; --paper-well:#f7f7f7;
+    --paper-green:#166b3a;
+    --paper-gold-tint:#faf7ee; --paper-gold-line:#e0cd96;
+    --paper-navy-tint:#f6f8fb; --paper-navy-line:#d6dde8;
+    --paper-red:#a10000;
+  }
+  *{box-sizing:border-box}
+  body{font:13px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;color:var(--paper-ink);margin:32px}
+  h1{font-size:20px;margin:0 0 4px;color:var(--paper-navy)}
+  h2{color:var(--paper-navy)}
+  .sub{color:var(--paper-muted);margin:0 0 18px;font-size:12px}
+  code{font:10px/1.3 ui-monospace,Menlo,Consolas,monospace;word-break:break-all}
+  .integrity{margin:0 0 18px;padding:10px 12px;background:var(--paper-gold-tint);border:1px solid var(--paper-gold-line);border-radius:6px;font-size:11px;color:var(--paper-ink-2)}
+  .integrity p{margin:6px 0 0;color:var(--paper-muted)}
+  .foot{margin-top:24px;font-size:11px;color:var(--paper-muted);border-top:1px solid var(--paper-gold-2);padding-top:10px}
+  .sign{margin-top:30px}
+  .sign p{font-size:11px;color:var(--paper-ink-2)}
+  .sign .line{border-top:1px solid #000;width:280px;margin-top:34px;padding-top:4px;font-size:11px}
+  @media print{body{margin:12mm}}
+`;
 
 export const BRAND_CSS = `
-  :root { --navy:#16263f; --gold:#b78f2c; --gold-2:#c8a23a; }
-  body { color:#1a2230; }
-  h1 { color: var(--navy); }
-  h2 { color: var(--navy); }
-  .doc-head { display:flex; align-items:center; gap:13px; padding-bottom:12px; border-bottom:2px solid var(--gold-2); margin:0 0 18px; }
+  .doc-head { display:flex; align-items:center; gap:13px; padding-bottom:12px; border-bottom:2px solid var(--paper-gold-2); margin:0 0 18px; }
   .doc-mark { flex:none; }
   .doc-mark svg { width:42px; height:46px; display:block; }
   .doc-brand { font-family: Georgia,"Times New Roman",serif; font-size:21px; font-weight:700; letter-spacing:.05em; line-height:1; }
-  .doc-brand .j { color: var(--navy); } .doc-brand .w { color: var(--gold); }
-  .doc-tagline { margin-left:auto; font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color: var(--gold); white-space:nowrap; }
-  .integrity { background:#faf7ee; border-color:#e0cd96; }
-  .attest { background:#f6f8fb; border-color:#d6dde8; }
-  .attest .imm { color: var(--navy); }
-  .foot { border-top-color: var(--gold-2); }
-  table th { background:#eef1f6; color: var(--navy); }
-  td.f { color:#8a6a12; }
+  .doc-brand .j { color: var(--paper-navy); } .doc-brand .w { color: var(--paper-gold); }
+  .doc-tagline { margin-left:auto; font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color: var(--paper-gold); white-space:nowrap; }
   @media (max-width:520px){ .doc-tagline { display:none; } }
 `;
 

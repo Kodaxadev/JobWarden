@@ -5,26 +5,21 @@ import { summarizePatterns, buildTimeline } from '../domain/patterns.js';
 import { manifestHash, HASH_ALGO } from '../domain/integrity.js';
 import { jurisdictionLabel } from '../config/jurisdictions.js';
 import { formatDate } from '../domain/timeUtils.js';
-import { BRAND_CSS, docHead } from './reportBrand.js';
+import { PAPER_CSS, BRAND_CSS, docHead } from './reportBrand.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
+// Summary-specific layout only — the paper palette + shared document chrome live in
+// reportBrand.js (PAPER_CSS), so both printable documents stay one product.
 const STYLE = `
-  *{box-sizing:border-box} body{font:13px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;color:#111;margin:32px;}
-  h1{font-size:20px;margin:0 0 4px} h2{font-size:14px;margin:18px 0 8px}
-  .sub{color:#555;margin:0 0 14px;font-size:12px}
-  .integrity{margin:0 0 16px;padding:9px 12px;background:#f3f6f3;border:1px solid #cfe0cf;border-radius:6px;font-size:11px;color:#444}
-  .integrity code{font:10px/1.3 ui-monospace,Menlo,Consolas,monospace;word-break:break-all}
-  .meta{font-size:12px;color:#333;margin:0 0 6px}
+  h2{font-size:14px;margin:18px 0 8px}
+  .meta{font-size:12px;color:var(--paper-ink-2);margin:0 0 6px}
   ul.totals{margin:6px 0 0;padding-left:18px} ul.totals li{margin:3px 0}
   ul.totals b{font-size:14px}
   table{border-collapse:collapse;width:100%;font-size:11.5px;margin-top:6px}
-  th,td{border:1px solid #ccc;padding:5px 7px;text-align:left;vertical-align:top}
-  th{background:#f2f2f2} td.f{color:#1a5}
+  th,td{border:1px solid var(--paper-line);padding:5px 7px;text-align:left;vertical-align:top}
+  th{background:var(--paper-navy-tint);color:var(--paper-navy)} td.f{color:var(--paper-gold-deep)}
   tr{page-break-inside:avoid}
-  .foot{margin-top:22px;font-size:11px;color:#666;border-top:1px solid #ccc;padding-top:10px}
-  .sign{margin-top:26px} .sign .line{border-top:1px solid #000;width:280px;margin-top:30px;padding-top:4px;font-size:11px}
-  @media print{body{margin:12mm}}
 `;
 
 export async function buildSummaryHtml(incidents, settings = {}) {
@@ -56,7 +51,7 @@ export async function buildSummaryHtml(incidents, settings = {}) {
   const integrity = mh ? `<div class="integrity"><strong>Integrity:</strong> ${HASH_ALGO} · Set fingerprint <code>${esc(mh)}</code> — detects any change to the underlying records. A self-kept log, not a third-party timestamp.</div>` : '';
 
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title>
-    <style>${STYLE}${BRAND_CSS}</style></head><body>
+    <style>${PAPER_CSS}${BRAND_CSS}${STYLE}</style></head><body>
     ${docHead()}
     <h1>${esc(title)}</h1>
     <p class="sub">${who}${who ? ' · ' : ''}${range ? range + ' · ' : ''}Generated ${esc(new Date().toLocaleString())}</p>
@@ -72,7 +67,7 @@ export async function buildSummaryHtml(incidents, settings = {}) {
       <tbody>${rows}</tbody>
     </table>
     <div class="sign">
-      <p style="font-size:11px;color:#444">These are my own records, made at or near the time of each event to the best of my knowledge.</p>
+      <p>These are my own records, made at or near the time of each event to the best of my knowledge.</p>
       <div class="line">Signature / Date</div>
     </div>
     <div class="foot">Self-kept contemporaneous log. Not legal advice. Counts and timing only; premium-pay dollar amounts are intentionally not computed. Confirm any classification and strategy with an employment attorney or the California Labor Commissioner.</div>
