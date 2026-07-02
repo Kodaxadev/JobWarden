@@ -87,3 +87,31 @@ test('empty input yields zeroed summary', () => {
   assert.equal(s.headline.length, 0);
   assert.equal(s.range.from, '');
 });
+
+// --- the headline counts the high-stakes findings too (audit B1) -----------
+
+test('retaliation and final-pay findings appear in the headline totals', () => {
+  const retaliated = createIncident({
+    incidentDate: '2026-06-11', types: ['retaliation'], notice: { to: 'HR', adverseAction: 'hours cut' },
+  });
+  const finalPay = createIncident({
+    incidentDate: '2026-06-12', types: ['final_pay'],
+    finalPay: { separation: 'fired', lastDay: '2026-06-01', datePaid: '2026-06-09', fullyPaid: false },
+  });
+  const s = summarizePatterns([retaliated, finalPay]);
+  const keys = s.headline.map(h => h.key);
+  assert.ok(keys.includes('retaliationNoted'));
+  assert.ok(keys.includes('finalPayLate'));
+  assert.ok(keys.includes('finalPayShort'));
+  assert.equal(s.issueRecords, 2);
+});
+
+test('on-duty meal findings appear in the headline totals', () => {
+  const onDuty = createIncident({
+    incidentDate: '2026-06-13', types: ['interrupted_meal'], clockIn: '08:00', clockOut: '16:30',
+    meal: { start: '12:00', end: '12:30', interrupted: true, writtenAgreement: 'no' },
+  });
+  const keys = summarizePatterns([onDuty]).headline.map(h => h.key);
+  assert.ok(keys.includes('interruptedMeal'));
+  assert.ok(keys.includes('onDutyNoAgreement'));
+});

@@ -1,5 +1,5 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v48';
+const CACHE = 'jobwarden-v49';
 const ASSETS = [
   './', './index.html', './install.html', './privacy.html', './terms.html', './manifest.webmanifest',
   './css/styles.css', './css/tokens.css', './css/shell.css', './css/forms.css', './css/records.css', './css/install.css', './css/legal.css',
@@ -39,8 +39,10 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   e.respondWith(
     caches.match(req).then(hit => hit || fetch(req).then(res => {
-      const copy = res.clone();
-      caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
+      if (res.ok) { // never cache an error page as if it were the asset
+        const copy = res.clone();
+        caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
+      }
       return res;
     }).catch(() => (req.mode === 'navigate' ? caches.match('./index.html') : Response.error())))
   );

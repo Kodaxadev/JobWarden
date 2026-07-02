@@ -3,7 +3,7 @@ import { el, clear, toast, confirmDialog } from './dom.js';
 import { getAllIncidents, getDeletedIncidents, putIncident } from '../data/incidentRepo.js';
 import { softDelete, restoreIncident } from '../domain/incidentModel.js';
 import { verifyIntegrity } from '../domain/integrity.js';
-import { summarize } from '../domain/breakRules.js';
+import { getRules } from '../rules/index.js';
 import { summarizePatterns } from '../domain/patterns.js';
 import { labelFor } from '../config/infractionTypes.js';
 import { formatDate } from '../domain/timeUtils.js';
@@ -68,7 +68,7 @@ function glanceCard(items) {
 }
 
 function row(item, { onEdit, onChanged, onRepeat }) {
-  const flagText = summarize(item.flags || []).join(' · ');
+  const flagText = getRules(item.jurisdiction).summarize(item.flags || []).join(' · ');
   const meta = [];
   if (item.workplace) meta.push(item.workplace);
   if ((item.attachments || []).length) meta.push(`${item.attachments.length} proof`);

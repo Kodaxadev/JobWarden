@@ -25,6 +25,8 @@ export function openDb() {
     req.onsuccess = () => resolve(req.result);
     req.onerror = () => reject(req.error);
   });
+  // A failed open should not be cached forever — let the next call retry.
+  _dbPromise.catch(() => { _dbPromise = null; });
   return _dbPromise;
 }
 

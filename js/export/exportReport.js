@@ -1,6 +1,7 @@
 // exportReport.js — printable report (Save as PDF). One concern: building the human-readable report.
 import { blobToDataUrl } from '../capture/media.js';
 import { labelFor } from '../config/infractionTypes.js';
+import { jurisdictionLabel } from '../config/jurisdictions.js';
 import { formatDate } from '../domain/timeUtils.js';
 import { formatLoc } from '../capture/geo.js';
 import { verifyIntegrity, manifestHash, HASH_ALGO } from '../domain/integrity.js';
@@ -78,9 +79,11 @@ async function recordHtml(i) {
   let imgs = '';
   for (const a of (i.attachments || [])) {
     const url = a.dataUrl || (a.blob ? await blobToDataUrl(a.blob) : '');
-    if (!url) continue;
-    const cap = a.sha256 ? `${esc(a.name || 'photo')} · ${HASH_ALGO}: ${a.sha256}` : esc(a.name || 'photo');
-    imgs += `<figure class="shot"><img src="${url}" alt="${esc(a.name)}"><figcaption>${cap}</figcaption></figure>`;
+    // Only inline image data URLs — a restored backup file is untrusted input, and this
+    // HTML is written into a same-origin window (see importBackup): no other schemes.
+    if (!/^data:image\//.test(url)) continue;
+    const cap = a.sha256 ? `${esc(a.name || 'photo')} · ${HASH_ALGO}: ${esc(a.sha256)}` : esc(a.name || 'photo');
+    imgs += `<figure class="shot"><img src="${esc(url)}" alt="${esc(a.name)}"><figcaption>${cap}</figcaption></figure>`;
   }
 
   const v = await verifyIntegrity(i);
@@ -89,7 +92,7 @@ async function recordHtml(i) {
     ? `Edited ${edits.length} time(s) after creation — see history below.`
     : 'Not edited since creation.';
   const fp = v.sealed
-    ? `<div><strong>Record fingerprint (${HASH_ALGO}):</strong> <code>${i.recordHash}</code></div>`
+    ? `<div><strong>Record fingerprint (${HASH_ALGO}):</strong> <code>${esc(i.recordHash)}</code></div>`
     : '<div class="unsealed">Created before fingerprint sealing was added.</div>';
   const mismatch = (v.sealed && !v.ok)
     ? '<div class="mismatch">⚠ Fingerprint does not match this record’s contents — it may have been changed outside the app.</div>'
@@ -121,12 +124,12 @@ export async function buildReportHtml(incidents, settings = {}) {
   const blocks = [];
   for (const i of incidents) blocks.push(await recordHtml(i));
   const mh = await manifestHash(incidents);
-  const title = 'Workplace Meal/Rest & Wage Log — California';
+  const title = `Workplace Meal/Rest & Wage Log — ${jurisdictionLabel(settings.jurisdiction)}`;
   const who = [settings.employeeName && `Employee: ${esc(settings.employeeName)}`,
     settings.employer && `Employer: ${esc(settings.employer)}`].filter(Boolean).join(' · ');
   const integrity = mh ? `<div class="integrity">
       <div><strong>Report integrity</strong> — Algorithm: ${HASH_ALGO} · Records: ${incidents.length} · Generated: ${esc(new Date().toLocaleString())}</div>
-      <div><strong>Set fingerprint:</strong> <code>${mh}</code></div>
+      <div><strong>Set fingerprint:</strong> <code>${esc(mh)}</code></div>
       <p>Each record below carries a fingerprint of its contents and edit history, and each photo carries a fingerprint of its file. These let anyone detect whether a record was changed after it was saved. This is a self-kept log, not a third-party timestamp — the fingerprints do not prove the times entered are true.</p>
     </div>` : '';
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title>

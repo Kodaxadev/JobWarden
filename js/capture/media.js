@@ -17,10 +17,17 @@ export async function fileToAttachment(file) {
   };
 }
 
+// One object URL per attachment, reused across re-renders (an unbounded
+// URL.createObjectURL per render leaks the blob for the life of the page).
+const _urlCache = new Map();
 export function attachmentUrl(att) {
   if (!att) return '';
   if (att.dataUrl) return att.dataUrl;
-  if (att.blob) return URL.createObjectURL(att.blob);
+  if (att.blob) {
+    const key = att.id || att.name || att.blob;
+    if (!_urlCache.has(key)) _urlCache.set(key, URL.createObjectURL(att.blob));
+    return _urlCache.get(key);
+  }
   return '';
 }
 

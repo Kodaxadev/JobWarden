@@ -4,18 +4,20 @@
 //   • NO general paid rest breaks for adults (so we never flag a "missed rest break")
 //   • NO daily overtime / no alternative-workweek concept (OT is weekly, 40h)
 //   • spread-of-hours: an extra hour when the workday SPANS > 10h (derivable from clock-in/out)
-//   • meal §162 keys off the noon period + a 6h threshold, plus an evening meal
+//   • meal §162 keys off the noon period + a 6h threshold, an evening meal, and a
+//     night-shift meal (§162(4)) for shifts starting between 1pm and 6am
 //   • final pay is due the next regular payday — no §203 immediate-pay / waiting-time rule
 // Facts and counts only; never dollars, never a verdict. Every note is "potential, confirm."
-import { combine, minutesBetween, hoursWorked, formatDate } from '../domain/timeUtils.js';
+//
+// All windows are computed as absolute times on the shift's start date (end = start + span),
+// never as bare time-of-day comparisons — so an overnight shift (6pm–2am) is not mistaken
+// for one that "spans noon" or "starts before 11am."
+import { combine, minutesBetween, hoursWorked } from '../domain/timeUtils.js';
 
-const NOON_START = '11:00';
-const NOON_END = '14:00';   // shift must extend over the 11am–2pm noon period
-const MIN_MEAL_MIN = 30;
+const MIN_MEAL_MIN = 30;    // mercantile floor; factories are owed 60 at noon — caveat, not computed
 const SPREAD_MIN = 600;     // > 10 hours start-to-end
 
 const f = (key, value, note) => (note ? { key, value, note } : { key, value });
-const before = (a, b) => { const x = minutesBetween(combine('2000-01-01', a), combine('2000-01-01', b)); return x != null && x > 0; };
 
 function computeHours(i) {
   const d = i.incidentDate;
@@ -23,27 +25,47 @@ function computeHours(i) {
   const m1 = minutesBetween(combine(d, i.meal?.start), combine(d, i.meal?.end));
   const m2 = minutesBetween(combine(d, i.meal2?.start), combine(d, i.meal2?.end));
   const unpaid = (m1 || 0) + (m2 || 0);
-  return { ci, co, hrs: hoursWorked(ci, co, unpaid), span: minutesBetween(ci, co) };
+  return { ci, hrs: hoursWorked(ci, co, unpaid), span: minutesBetween(ci, co) };
 }
 
-// §162: 30-min meal for a shift > 6h that extends over the noon period; +20-min evening meal
-// when the shift starts before 11am and continues past 7pm. NY meals must be uninterrupted.
-function mealFlags(i, hrs) {
+// Absolute shift window on the start date: [startMs, endMs] with the span carrying
+// any midnight crossing. tod(hhmm) is that clock time on the SAME start date.
+function shiftWindow(i, ci, span) {
+  if (!ci || span == null) return null;
+  const start = ci.getTime();
+  const tod = (hhmm) => combine(i.incidentDate, hhmm)?.getTime();
+  return { start, end: start + span * 60000, tod };
+}
+
+// §162 meals. Noon meal (subd. 2): 30 min for a shift over 6h that extends over the
+// 11am–2pm noon period. Evening meal (subd. 3): +20 min between 5–7pm when the shift
+// starts before 11am and runs past 7pm. Night meal (subd. 4): 45 min midway, for a
+// shift over 6h starting between 1pm and 6am. NY meals must be uninterrupted.
+function mealFlags(i, hrs, w) {
   const out = [];
   const meal = i.meal || {};
-  const overNoon = i.clockIn && i.clockOut && before(i.clockIn, NOON_END) && before(NOON_START, i.clockOut);
-  const owed = (hrs ?? 0) > 6 && overNoon;
+  const types = i.types || [];
+  const noMeal = meal.taken === false || (!meal.start && !meal.end) ||
+    types.includes('missed_meal') || types.includes('worked_past_5h_no_meal');
   const len = minutesBetween(combine(i.incidentDate, meal.start), combine(i.incidentDate, meal.end));
-  const noMeal = meal.taken === false || (!meal.start && !meal.end);
 
-  if (owed && noMeal) {
-    out.push(f('nyMealMissing', true, 'Worked more than 6 hours over the midday period with no 30-minute meal recorded — potential NY Labor Law §162 issue. Factual observation, not a legal conclusion.'));
+  if (w && (hrs ?? 0) > 6) {
+    const nightStart = w.start >= w.tod('13:00') || w.start < w.tod('06:00');
+    if (nightStart) {
+      if (noMeal) out.push(f('nyNightMeal', true, 'Worked more than 6 hours on a shift starting between 1pm and 6am with no meal recorded — New York owes a 45-minute meal midway through such shifts (Labor Law §162(4); 60 minutes in factories). Factual observation, not a legal conclusion.'));
+    } else {
+      const overNoon = w.start < w.tod('14:00') && w.end > w.tod('11:00');
+      if (overNoon && noMeal) {
+        out.push(f('nyMealMissing', true, 'Worked more than 6 hours over the midday period with no 30-minute meal recorded — potential NY Labor Law §162 issue (60 minutes in factories). Factual observation, not a legal conclusion.'));
+      }
+    }
   }
+
   if (len != null && len < MIN_MEAL_MIN) out.push(f('nyMealShort', len, 'Meal under 30 minutes (NY Labor Law §162).'));
-  if (meal.interrupted) out.push(f('nyMealInterrupted', true, 'Meal was interrupted — a NY meal period must be uninterrupted (§162).'));
+  if (meal.interrupted || types.includes('interrupted_meal')) out.push(f('nyMealInterrupted', true, 'Meal was interrupted — a NY meal period must be uninterrupted (§162).'));
 
   // Evening meal: shift starts before 11am and continues past 7pm.
-  if (i.clockIn && i.clockOut && before(i.clockIn, NOON_START) && before('19:00', i.clockOut)) {
+  if (w && w.start < w.tod('11:00') && w.end > w.tod('19:00')) {
     const hasSecond = !!(i.meal2 && (i.meal2.start || i.meal2.end));
     if (!hasSecond) out.push(f('nyEveningMeal', true, 'Shift started before 11am and ran past 7pm — NY owes an additional ~20-minute meal between 5–7pm (§162); none recorded.'));
   }
@@ -98,12 +120,13 @@ export function analyze(i) {
   if (i.classification?.cbaCovered === 'yes') {
     flags.push(f('cbaCaveat', true, 'Covered by a union contract (CBA) — terms may differ. Confirm the agreement.'));
   }
-  const { hrs, span } = computeHours(i);
+  const { ci, hrs, span } = computeHours(i);
   if (hrs != null) flags.push(f('hoursWorked', Number(hrs.toFixed(2))));
   if (hrs != null && hrs > 8) {
     flags.push(f('nyOvertimeNote', true, 'New York overtime is weekly (over 40 hours in a week), not daily — a single long day is not daily overtime by itself.'));
   }
-  flags.push(...mealFlags(i, hrs));
+  const w = shiftWindow(i, ci, span);
+  flags.push(...mealFlags(i, hrs, w));
   flags.push(...spreadFlag(i, span));
   flags.push(...offClockFlags(i));
   flags.push(...noticeFlags(i));
@@ -118,6 +141,7 @@ export function summarize(flags = []) {
   const p = [];
   if (m.exemptCaveat) p.push('Exempt? confirm');
   if (m.nyMealMissing) p.push('No meal');
+  if (m.nyNightMeal) p.push('No night-shift meal');
   if (m.nyMealShort) p.push(`Short meal (${m.nyMealShort.value}m)`);
   if (m.nyMealInterrupted) p.push('Meal interrupted');
   if (m.nyEveningMeal) p.push('No evening meal');
@@ -128,3 +152,16 @@ export function summarize(flags = []) {
   if (m.nyFinalPayUnpaid) p.push('Final pay not received');
   return p;
 }
+
+export const FINDING_LABELS = {
+  nyMealMissing: 'No meal (worked over 6 hours)',
+  nyNightMeal: 'No night-shift meal',
+  nyMealShort: 'Short meal (under 30 min)',
+  nyMealInterrupted: 'Meal interrupted',
+  nyEveningMeal: 'No evening meal (long day)',
+  spreadOver10: 'Workday spanned over 10 hours',
+  nyRetaliation: 'Possible retaliation after speaking up',
+  nyFinalPayShort: 'Final pay incomplete',
+  nyFinalPayUnpaid: 'Final pay not received',
+  timeRecordEdited: 'Employer changed the time record',
+};

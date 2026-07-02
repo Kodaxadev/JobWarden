@@ -3,6 +3,7 @@
 // only — no dollar amounts, no verdict (same ethos as exportReport).
 import { summarizePatterns, buildTimeline } from '../domain/patterns.js';
 import { manifestHash, HASH_ALGO } from '../domain/integrity.js';
+import { jurisdictionLabel } from '../config/jurisdictions.js';
 import { formatDate } from '../domain/timeUtils.js';
 import { BRAND_CSS, docHead } from './reportBrand.js';
 
@@ -30,7 +31,7 @@ export async function buildSummaryHtml(incidents, settings = {}) {
   const s = summarizePatterns(incidents);
   const timeline = buildTimeline(incidents);
   const mh = await manifestHash(incidents);
-  const title = 'Pattern Summary — Workplace Meal/Rest & Wage Log (California)';
+  const title = `Pattern Summary — Workplace Meal/Rest & Wage Log (${jurisdictionLabel(settings.jurisdiction)})`;
   const who = [settings.employeeName && `Employee: ${esc(settings.employeeName)}`,
     settings.employer && `Employer: ${esc(settings.employer)}`].filter(Boolean).join(' · ');
   const range = s.range.from ? `${esc(formatDate(s.range.from))} – ${esc(formatDate(s.range.to))} (${esc(s.range.span)})` : '';
@@ -52,7 +53,7 @@ export async function buildSummaryHtml(incidents, settings = {}) {
       <td class="f">${esc(t.findings.join('; '))}</td>
     </tr>`).join('');
 
-  const integrity = mh ? `<div class="integrity"><strong>Integrity:</strong> ${HASH_ALGO} · Set fingerprint <code>${mh}</code> — detects any change to the underlying records. A self-kept log, not a third-party timestamp.</div>` : '';
+  const integrity = mh ? `<div class="integrity"><strong>Integrity:</strong> ${HASH_ALGO} · Set fingerprint <code>${esc(mh)}</code> — detects any change to the underlying records. A self-kept log, not a third-party timestamp.</div>` : '';
 
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title>
     <style>${STYLE}${BRAND_CSS}</style></head><body>

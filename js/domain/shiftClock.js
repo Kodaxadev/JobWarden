@@ -36,10 +36,13 @@ export function shiftStatus(shift, now = Date.now()) {
   else if (firstMealInMin <= SOON_MIN) mealState = 'soon';
   else mealState = 'ok';
 
-  const secondMealByMs = start + TENTH_HOUR_MIN * MS;
-  const secondMealDue = elapsedMin >= TENTH_HOUR_MIN && meals.length < 2;
+  // §512's 10th hour is hours WORKED — unpaid meal time already taken doesn't count.
+  const mealMin = meals.reduce((sum, m) => sum + (m.start && m.end ? Math.round((new Date(m.end) - new Date(m.start)) / MS) : 0), 0);
+  const workedMin = Math.max(0, elapsedMin - mealMin);
+  const secondMealByMs = start + (TENTH_HOUR_MIN + mealMin) * MS;
+  const secondMealDue = workedMin >= TENTH_HOUR_MIN && meals.length < 2;
 
-  return { elapsedMin, onMeal, firstMealTaken, firstMealByMs, firstMealInMin, mealState, secondMealByMs, secondMealDue };
+  return { elapsedMin, workedMin, onMeal, firstMealTaken, firstMealByMs, firstMealInMin, mealState, secondMealByMs, secondMealDue };
 }
 
 // Which one-time alerts should fire now (names not already in shift.notified).
@@ -72,7 +75,8 @@ export function shiftToDraft(shift, endIso, settings = {}) {
   if (elapsedMin > FIFTH_HOUR_MIN && !m1.start) types.push('missed_meal');
   else if (m1lateMin != null && m1lateMin > FIFTH_HOUR_MIN) types.push('late_meal');
   if (m1len != null && m1len < MIN_MEAL_MIN) types.push('short_meal');
-  if (elapsedMin > TENTH_HOUR_MIN && (shift.meals || []).length < 2) types.push('second_meal_missed');
+  // 10th hour of WORK: clock time minus the (unpaid) first meal already taken.
+  if (elapsedMin - (m1len || 0) > TENTH_HOUR_MIN && (shift.meals || []).length < 2) types.push('second_meal_missed');
 
   return {
     incidentDate: dateStr(shift.startedAt),

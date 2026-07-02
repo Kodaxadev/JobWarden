@@ -2,7 +2,6 @@
 // back into the device. The missing half of durability: back up -> reinstall/new phone ->
 // restore. Additive and non-destructive: existing records are kept, duplicates (same id)
 // are skipped, and each record's fingerprint is checked so a tampered file is flagged.
-import { hydrateIncident } from '../domain/incidentModel.js';
 import { verifyIntegrity } from '../domain/integrity.js';
 import { getIncident, putIncidentRaw } from '../data/incidentRepo.js';
 
@@ -23,10 +22,9 @@ export async function importBackup(text) {
   for (const raw of data.records) {
     if (!raw || !raw.id) { skipped++; continue; }
     if (await getIncident(raw.id)) { skipped++; continue; }     // already on this device
-    const rec = hydrateIncident(raw);                            // normalize; keeps original hashes
-    const v = await verifyIntegrity(rec);
+    const v = await verifyIntegrity(raw);                        // check the file's record exactly as sealed
     if (v.sealed && !v.ok) changed++;                            // fingerprint mismatch — flag, still restore
-    await putIncidentRaw(rec);                                   // store as-is (preserve original seal)
+    await putIncidentRaw(raw);                                   // store the sealed shape untouched (reads hydrate)
     added++;
   }
   return { added, skipped, changed, total: data.records.length };

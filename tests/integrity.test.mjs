@@ -64,3 +64,85 @@ test('an unsealed record reports sealed:false', async () => {
   const v = await verifyIntegrity(base());
   assert.equal(v.sealed, false);
 });
+
+// --- seal versioning (audit A2 + A3) ----------------------------------------
+
+import { createHash } from 'node:crypto';
+import { hydrateIncident } from '../js/domain/incidentModel.js';
+
+const nodeSha256 = s => createHash('sha256').update(s).digest('hex');
+
+// Reproduce the ORIGINAL (pre-versioning) sealer: dense content view of the
+// record's whole normalized shape at its time, no sealVersion field.
+function legacySeal(i) {
+  const view = {
+    createdAt: i.createdAt || '', capturedTz: i.capturedTz || '',
+    incidentDate: i.incidentDate || '', workplace: i.workplace || '', location: i.location || null,
+    clockIn: i.clockIn || '', clockOut: i.clockOut || '',
+    types: [...(i.types || [])].sort(),
+    classification: i.classification || {}, meal: i.meal || {}, meal2: i.meal2 || {},
+    rest: i.rest || {}, offClock: i.offClock || {}, notice: i.notice || {},
+    witnesses: i.witnesses || '', narrative: i.narrative || '',
+    attachments: [],
+  };
+  const contentHash = nodeSha256(stableStringify(view));
+  const recordView = { createdAt: i.createdAt || '', contentHash, deleted: !!i.deleted, editLog: [] };
+  return { ...i, contentHash, recordHash: nodeSha256(stableStringify(recordView)), sealedAt: i.createdAt };
+}
+
+test('a record sealed BEFORE meal.writtenAgreement existed still verifies after hydration', async () => {
+  // Old-schema shape: meal has no writtenAgreement key, no finalPay, no sealVersion.
+  const old = {
+    id: 'legacy-1', createdAt: '2026-05-01T08:00:00.000Z', capturedTz: 'America/Los_Angeles',
+    incidentDate: '2026-05-01', workplace: 'Shop', clockIn: '08:00', clockOut: '16:00',
+    types: ['missed_meal'],
+    classification: { payType: 'hourly', awsElection: '', cbaCovered: '' },
+    meal: { start: '', end: '', interrupted: false, interruptedBy: '', detail: '', onCall: false, relievedOfDuty: null, taken: false, waived: false },
+    meal2: { start: '', end: '', taken: null, waived: false },
+    rest: { taken: null, interrupted: false, onCall: false },
+    offClock: { start: '', end: '', task: '', directedBy: '', knownBy: '', payPeriod: '', expectedPay: '', employerEdited: null },
+    notice: { to: '', channel: '', response: '', adverseAction: '' },
+    witnesses: '', narrative: '', attachments: [], deleted: false, editLog: [],
+  };
+  const sealed = legacySeal(old);
+  // Read path: hydration upgrades the schema (adds writtenAgreement, finalPay, …).
+  const hydrated = hydrateIncident(sealed);
+  const v = await verifyIntegrity(hydrated);
+  assert.equal(v.sealed, true);
+  assert.equal(v.ok, true, 'schema growth must never read as tampering');
+});
+
+test('legacy verification still catches real tampering', async () => {
+  const sealed = legacySeal({
+    id: 'legacy-2', createdAt: '2026-05-01T08:00:00.000Z', incidentDate: '2026-05-01',
+    workplace: 'Shop', clockIn: '08:00', clockOut: '16:00', types: ['missed_meal'],
+    meal: {}, meal2: {}, rest: {}, offClock: {}, notice: {}, classification: {},
+    witnesses: '', narrative: 'original', attachments: [], deleted: false, editLog: [],
+  });
+  const v = await verifyIntegrity(hydrateIncident({ ...sealed, narrative: 'changed later' }));
+  assert.equal(v.ok, false);
+});
+
+test('v2 seals survive a FUTURE schema field with an empty default', async () => {
+  const sealed = await stampIntegrity(base({ narrative: 'facts' }));
+  // Simulate tomorrow's hydration adding new empty fields everywhere.
+  const future = { ...sealed, meal: { ...sealed.meal, someNewField: '' }, someNewTopLevel: null };
+  const v = await verifyIntegrity(future);
+  assert.equal(v.ok, true, 'empty defaults must be invisible to the seal');
+});
+
+test('v2 seals cover finalPay — changing the payout date is detected', async () => {
+  const sealed = await stampIntegrity(base({
+    types: ['final_pay'],
+    finalPay: { separation: 'fired', lastDay: '2026-06-01', datePaid: '2026-06-09', fullyPaid: false },
+  }));
+  assert.equal((await verifyIntegrity(sealed)).ok, true);
+  const tampered = { ...sealed, finalPay: { ...sealed.finalPay, datePaid: '2026-06-01' } };
+  assert.equal((await verifyIntegrity(tampered)).contentOk, false);
+});
+
+test('v2 seals treat a "no" answer as substance — flipping it to unknown is detected', async () => {
+  const sealed = await stampIntegrity(base({ meal: { start: '12:00', end: '12:30', relievedOfDuty: false } }));
+  const tampered = { ...sealed, meal: { ...sealed.meal, relievedOfDuty: null } };
+  assert.equal((await verifyIntegrity(tampered)).contentOk, false);
+});

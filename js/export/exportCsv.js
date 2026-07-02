@@ -1,7 +1,7 @@
 // exportCsv.js — spreadsheet export (no photos). One concern: CSV export.
 // buildCsv() is pure (unit-tested). Cells are CSV-escaped AND neutralized against
 // spreadsheet formula injection — CWE-1236 / OWASP CSV injection.
-import { summarize } from '../domain/breakRules.js';
+import { getRules } from '../rules/index.js';
 import { labelFor } from '../config/infractionTypes.js';
 import { downloadText, dateStamp } from './download.js';
 
@@ -30,7 +30,7 @@ export function buildCsv(incidents) {
     i.meal2?.start, i.meal2?.end, tri(i.meal2?.waived),
     i.rest?.taken ?? '', flag(i.flags, 'restRequired'),
     i.offClock?.start, i.offClock?.end, i.offClock?.task, i.offClock?.directedBy, tri(i.offClock?.employerEdited), i.offClock?.payPeriod, i.offClock?.expectedPay,
-    summarize(i.flags).join(' / '),
+    getRules(i.jurisdiction).summarize(i.flags).join(' / '),
     i.notice?.to, i.notice?.channel, i.witnesses, i.narrative,
     i.location ? `${i.location.lat},${i.location.lng}` : '',
     (i.attachments || []).length, (i.editLog || []).length, i.createdAt,

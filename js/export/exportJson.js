@@ -2,6 +2,7 @@
 import { blobToDataUrl } from '../capture/media.js';
 import { downloadText, dateStamp } from './download.js';
 import { manifestHash, HASH_ALGO } from '../domain/integrity.js';
+import { jurisdictionLabel } from '../config/jurisdictions.js';
 
 async function serializeAttachments(atts = []) {
   const out = [];
@@ -25,7 +26,7 @@ export async function buildBackupPayload(incidents, settings) {
   const payload = {
     app: 'JobWarden',
     schema: 2,
-    jurisdiction: 'California',
+    jurisdiction: jurisdictionLabel(settings?.jurisdiction),
     exportedAt: new Date().toISOString(),
     employer: settings?.employer || '',
     employee: settings?.employeeName || '',

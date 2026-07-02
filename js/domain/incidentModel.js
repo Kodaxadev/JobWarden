@@ -69,7 +69,7 @@ export function createIncident(input = {}) {
     attachments: input.attachments || [],
     deleted: false, deletedAt: '', deleteReason: '',
     editLog: [],
-    contentHash: '', recordHash: '', sealedAt: '', // set by the repo when persisted (see integrity.js)
+    contentHash: '', recordHash: '', sealedAt: '', sealVersion: 0, // set by the repo when persisted (see integrity.js)
   };
   i.flags = getRules(i.jurisdiction).analyze(i);
   return i;
@@ -103,6 +103,7 @@ export function hydrateIncident(stored = {}) {
     deleteReason: stored.deleteReason || '',
     editLog: Array.isArray(stored.editLog) ? [...stored.editLog] : [],
     contentHash: stored.contentHash || '', recordHash: stored.recordHash || '', sealedAt: stored.sealedAt || '',
+    sealVersion: stored.sealVersion || 0,
   };
   i.flags = getRules(i.jurisdiction).analyze(i);
   return i;

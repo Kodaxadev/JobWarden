@@ -18,9 +18,14 @@ test('a recorded meal clears the meal state', () => {
   assert.equal(shiftStatus(s, at(START, 360)).mealState, 'taken');
 });
 
-test('second meal becomes due past 10 hours with only one meal', () => {
+test('second meal becomes due past 10 hours WORKED (the unpaid meal does not count)', () => {
   const s = { startedAt: START, meals: [{ start: '2026-06-18T12:00:00.000Z', end: '2026-06-18T12:30:00.000Z' }], restCount: 0, notified: {} };
-  assert.equal(shiftStatus(s, at(START, 610)).secondMealDue, true);
+  // 610 clock minutes minus the 30-min meal = 580 worked — not yet the 10th hour of work.
+  assert.equal(shiftStatus(s, at(START, 610)).secondMealDue, false);
+  // 635 clock minutes = 605 worked — now due.
+  assert.equal(shiftStatus(s, at(START, 635)).secondMealDue, true);
+  // With no meal taken, clock time IS worked time.
+  assert.equal(shiftStatus({ ...s, meals: [] }, at(START, 610)).secondMealDue, true);
 });
 
 test('dueAlerts fires once, then is suppressed by notified', () => {

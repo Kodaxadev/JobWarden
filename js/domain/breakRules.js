@@ -52,10 +52,14 @@ function computeHours(i) {
 
 function firstMealFlags(i, ci, hrs) {
   const out = [];
+  const types = i.types || [];
   const meal = i.meal || {};
   const ms = combine(i.incidentDate, meal.start);
   const len = mealLength(ms, combine(i.incidentDate, meal.end));
   const required = (hrs ?? 0) > 5;
+  // Picking the issue itself asserts the fact — a checked box or a picked chip both count.
+  const saysNoMeal = meal.taken === false || types.includes('missed_meal') || types.includes('worked_past_5h_no_meal');
+  const saysInterrupted = meal.interrupted || types.includes('interrupted_meal');
 
   if (meal.waived) {
     if ((hrs ?? 0) <= FIRST_WAIVER_MAX_H) {
@@ -69,15 +73,17 @@ function firstMealFlags(i, ci, hrs) {
   if (timing.known) {
     out.push(f('minutesUntilMeal', timing.minutesIn));
     if (timing.late) out.push(f('lateMeal', true, 'First meal began after the 5th hour — potential §512 issue (confirm no valid waiver).'));
-  } else if (required && (meal.taken === false || (i.types || []).includes('missed_meal'))) {
+  } else if (required && saysNoMeal) {
     out.push(f('missedMeal', true, 'Meal owed on a 5h+ shift, none recorded — potential §512 / §226.7 issue.'));
+  } else if (hrs == null && saysNoMeal) {
+    out.push(f('missedMealReported', true, 'Reported working over 5 hours with no meal; work times were not recorded, so the 5-hour threshold could not be checked. Potential §512 / §226.7 issue as reported.'));
   }
   if (len.known && len.short) out.push(f('shortMeal', len.minutes, 'First meal under 30 minutes (§512).'));
-  if (meal.interrupted) out.push(f('interruptedMeal', true, 'Interrupted / on-duty meal is non-compliant (§512).'));
+  if (saysInterrupted) out.push(f('interruptedMeal', true, 'Interrupted / on-duty meal is non-compliant (§512).'));
   if (meal.onCall) out.push(f('mealOnCall', true, 'Required to stay on-call / reachable during the meal — not relieved of all duty (§512).'));
   if (meal.relievedOfDuty === false) out.push(f('notRelieved', true, 'Not relieved of all duty during meal (§512).'));
   // On-duty meal: California permits it only with a written, revocable agreement (IWC Wage Orders §11).
-  const onDuty = meal.interrupted || meal.onCall || meal.relievedOfDuty === false;
+  const onDuty = saysInterrupted || meal.onCall || meal.relievedOfDuty === false;
   if (onDuty && meal.writtenAgreement === 'no') {
     out.push(f('onDutyNoAgreement', true, 'Worked / stayed on duty during the meal and reported no written, revocable on-duty meal agreement. California permits an on-duty meal only with such an agreement. Factual observation, not a legal conclusion.'));
   } else if (onDuty && meal.writtenAgreement === 'yes') {
@@ -96,8 +102,12 @@ function secondMealFlags(i, ci, hrs) {
   const waiverAllowed = hrs <= SECOND_WAIVER_MAX_H && !firstWaived;
 
   if (len.known) {
-    const timing = mealTiming(ci, m2s, TENTH_HOUR_MIN);
-    if (timing.known && timing.late) out.push(f('secondMealLate', true, 'Second meal began after the 10th hour — potential §512 issue.'));
+    // §512: the second meal must begin before the end of the 10th hour of WORK —
+    // measured in hours worked, so the (unpaid) first meal doesn't count toward it.
+    const clockMins = minutesBetween(ci, m2s);
+    const m1 = mealLength(combine(i.incidentDate, i.meal?.start), combine(i.incidentDate, i.meal?.end));
+    const workedMins = clockMins == null ? null : clockMins - (m1.known ? m1.minutes : 0);
+    if (workedMins != null && workedMins > TENTH_HOUR_MIN) out.push(f('secondMealLate', true, 'Second meal began after the 10th hour of work — potential §512 issue.'));
     if (len.short) out.push(f('secondMealShort', len.minutes, 'Second meal under 30 minutes (§512).'));
     return out;
   }
@@ -112,13 +122,18 @@ function secondMealFlags(i, ci, hrs) {
 
 function restFlags(i, hrs) {
   const out = [];
+  const types = i.types || [];
   const reqRest = restRequired(hrs);
   const rest = i.rest || {};
   if (reqRest != null) out.push(f('restRequired', reqRest));
   if (reqRest != null && rest.taken != null && rest.taken < reqRest) {
     out.push(f('restShortfall', reqRest - rest.taken, `${rest.taken}/${reqRest} rest breaks taken — potential §226.7 issue.`));
+  } else if (types.includes('rest_missed') && (reqRest == null || (reqRest > 0 && rest.taken == null))) {
+    // The pick asserts the fact even when the count/hours needed to compute it are missing
+    // (but never when the hours show no rest was owed at all).
+    out.push(f('restMissedReported', true, 'Reported a missed rest break; the break count or work times needed to compute the shortfall were not recorded. Potential §226.7 issue as reported.'));
   }
-  if (rest.interrupted) out.push(f('restInterrupted', true, 'Rest break interrupted (§226.7).'));
+  if (rest.interrupted || types.includes('rest_interrupted')) out.push(f('restInterrupted', true, 'Rest break interrupted (§226.7).'));
   if (rest.onCall) out.push(f('restOnCall', true, 'On-call rest is non-compliant (Augustus v. ABM).'));
   return out;
 }
@@ -201,6 +216,7 @@ export function summarize(flags = []) {
   if (m.exemptCaveat) p.push('Exempt? confirm');
   if (m.lateMeal) p.push(`Late meal (${m.minutesUntilMeal?.value}m in)`);
   if (m.missedMeal) p.push('No meal');
+  if (m.missedMealReported) p.push('No meal (reported)');
   if (m.shortMeal) p.push(`Short meal (${m.shortMeal.value}m)`);
   if (m.interruptedMeal) p.push('Meal interrupted');
   if (m.mealOnCall) p.push('On-call at lunch');
@@ -211,6 +227,7 @@ export function summarize(flags = []) {
   if (m.secondMealShort) p.push(`Short 2nd meal (${m.secondMealShort.value}m)`);
   if (m.secondMealWaiverInvalid) p.push('Bad 2nd-meal waiver');
   if (m.restShortfall) p.push(`Rest short (${m.restShortfall.value})`);
+  if (m.restMissedReported) p.push('Rest missed (reported)');
   if (m.restOnCall) p.push('Rest on-call');
   if (m.offClockMinutes) p.push(`Off-clock ${m.offClockMinutes.value}m`);
   if (m.retaliationNoted) p.push('Possible retaliation');

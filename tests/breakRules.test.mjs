@@ -119,3 +119,63 @@ test('on-time final pay produces no late flag', () => {
 test('off-the-clock minutes are computed', () => {
   assert.equal(flagsOf(base({ types: ['off_clock_work'], offClock: { start: '08:30', end: '09:00' } })).offClockMinutes, 30);
 });
+
+// --- picking an issue asserts the fact (audit A1) --------------------------
+
+test('the "no lunch" pick alone produces the missed-meal finding (legacy id too)', () => {
+  for (const id of ['missed_meal', 'worked_past_5h_no_meal']) {
+    const flags = analyze(base({ clockIn: '08:00', clockOut: '16:00', types: [id] }));
+    assert.ok(flags.some(f => f.key === 'missedMeal'), id);
+  }
+});
+
+test('no lunch reported without work times is flagged as reported, not computed', () => {
+  const flags = analyze(base({ types: ['missed_meal'] }));
+  assert.ok(flags.some(f => f.key === 'missedMealReported'));
+  assert.equal(flags.some(f => f.key === 'missedMeal'), false);
+});
+
+test('a recorded meal beats the pick — no missed-meal finding when times exist', () => {
+  const flags = analyze(base({ clockIn: '08:00', clockOut: '16:00', types: ['missed_meal'], meal: { start: '12:00', end: '12:30' } }));
+  assert.equal(flags.some(f => f.key === 'missedMeal'), false);
+  assert.equal(flags.some(f => f.key === 'missedMealReported'), false);
+});
+
+test('the "missed rest break" pick without a count is flagged as reported', () => {
+  const flags = analyze(base({ clockIn: '08:00', clockOut: '16:00', types: ['rest_missed'] }));
+  assert.ok(flags.some(f => f.key === 'restMissedReported'));
+});
+
+test('no reported-rest flag when the hours show no rest was owed', () => {
+  const flags = analyze(base({ clockIn: '08:00', clockOut: '10:00', types: ['rest_missed'] }));
+  assert.equal(flags.some(f => f.key === 'restMissedReported'), false);
+});
+
+test('a rest count beats the pick — the computed shortfall is used instead', () => {
+  const flags = analyze(base({ clockIn: '08:00', clockOut: '16:00', types: ['rest_missed'], rest: { taken: 1 } }));
+  assert.ok(flags.some(f => f.key === 'restShortfall'));
+  assert.equal(flags.some(f => f.key === 'restMissedReported'), false);
+});
+
+test('the "interrupted lunch" pick alone produces the interrupted finding', () => {
+  const flags = analyze(base({ clockIn: '08:00', clockOut: '16:00', types: ['interrupted_meal'], meal: { start: '12:00', end: '12:30' } }));
+  assert.ok(flags.some(f => f.key === 'interruptedMeal'));
+});
+
+// --- second-meal timing is hours WORKED, not clock time (audit A4) ---------
+
+test('second meal at 580 worked minutes (610 on the clock) is NOT late', () => {
+  const flags = analyze(base({
+    clockIn: '08:00', clockOut: '19:30', types: ['late_meal'],
+    meal: { start: '12:00', end: '12:30' }, meal2: { start: '18:10', end: '18:40' },
+  }));
+  assert.equal(flags.some(f => f.key === 'secondMealLate'), false);
+});
+
+test('second meal past the 10th hour of work IS late', () => {
+  const flags = analyze(base({
+    clockIn: '08:00', clockOut: '19:45', types: ['late_meal'],
+    meal: { start: '12:00', end: '12:30' }, meal2: { start: '18:45', end: '19:15' },
+  }));
+  assert.ok(flags.some(f => f.key === 'secondMealLate'));
+});

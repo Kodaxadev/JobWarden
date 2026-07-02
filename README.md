@@ -39,7 +39,7 @@ python3 -m http.server 8099
 - **No legal advice or filings.** General information plus the user's own records — not the practice of law. See [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md).
 
 ## Architecture (for maintainers)
-Vanilla ES modules, no build step, no runtime dependencies. One concern per file, every source file under the 400-line cap. The evidence engine (capture, model, integrity, patterns, export) is jurisdiction-agnostic; per-state **rules** live behind a thin seam (`config/jurisdictions.js`, `domain/breakRules.js`).
+Vanilla ES modules, no build step, no runtime dependencies. One concern per file, every source file under the 400-line cap. The evidence engine (capture, model, integrity, patterns, export) is jurisdiction-agnostic; per-state **rules** live behind a thin seam — `js/rules/index.js` (`getRules` dispatch + merged finding labels) over `js/rules/california.js` and `js/rules/newYork.js` (draft, attorney-gated), scoped by `config/jurisdictions.js`.
 
 ```
 index.html · install.html · manifest.webmanifest · service-worker.js
@@ -47,6 +47,7 @@ css/   styles · tokens · shell · forms · records
 js/
   app.js                       bootstrap · view routing · app-wide shift-alert monitor
   config/  infractionTypes (type catalog + field map) · uiCopy · jurisdictions
+  rules/   index (getRules dispatch + finding labels) · california · newYork (draft)
   domain/  timeUtils · breakRules (meal/rest/2nd-meal/waiver/off-clock/on-duty/final-pay) ·
            incidentModel (schema, edit-diff, soft-delete) · integrity (SHA-256 content+record seals) ·
            patterns (aggregate roll-ups) · shiftClock (live shift math)
@@ -56,7 +57,7 @@ js/
            shiftPanel · rightsFaq · legalView
   export/  download · exportJson · exportCsv · exportReport · exportSummary ·
            reportBrand · emailExport · importBackup · backup
-tests/     Node built-in runner — 60 tests
+tests/     Node built-in runner — 93 tests
 docs/      LEGAL_FOUNDATION.md · superpowers/plans/ (design + Phase 3 plan)
 scripts/   build-app-icons.mjs (SVG → PNG app icons)
 ```
@@ -68,7 +69,7 @@ Rule-engine and export logic are covered by committed tests under `tests/`, no d
 npm test          # alias for: node --test
 ```
 
-The suite (**60 tests** at last run) covers meal timing and waivers, the >10h second-meal rule, on-duty-meal agreements, final-pay/waiting-time timing, off-the-clock minutes, the exempt/AWS/CBA caveats, content + record hashing and verification, the pattern + interruption roll-ups, the live shift clock, the quick-capture draft, email summary + backup import round-trips, CSV formula-injection neutralization (CWE-1236), and a plain-language copy guard. After changing any cached asset, bump `CACHE` in `service-worker.js` so installed clients update.
+The suite (**93 tests** at last run) covers meal timing and waivers (measured in hours *worked*), the >10h second-meal rule, picked-issue assertions (a chip alone produces its finding), on-duty-meal agreements, final-pay/waiting-time timing, off-the-clock minutes, the exempt/AWS/CBA caveats, versioned content + record sealing (including legacy-seal survival across schema growth and finalPay tamper detection), the New York rule set (noon/evening/night §162 windows, overnight shifts), the pattern + interruption roll-ups, the live shift clock, the quick-capture draft, email summary + backup import round-trips, CSV formula-injection neutralization (CWE-1236), and a plain-language copy guard. After changing any cached asset, bump `CACHE` in `service-worker.js` so installed clients update.
 
 ## Design
 The "Field Log" UI: plain-language, navy-and-gold "legal authority" branding on a dark canvas, self-hosted fonts (Geist / Geist Mono / Cinzel), offline-safe icons from `lucide-static`, and WCAG 2.1 AA contrast/structure.

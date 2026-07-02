@@ -3,26 +3,14 @@
 // This is the "pattern / timeline" layer: per-incident findings already exist in
 // breakRules; this rolls them up so a recurring problem becomes visible at a glance.
 import { labelFor } from '../config/infractionTypes.js';
-import { summarize } from './breakRules.js';
+import { getRules, findingLabels } from '../rules/index.js';
 import { formatDate } from './timeUtils.js';
 
-// Finding flag keys that represent a possible problem, with plain-language labels.
-// (Informational flags like hoursWorked / mealsRequired / exemptCaveat are excluded.)
-export const FINDING_LABELS = {
-  lateMeal: 'Late lunch',
-  missedMeal: 'No lunch',
-  shortMeal: 'Short lunch (under 30 min)',
-  interruptedMeal: 'Lunch interrupted',
-  secondMealMissed: 'No second lunch (long shift)',
-  secondMealLate: 'Late second lunch',
-  secondMealShort: 'Short second lunch',
-  firstMealWaiverInvalid: 'Lunch skip not allowed on that shift',
-  secondMealWaiverInvalid: 'Second-lunch skip not allowed',
-  restShortfall: 'Missed rest break',
-  restInterrupted: 'Rest break interrupted',
-  restOnCall: 'Rest break kept on-call',
-  timeRecordEdited: 'Employer changed the time record',
-};
+// Finding flag keys that represent a possible problem, with plain-language labels —
+// merged from every rule set (each state names and labels its own finding keys).
+// Informational flags (hoursWorked / mealsRequired / the caveats) carry no label and
+// are excluded. offClockMinutes is totaled separately below (minutes, not a count).
+export const FINDING_LABELS = findingLabels();
 const FINDING_KEYS = Object.keys(FINDING_LABELS);
 
 const parseDay = d => (d ? Date.parse(d + 'T00:00:00Z') : NaN);
@@ -124,6 +112,6 @@ export function buildTimeline(incidents = []) {
       dateLabel: formatDate(i.incidentDate),
       workplace: i.workplace || '',
       types: (i.types || []).map(labelFor),
-      findings: summarize(i.flags || []),
+      findings: getRules(i.jurisdiction).summarize(i.flags || []),
     }));
 }

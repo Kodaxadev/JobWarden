@@ -11,3 +11,9 @@ const RULES = { CA: california, NY: newYork };
 export function getRules(jurisdiction) {
   return RULES[jurisdiction] || RULES.CA;
 }
+
+// Plain-language labels for every rule set's finding keys, merged. Keys are namespaced
+// per state (or shared deliberately, e.g. timeRecordEdited), so merging is safe.
+export function findingLabels() {
+  return Object.assign({}, ...Object.values(RULES).map(r => r.FINDING_LABELS || {}));
+}

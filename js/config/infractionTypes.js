@@ -14,6 +14,8 @@ export const FIELD = {
 // Each type carries a ONE-LINE legal reference. These are plain-language pointers,
 // not legal advice — full citations live in docs/RESEARCH_AND_STRESS_TEST.md.
 export const INFRACTION_TYPES = [
+  // LEGACY — merged into 'missed_meal' (no longer offered in the picker; kept so old
+  // records keep their label and field map, and the analyzer honors it as "no meal").
   { id: 'worked_past_5h_no_meal', label: 'Past 5 hrs, no lunch', group: 'meal',
     fields: [FIELD.CLOCK, FIELD.MEAL],
     legal: 'Meal must begin before the end of the 5th hour. Lab. Code §512.' },

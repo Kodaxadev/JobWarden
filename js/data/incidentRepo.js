@@ -5,6 +5,15 @@ import { STORE_INCIDENTS, tx, reqToPromise } from './db.js';
 import { hydrateIncident } from '../domain/incidentModel.js';
 import { stampIntegrity } from '../domain/integrity.js';
 
+// Hydrate for the app, but keep the exact stored shape reachable for seal verification:
+// legacy (pre-versioning) fingerprints hashed the shape of their day, and hydration adds
+// newer schema fields. Non-enumerable so it never spreads into edits or back into storage.
+function hydrateKeepingRaw(stored) {
+  const h = hydrateIncident(stored);
+  Object.defineProperty(h, '_raw', { value: stored, enumerable: false, configurable: true });
+  return h;
+}
+
 // Records are sealed (content + record SHA-256 fingerprints, plus per-photo hashes)
 // on the way into storage, so every create/edit/delete reseals the tamper-evident state.
 export async function addIncident(incident) {
@@ -26,7 +35,7 @@ export function putIncidentRaw(incident) {
 export function getIncident(id) {
   return tx(STORE_INCIDENTS, 'readonly', async s => {
     const item = await reqToPromise(s.get(id));
-    return item ? hydrateIncident(item) : item;
+    return item ? hydrateKeepingRaw(item) : item;
   });
 }
 
@@ -41,13 +50,13 @@ const byNewest = (a, b) =>
 // Active records (soft-deleted excluded unless includeDeleted), newest first.
 export async function getAllIncidents({ includeDeleted = false } = {}) {
   const all = await tx(STORE_INCIDENTS, 'readonly', s => reqToPromise(s.getAll()));
-  return (all || []).map(hydrateIncident).filter(i => includeDeleted || !i.deleted).sort(byNewest);
+  return (all || []).map(hydrateKeepingRaw).filter(i => includeDeleted || !i.deleted).sort(byNewest);
 }
 
 // Soft-deleted records only (for the recoverable "Deleted" view).
 export async function getDeletedIncidents() {
   const all = await tx(STORE_INCIDENTS, 'readonly', s => reqToPromise(s.getAll()));
-  return (all || []).map(hydrateIncident).filter(i => i.deleted).sort(byNewest);
+  return (all || []).map(hydrateKeepingRaw).filter(i => i.deleted).sort(byNewest);
 }
 
 // Count of ACTIVE records (used by the backup banner).

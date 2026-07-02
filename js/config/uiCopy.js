@@ -14,10 +14,11 @@ export const TRAIL_STEPS = [
 
 export const ISSUE_GROUPS = [
   { id: 'lunch', label: 'Lunch problem', items: [
-    { id: 'worked_past_5h_no_meal', label: 'Worked over 5 hours, no lunch' },
+    // ('worked_past_5h_no_meal' merged into 'missed_meal' — one chip, one meaning;
+    // the analyzer still honors the legacy id on old records.)
+    { id: 'missed_meal', label: 'No lunch at all' },
     { id: 'late_meal', label: 'Lunch started late' },
     { id: 'short_meal', label: 'Lunch was under 30 minutes' },
-    { id: 'missed_meal', label: 'No lunch at all' },
     { id: 'interrupted_meal', label: 'Someone bothered me at lunch' },
     { id: 'second_meal_missed', label: 'No second lunch on a long shift' },
   ] },
