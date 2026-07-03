@@ -1,6 +1,6 @@
 // exportJson.js — full-fidelity JSON backup (includes photos as data URLs). One concern: JSON export.
 import { blobToDataUrl } from '../capture/media.js';
-import { downloadText, dateStamp } from './download.js';
+import { downloadBlob, dateStamp } from './download.js';
 import { manifestHash, HASH_ALGO } from '../domain/integrity.js';
 import { jurisdictionLabel } from '../config/jurisdictions.js';
 
@@ -16,14 +16,8 @@ async function serializeAttachments(atts = []) {
   return out;
 }
 
-// Build the complete, re-importable backup as a JSON string (no download/side effects),
-// so it can be downloaded OR shared/emailed. The canonical "don't lose the evidence" file.
-export async function buildBackupPayload(incidents, settings) {
-  const records = [];
-  for (const i of incidents) {
-    records.push({ ...i, attachments: await serializeAttachments(i.attachments) });
-  }
-  const payload = {
+async function backupMeta(incidents, settings) {
+  return {
     app: 'JobWarden',
     schema: 2,
     jurisdiction: jurisdictionLabel(settings?.jurisdiction),
@@ -36,13 +30,42 @@ export async function buildBackupPayload(incidents, settings) {
       manifestHash: await manifestHash(incidents),
       note: 'Each record carries contentHash + recordHash; each photo carries sha256 of its file. A changed record will not match its fingerprint. This is a self-kept fingerprint, not a third-party timestamp.',
     },
-    records,
   };
-  return { text: JSON.stringify(payload, null, 2), count: records.length, filename: `jobwarden-backup-${dateStamp()}.json` };
+}
+
+// The backup as an ARRAY of JSON string parts — one per record — instead of one concatenated
+// megastring. The base64 photos live in the Blob's backing store (which the browser can spill to
+// disk), never in a single 100MB+ JS string that then gets copied again into the Blob. Compact,
+// not pretty-printed: a backup is a machine file, and the extra whitespace is pure weight.
+export async function buildBackupParts(incidents, settings) {
+  const meta = await backupMeta(incidents, settings);
+  const parts = [JSON.stringify(meta).slice(0, -1) + ',"records":['];  // "{...,"integrity":{...},"records":["
+  let count = 0;
+  for (const i of incidents) {
+    const rec = { ...i, attachments: await serializeAttachments(i.attachments) };
+    parts.push((count ? ',' : '') + JSON.stringify(rec));
+    count++;
+  }
+  parts.push(']}');
+  return { parts, count, filename: `jobwarden-backup-${dateStamp()}.json` };
+}
+
+// Blob form — the app path. new Blob(parts) concatenates into (possibly disk-backed) storage
+// without ever materializing the whole JSON as one JS string.
+export async function buildBackupBlob(incidents, settings) {
+  const { parts, count, filename } = await buildBackupParts(incidents, settings);
+  return { blob: new Blob(parts, { type: 'application/json' }), count, filename };
+}
+
+// Text form — used by tests and any consumer that needs the string. Materializes it, so the app
+// prefers buildBackupBlob for large sets; this stays as the round-trippable pure path.
+export async function buildBackupPayload(incidents, settings) {
+  const { blob, count, filename } = await buildBackupBlob(incidents, settings);
+  return { text: await blob.text(), count, filename };
 }
 
 export async function exportJson(incidents, settings) {
-  const { text, count, filename } = await buildBackupPayload(incidents, settings);
-  downloadText(filename, text, 'application/json');
+  const { blob, count, filename } = await buildBackupBlob(incidents, settings);
+  downloadBlob(filename, blob);
   return count;
 }

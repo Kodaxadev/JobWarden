@@ -5,8 +5,8 @@
 // with files) — on a phone the share sheet offers Mail/Gmail with the backup attached. Where
 // file-sharing is unsupported, fall back to downloading the file + opening mailto with the
 // summary pre-filled. (Google Drive export is a later, OAuth-based addition — see Phase 3 plan.)
-import { buildBackupPayload } from './exportJson.js';
-import { downloadText, dateStamp } from './download.js';
+import { buildBackupBlob } from './exportJson.js';
+import { downloadBlob, dateStamp } from './download.js';
 import { summarizePatterns } from '../domain/patterns.js';
 
 // Hand off to the device's mail app. A real anchor click is far more reliable than
@@ -40,11 +40,11 @@ export function emailSummary(incidents, settings = {}) {
 
 // Returns 'shared' | 'cancelled' | 'fallback'. Must be called from a user gesture.
 export async function emailRecords(incidents, settings = {}) {
-  const { text, count, filename } = await buildBackupPayload(incidents, settings);
+  const { blob, count, filename } = await buildBackupBlob(incidents, settings);
   const subject = `JobWarden records — ${dateStamp()} (${count} record${count === 1 ? '' : 's'})`;
   const body = emailSummary(incidents, settings);
 
-  const file = new File([text], filename, { type: 'application/json' });
+  const file = new File([blob], filename, { type: 'application/json' });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
       await navigator.share({ files: [file], title: subject, text: body });
@@ -56,7 +56,7 @@ export async function emailRecords(incidents, settings = {}) {
   }
 
   // Fallback: save the file, then open the mail client with the summary pre-filled.
-  downloadText(filename, text, 'application/json');
+  downloadBlob(filename, blob);
   // Belt-and-suspenders: also put the summary on the clipboard, so if the device has no
   // mail handler at all, the user still has the text to paste somewhere.
   try { await navigator.clipboard?.writeText(body); } catch { /* best-effort */ }
