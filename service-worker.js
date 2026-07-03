@@ -1,5 +1,5 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v56';
+const CACHE = 'jobwarden-v57';
 const ASSETS = [
   './', './index.html', './install.html', './privacy.html', './terms.html', './manifest.webmanifest',
   './css/styles.css', './css/tokens.css', './css/shell.css', './css/forms.css', './css/records.css', './css/install.css', './css/legal.css',
@@ -13,7 +13,7 @@ const ASSETS = [
   './js/rules/index.js', './js/rules/california.js', './js/rules/newYork.js',
   './js/data/db.js', './js/data/incidentRepo.js', './js/data/settingsRepo.js', './js/data/shiftRepo.js', './js/data/errorLog.js',
   './js/capture/geo.js', './js/capture/media.js', './js/capture/captureFields.js', './js/capture/captureForm.js', './js/capture/quickCapture.js',
-  './js/ui/dom.js', './js/ui/icons.js', './js/ui/incidentList.js', './js/ui/exportView.js', './js/ui/settingsView.js', './js/ui/onboarding.js', './js/ui/shiftPanel.js', './js/ui/rightsFaq.js', './js/ui/legalView.js',
+  './js/ui/dom.js', './js/ui/icons.js', './js/ui/incidentList.js', './js/ui/exportView.js', './js/ui/settingsView.js', './js/ui/onboarding.js', './js/ui/shiftPanel.js', './js/ui/rightsFaq.js', './js/ui/legalView.js', './js/ui/theme.js',
   './js/export/download.js', './js/export/exportJson.js', './js/export/emailExport.js', './js/export/importBackup.js', './js/export/exportCsv.js',
   './js/export/exportReport.js', './js/export/exportSummary.js', './js/export/reportBrand.js', './js/export/backup.js',
 ];

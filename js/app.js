@@ -16,6 +16,7 @@ import { getActiveShift, saveActiveShift } from './data/shiftRepo.js';
 import { dueAlerts } from './domain/shiftClock.js';
 import { qs, clear, toast } from './ui/dom.js';
 import { logError } from './data/errorLog.js';
+import { applyTheme, watchSystemTheme } from './ui/theme.js';
 
 // Local error capture (never sent anywhere) — surfaced in Settings so "it's broken" is diagnosable.
 window.addEventListener('error', e => logError(e.message, e.filename ? `${e.filename}:${e.lineno || ''}` : ''));
@@ -115,6 +116,8 @@ async function boot() {
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') monitorShift(); });
   monitorShift();
   const [settings, count] = await Promise.all([getSettings(), countIncidents()]);
+  applyTheme(settings.theme || 'dark');
+  watchSystemTheme();
   if (!settings.onboardedAt && count === 0) { await showOnboarding(); return; }
   await refreshBanner();
   await show('log');

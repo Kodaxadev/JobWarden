@@ -5,6 +5,7 @@ import { requestPersistence } from '../data/db.js';
 import { jurisdictionLabel } from '../config/jurisdictions.js';
 import { swVersion } from '../version.js';
 import { readErrors, clearErrors, errorLogText } from '../data/errorLog.js';
+import { setTheme } from './theme.js';
 
 // Bytes → a short human string that also handles GB (humanSize in media.js stops at MB).
 function fmtBytes(n) {
@@ -63,6 +64,14 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
     el('h2', { text: 'About you' }),
     field('Name', name), field('Role', role), field('Employer', employer),
     field('Pay type', pay, 'Hourly workers get the strongest break protections.'), payWarn,
+  ]));
+
+  const theme = el('select', {}, [['dark', 'Dark'], ['light', 'Light'], ['system', 'Match my phone']]
+    .map(([v, t]) => el('option', { value: v, text: t, selected: (s.theme || 'dark') === v })));
+  theme.addEventListener('change', () => setTheme(theme.value));
+  container.appendChild(el('section', { class: 'card' }, [
+    el('h2', { text: 'Appearance' }),
+    field('Theme', theme, 'Light is easier to read in bright sun.'),
   ]));
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Schedule & coverage' }),

@@ -15,6 +15,7 @@ const DEFAULTS = {
   lastBackupAt: '',
   backupReminderDays: 7,
   onboardedAt: '',       // ISO timestamp set once the first-run setup is completed
+  theme: 'dark',         // 'dark' (brand default) | 'light' | 'system'
 };
 
 export async function getSettings() {
