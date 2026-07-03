@@ -10,6 +10,8 @@ import { labelFor } from '../config/infractionTypes.js';
 import { formatDate } from '../domain/timeUtils.js';
 import { attachmentUrl } from '../capture/media.js';
 import { mapsLink, formatLoc } from '../capture/geo.js';
+import { getSettings } from '../data/settingsRepo.js';
+import { openPrintSummary } from '../export/exportSummary.js';
 
 const fmt = v => (Array.isArray(v) ? v.join(', ') : v === true ? 'Yes' : v === false ? 'No' : v === '' || v == null ? '—' : String(v));
 
@@ -28,16 +30,28 @@ export async function renderIncidentList(container, { onEdit, onChanged, onRepea
   // and "show me the missed meals at location X" is how a record actually gets used.
   const filter = { q: '', type: '', workplace: '' };
   const countEl = el('p', { class: 'count' });
+  const scopedBar = el('div', { class: 'scoped-export' });
   const listHost = el('div', { class: 'rec-list' });
   if (items.length > 6) container.appendChild(filterBar(items, filter, apply));
-  container.append(countEl, listHost);
+  container.append(countEl, scopedBar, listHost);
   apply();
 
   function apply() {
     const list = items.filter(i => matchesFilter(i, filter));
-    countEl.textContent = list.length === items.length
-      ? `${items.length} record${items.length === 1 ? '' : 's'}`
-      : `${list.length} of ${items.length} records`;
+    const filtered = list.length !== items.length;
+    countEl.textContent = filtered
+      ? `${list.length} of ${items.length} records`
+      : `${items.length} record${items.length === 1 ? '' : 's'}`;
+
+    // Filtered view → export exactly this subset (e.g. "just employer A, for a lawyer").
+    clear(scopedBar);
+    if (filtered && list.length) {
+      scopedBar.appendChild(el('button', { type: 'button', class: 'btn tiny', onclick: async () => {
+        const ok = await openPrintSummary(list, await getSettings());
+        if (!ok) toast('Allow pop-ups to make the report');
+      } }, [document.createTextNode(`Make a report of these ${list.length}`)]));
+    }
+
     clear(listHost);
     if (!list.length) {
       listHost.appendChild(el('p', { class: 'hint filter-empty', text: 'No records match. Clear the filters to see everything.' }));
