@@ -185,6 +185,10 @@ function finalPayFlags(i) {
 }
 
 // Analyze a stored incident -> array of factual flags. Pure; reads i.classification for exempt caveat.
+/**
+ * @param {import('./types.js').Incident} i
+ * @returns {import('./types.js').Flag[]}
+ */
 export function analyze(i) {
   const flags = [];
   if (i.classification?.payType === 'salary_exempt') {

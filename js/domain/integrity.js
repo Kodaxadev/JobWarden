@@ -58,7 +58,7 @@ async function attachmentBytes(att) {
   if (att?.blob && typeof att.blob.arrayBuffer === 'function') return new Uint8Array(await att.blob.arrayBuffer());
   if (att?.dataUrl) {
     const b64 = att.dataUrl.slice(att.dataUrl.indexOf(',') + 1);
-    const bin = globalThis.atob ? globalThis.atob(b64) : Buffer.from(b64, 'base64').toString('binary');
+    const bin = globalThis.atob ? globalThis.atob(b64) : /** @type {any} */ (globalThis).Buffer.from(b64, 'base64').toString('binary');
     const out = new Uint8Array(bin.length);
     for (let j = 0; j < bin.length; j++) out[j] = bin.charCodeAt(j);
     return out;

@@ -37,7 +37,7 @@ export function shiftStatus(shift, now = Date.now()) {
   else mealState = 'ok';
 
   // §512's 10th hour is hours WORKED — unpaid meal time already taken doesn't count.
-  const mealMin = meals.reduce((sum, m) => sum + (m.start && m.end ? Math.round((new Date(m.end) - new Date(m.start)) / MS) : 0), 0);
+  const mealMin = meals.reduce((sum, m) => sum + (m.start && m.end ? Math.round((new Date(m.end).getTime() - new Date(m.start).getTime()) / MS) : 0), 0);
   const workedMin = Math.max(0, elapsedMin - mealMin);
   const secondMealByMs = start + (TENTH_HOUR_MIN + mealMin) * MS;
   const secondMealDue = workedMin >= TENTH_HOUR_MIN && meals.length < 2;
@@ -70,7 +70,7 @@ export function shiftToDraft(shift, endIso, settings = {}) {
   const elapsedMin = Math.round(((endIso ? new Date(endIso).getTime() : Date.now()) - start) / MS);
 
   const types = [];
-  const m1len = (m1.start && m1.end) ? Math.round((new Date(m1.end) - new Date(m1.start)) / MS) : null;
+  const m1len = (m1.start && m1.end) ? Math.round((new Date(m1.end).getTime() - new Date(m1.start).getTime()) / MS) : null;
   const m1lateMin = m1.start ? Math.round((new Date(m1.start).getTime() - start) / MS) : null;
   if (elapsedMin > FIFTH_HOUR_MIN && !m1.start) types.push('missed_meal');
   else if (m1lateMin != null && m1lateMin > FIFTH_HOUR_MIN) types.push('late_meal');
