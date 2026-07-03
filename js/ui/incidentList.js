@@ -1,5 +1,6 @@
 // incidentList.js — records review. One concern: listing/expanding/soft-deleting/restoring.
 import { el, clear, toast, confirmDialog } from './dom.js';
+import { icon } from './icons.js';
 import { getAllIncidents, getDeletedIncidents, putIncident } from '../data/incidentRepo.js';
 import { softDelete, restoreIncident } from '../domain/incidentModel.js';
 import { verifyIntegrity } from '../domain/integrity.js';
@@ -17,22 +18,95 @@ export async function renderIncidentList(container, { onEdit, onChanged, onRepea
   const [items, deleted] = await Promise.all([getAllIncidents(), getDeletedIncidents()]);
 
   if (!items.length && !deleted.length) {
-    container.appendChild(el('div', { class: 'empty' }, [
-      el('p', { text: 'No records yet.' }),
-      el('p', { class: 'hint', text: 'Tap “Log” to add the first one — it takes seconds.' }),
-    ]));
+    container.appendChild(emptyState());
     return;
   }
 
   if (items.length) container.appendChild(glanceCard(items));
-  container.appendChild(el('p', { class: 'count', text: `${items.length} record${items.length === 1 ? '' : 's'}` }));
-  items.forEach(item => container.appendChild(row(item, { onEdit, onChanged, onRepeat })));
+
+  // Filter + month-grouped list — the Records screen has to stay usable at hundreds of records,
+  // and "show me the missed meals at location X" is how a record actually gets used.
+  const filter = { q: '', type: '', workplace: '' };
+  const countEl = el('p', { class: 'count' });
+  const listHost = el('div', { class: 'rec-list' });
+  if (items.length > 6) container.appendChild(filterBar(items, filter, apply));
+  container.append(countEl, listHost);
+  apply();
+
+  function apply() {
+    const list = items.filter(i => matchesFilter(i, filter));
+    countEl.textContent = list.length === items.length
+      ? `${items.length} record${items.length === 1 ? '' : 's'}`
+      : `${list.length} of ${items.length} records`;
+    clear(listHost);
+    if (!list.length) {
+      listHost.appendChild(el('p', { class: 'hint filter-empty', text: 'No records match. Clear the filters to see everything.' }));
+      return;
+    }
+    for (const [label, group] of groupByMonth(list)) {
+      listHost.appendChild(el('h3', { class: 'month-head', text: label }));
+      group.forEach(item => listHost.appendChild(row(item, { onEdit, onChanged, onRepeat })));
+    }
+  }
 
   if (deleted.length) {
     const wrap = el('details', { class: 'deleted-wrap' }, [el('summary', { text: `Deleted (${deleted.length}) — recoverable` })]);
     deleted.forEach(d => wrap.appendChild(deletedRow(d, { onChanged })));
     container.appendChild(wrap);
   }
+}
+
+const iconEl = (n) => { const s = el('span'); s.innerHTML = icon(n); return s.firstElementChild || s; };
+
+// First-run empty state that teaches what the tool does, not just "nothing here".
+function emptyState() {
+  return el('div', { class: 'empty teach' }, [
+    el('div', { class: 'empty-mark' }, [iconEl('shield-check')]),
+    el('p', { class: 'empty-title', text: 'Your record starts here' }),
+    el('p', { class: 'hint', text: 'When something happens at work — a skipped lunch, unpaid minutes, a break cut short — log it in seconds. JobWarden stamps the time, seals it so it can’t be quietly changed, and builds the pattern over weeks.' }),
+    el('p', { class: 'hint', text: 'Tap Log below to add the first one.' }),
+  ]);
+}
+
+function matchesFilter(i, f) {
+  if (f.type && !(i.types || []).includes(f.type)) return false;
+  if (f.workplace && i.workplace !== f.workplace) return false;
+  if (f.q) {
+    const hay = `${i.workplace || ''} ${i.narrative || ''} ${i.witnesses || ''}`.toLowerCase();
+    if (!hay.includes(f.q.toLowerCase())) return false;
+  }
+  return true;
+}
+
+const monthLabel = (ym) => {
+  const [y, m] = String(ym).split('-').map(Number);
+  if (!y) return 'Undated';
+  return new Date(y, (m || 1) - 1, 1).toLocaleDateString([], { month: 'long', year: 'numeric' });
+};
+
+// Group a newest-first list into [monthLabel, records] pairs, order preserved.
+function groupByMonth(list) {
+  const groups = new Map();
+  for (const i of list) {
+    const key = (i.incidentDate || '').slice(0, 7) || 'unknown';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(i);
+  }
+  return [...groups.entries()].map(([key, g]) => [monthLabel(key), g]);
+}
+
+function filterBar(items, filter, apply) {
+  const types = [...new Set(items.flatMap(i => i.types || []))];
+  const places = [...new Set(items.map(i => i.workplace).filter(Boolean))];
+  const search = el('input', { type: 'search', class: 'rec-search', placeholder: 'Search notes, place, names', 'aria-label': 'Search records', oninput: e => { filter.q = e.target.value; apply(); } });
+  const typeSel = el('select', { 'aria-label': 'Filter by issue', onchange: e => { filter.type = e.target.value; apply(); } },
+    [el('option', { value: '', text: 'All issues' }), ...types.map(t => el('option', { value: t, text: labelFor(t) }))]);
+  const kids = [search, typeSel];
+  if (places.length > 1) {
+    kids.push(el('select', { 'aria-label': 'Filter by place', onchange: e => { filter.workplace = e.target.value; apply(); } },
+      [el('option', { value: '', text: 'All places' }), ...places.map(p => el('option', { value: p, text: p }))]));
+  }
+  return el('div', { class: 'rec-filter' }, kids);
 }
 
 function chipRow(item) {
