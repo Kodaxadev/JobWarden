@@ -121,6 +121,19 @@ async function boot() {
 }
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+  navigator.serviceWorker.register('./service-worker.js').then(reg => {
+    // When a newer build finishes installing AND we were already controlled by an older
+    // one, this is an update (not first install) — invite a reopen. Never auto-reload:
+    // a capture could be in progress.
+    reg.addEventListener('updatefound', () => {
+      const nw = reg.installing;
+      if (!nw) return;
+      nw.addEventListener('statechange', () => {
+        if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+          toast('New version ready — reopen JobWarden to update', 6000);
+        }
+      });
+    });
+  }).catch(() => {});
 }
 boot();

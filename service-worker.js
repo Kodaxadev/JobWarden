@@ -1,5 +1,5 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v51';
+const CACHE = 'jobwarden-v52';
 const ASSETS = [
   './', './index.html', './install.html', './privacy.html', './terms.html', './manifest.webmanifest',
   './css/styles.css', './css/tokens.css', './css/shell.css', './css/forms.css', './css/records.css', './css/install.css', './css/legal.css',
@@ -7,7 +7,7 @@ const ASSETS = [
   './fonts/geist-mono-latin-400-normal.woff2', './fonts/geist-mono-latin-500-normal.woff2',
   './fonts/cinzel-latin-600-normal.woff2', './fonts/cinzel-latin-700-normal.woff2',
   './icons/logo-mark.svg', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png',
-  './js/app.js',
+  './js/app.js', './js/installPage.js', './js/version.js',
   './js/config/infractionTypes.js', './js/config/uiCopy.js', './js/config/jurisdictions.js',
   './js/domain/timeUtils.js', './js/domain/breakRules.js', './js/domain/incidentModel.js', './js/domain/integrity.js', './js/domain/patterns.js', './js/domain/shiftClock.js',
   './js/rules/index.js', './js/rules/california.js', './js/rules/newYork.js',
@@ -32,6 +32,13 @@ self.addEventListener('activate', e => {
       .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
+});
+
+// Answer the app's version query (Settings shows the running build id).
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'version' && e.ports && e.ports[0]) {
+    e.ports[0].postMessage({ version: CACHE });
+  }
 });
 
 self.addEventListener('fetch', e => {

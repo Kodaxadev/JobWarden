@@ -3,6 +3,16 @@ import { el, clear, toast } from './dom.js';
 import { getSettings, saveSettings } from '../data/settingsRepo.js';
 import { requestPersistence } from '../data/db.js';
 import { jurisdictionLabel } from '../config/jurisdictions.js';
+import { swVersion } from '../version.js';
+
+// Bytes → a short human string that also handles GB (humanSize in media.js stops at MB).
+function fmtBytes(n) {
+  if (!n || n < 0) return '0 MB';
+  const mb = n / 1048576;
+  if (mb < 1) return `${Math.max(1, Math.round(n / 1024))} KB`;
+  if (mb < 1024) return `${mb < 10 ? mb.toFixed(1) : Math.round(mb)} MB`;
+  return `${(mb / 1024).toFixed(1)} GB`;
+}
 
 const field = (label, input, hint) => el('label', { class: 'field' }, [
   el('span', { class: 'field-label', text: label }), input,
@@ -79,10 +89,32 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
       el('button', { type: 'button', class: 'btn', text: 'Legal, privacy & terms', onclick: () => onShowLegal?.() }),
     ]),
   ]));
+  // Storage + build facts, filled in after the async probes resolve.
+  const storageLine = el('p', { class: 'hint mono', text: 'Checking device storage…' });
+  const persistLine = el('p', { class: 'hint' });
+  const versionLine = el('p', { class: 'hint mono' });
+  Promise.all([
+    navigator.storage?.estimate?.() ?? Promise.resolve(null),
+    navigator.storage?.persisted?.() ?? Promise.resolve(false),
+    swVersion(),
+  ]).then(([est, persisted, version]) => {
+    storageLine.textContent = est && est.quota
+      ? `Storage used on this device: ${fmtBytes(est.usage || 0)} of ${fmtBytes(est.quota)} available.`
+      : 'Storage estimate not available in this browser.';
+    persistLine.textContent = persisted
+      ? 'Protected from auto-deletion: yes.'
+      : 'Protected from auto-deletion: not yet — tap the button below, and back up often.';
+    persistLine.classList.toggle('warn-text', !persisted);
+    versionLine.textContent = version ? `App version: ${version}` : '';
+  }).catch(() => { storageLine.textContent = ''; });
+
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Data safety' }),
     el('p', { class: 'hint', text: 'Records stay on this phone only. This asks your browser not to auto-delete them (some browsers clear unused data after a while) — it is not a backup, so export often.' }),
+    storageLine,
+    persistLine,
     el('p', { class: 'hint', text: 'Not legal advice. No audio recording (illegal in California without all-party consent).' }),
     el('div', { class: 'actions' }, [persistBtn]),
+    versionLine,
   ]));
 }

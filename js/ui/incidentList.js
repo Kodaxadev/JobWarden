@@ -144,7 +144,7 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
     ]));
   }
   if ((item.attachments || []).length) {
-    host.appendChild(el('div', { class: 'thumbs' }, item.attachments.map(a => el('img', { class: 'thumb-img', src: attachmentUrl(a), alt: a.name }))));
+    host.appendChild(el('div', { class: 'thumbs' }, item.attachments.map(a => el('img', { class: 'thumb-img', src: attachmentUrl(a), alt: a.name, loading: 'lazy', decoding: 'async' }))));
   }
 
   const hist = item.editLog || [];
