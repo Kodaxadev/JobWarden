@@ -1,7 +1,7 @@
 // quickCapture.js — the <5-second "interrupted lunch" path. One concern: capturing a single
 // interruption as a standalone, timestamped, sealed record the moment it happens — zero typing
 // required. The fact is the strongest evidence when it's saved AT the interruption, not later.
-import { el, clear, toast } from '../ui/dom.js';
+import { el, clear, toast, trapFocus } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { createIncident } from '../domain/incidentModel.js';
 import { addIncident } from '../data/incidentRepo.js';
@@ -40,8 +40,9 @@ export async function openInterruptedLunch({ onSaved } = {}) {
   let by = '';
   const attachments = [];
 
+  let untrap = () => {};
   const close = () => {
-    document.removeEventListener('keydown', onKey, true);
+    untrap();
     overlay.remove();
     if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
   };
@@ -103,17 +104,7 @@ export async function openInterruptedLunch({ onSaved } = {}) {
   const overlay = el('div', { class: 'overlay' }, [sheet]);
   overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
 
-  const onKey = (e) => {
-    if (e.key === 'Escape') { e.preventDefault(); close(); return; }
-    if (e.key === 'Tab') {
-      const f = [...sheet.querySelectorAll('button,input,textarea')].filter(x => !x.hidden && x.offsetParent !== null);
-      if (!f.length) return;
-      const i = f.indexOf(document.activeElement);
-      const next = e.shiftKey ? (i <= 0 ? f.length - 1 : i - 1) : (i + 1) % f.length;
-      e.preventDefault(); f[next].focus();
-    }
-  };
-  document.addEventListener('keydown', onKey, true);
   document.body.appendChild(overlay);
+  untrap = trapFocus(sheet, close);
   chips[0].focus();
 }

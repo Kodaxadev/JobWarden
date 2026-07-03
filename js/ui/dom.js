@@ -33,13 +33,32 @@ export function toast(msg, ms = 2600) {
   _toastTimer = setTimeout(() => t.classList.remove('show'), ms);
 }
 
+// Trap Tab focus within `container`; route Escape to onEscape. Returns a cleanup fn.
+// One implementation for every modal surface (confirm dialog, quick-capture sheet).
+const FOCUSABLE = 'button, input, textarea, select, a[href], [tabindex]:not([tabindex="-1"])';
+export function trapFocus(container, onEscape) {
+  const onKey = (e) => {
+    if (e.key === 'Escape') { e.preventDefault(); onEscape?.(); return; }
+    if (e.key !== 'Tab') return;
+    const f = [...container.querySelectorAll(FOCUSABLE)].filter(x => !x.hidden && !x.disabled && x.offsetParent !== null);
+    if (!f.length) return;
+    const i = f.indexOf(document.activeElement);
+    const next = e.shiftKey ? (i <= 0 ? f.length - 1 : i - 1) : ((i + 1) % f.length);
+    e.preventDefault();
+    f[next].focus();
+  };
+  document.addEventListener('keydown', onKey, true);
+  return () => document.removeEventListener('keydown', onKey, true);
+}
+
 // Accessible confirm dialog (returns a Promise<boolean>). role=dialog + aria-modal,
 // focus moves into the dialog and is trapped, Escape cancels, focus returns to the trigger.
 export function confirmDialog(message, { confirmText = 'Delete', cancelText = 'Cancel', danger = true } = {}) {
   return new Promise(resolve => {
     const prevFocus = document.activeElement;
+    let untrap = () => {};
     const close = (val) => {
-      document.removeEventListener('keydown', onKey, true);
+      untrap();
       overlay.remove();
       if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
       resolve(val);
@@ -53,17 +72,8 @@ export function confirmDialog(message, { confirmText = 'Delete', cancelText = 'C
     ]);
     const overlay = el('div', { class: 'overlay' }, [box]);
     overlay.addEventListener('click', e => { if (e.target === overlay) close(false); });
-    const focusables = [cancelBtn, okBtn];
-    const onKey = (e) => {
-      if (e.key === 'Escape') { e.preventDefault(); close(false); }
-      else if (e.key === 'Tab') {
-        const i = focusables.indexOf(document.activeElement);
-        const next = e.shiftKey ? (i <= 0 ? focusables.length - 1 : i - 1) : (i + 1) % focusables.length;
-        e.preventDefault(); focusables[next].focus();
-      }
-    };
-    document.addEventListener('keydown', onKey, true);
     document.body.appendChild(overlay);
+    untrap = trapFocus(box, () => close(false));
     cancelBtn.focus();
   });
 }

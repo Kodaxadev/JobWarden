@@ -15,6 +15,11 @@ import { exportJson } from './export/exportJson.js';
 import { getActiveShift, saveActiveShift } from './data/shiftRepo.js';
 import { dueAlerts } from './domain/shiftClock.js';
 import { qs, clear, toast } from './ui/dom.js';
+import { logError } from './data/errorLog.js';
+
+// Local error capture (never sent anywhere) — surfaced in Settings so "it's broken" is diagnosable.
+window.addEventListener('error', e => logError(e.message, e.filename ? `${e.filename}:${e.lineno || ''}` : ''));
+window.addEventListener('unhandledrejection', e => logError(e.reason?.message || e.reason, 'promise'));
 
 const main = qs('#view');
 const bannerHost = qs('#banner');

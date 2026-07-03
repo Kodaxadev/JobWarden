@@ -4,6 +4,7 @@ import { getSettings, saveSettings } from '../data/settingsRepo.js';
 import { requestPersistence } from '../data/db.js';
 import { jurisdictionLabel } from '../config/jurisdictions.js';
 import { swVersion } from '../version.js';
+import { readErrors, clearErrors, errorLogText } from '../data/errorLog.js';
 
 // Bytes → a short human string that also handles GB (humanSize in media.js stops at MB).
 function fmtBytes(n) {
@@ -116,5 +117,21 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
     el('p', { class: 'hint', text: 'Not legal advice. No audio recording (illegal in California without all-party consent).' }),
     el('div', { class: 'actions' }, [persistBtn]),
     versionLine,
+  ]));
+
+  // Diagnostics — local error log, copyable for support. Zero privacy cost; nothing is sent.
+  const errs = readErrors();
+  container.appendChild(el('section', { class: 'card' }, [
+    el('h2', { text: 'Something went wrong?' }),
+    el('p', { class: 'hint', text: errs.length
+      ? `${errs.length} recent error${errs.length === 1 ? '' : 's'} recorded on this device. Nothing is sent anywhere — copy the log if you report a problem.`
+      : 'No recent errors recorded on this device.' }),
+    el('div', { class: 'actions' }, [
+      el('button', { class: 'btn', text: 'Copy error log', onclick: async () => {
+        try { await navigator.clipboard.writeText(errorLogText()); toast('Error log copied'); }
+        catch { toast('Copy not available on this browser'); }
+      } }),
+      errs.length ? el('button', { class: 'btn', text: 'Clear log', onclick: () => { clearErrors(); toast('Cleared'); renderSettingsView(container, { onShowRights, onShowLegal }); } }) : null,
+    ]),
   ]));
 }
