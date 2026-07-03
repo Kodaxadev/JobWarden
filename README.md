@@ -45,19 +45,19 @@ Vanilla ES modules, no build step, no runtime dependencies. One concern per file
 index.html · install.html · manifest.webmanifest · service-worker.js
 css/   styles · tokens · shell · forms · records
 js/
-  app.js                       bootstrap · view routing · app-wide shift-alert monitor
+  app.js · installPage.js · version.js   bootstrap · routing · shift-alert monitor · SW version query
   config/  infractionTypes (type catalog + field map) · uiCopy · jurisdictions
   rules/   index (getRules dispatch + finding labels) · california · newYork (draft)
-  domain/  timeUtils · breakRules (meal/rest/2nd-meal/waiver/off-clock/on-duty/final-pay) ·
-           incidentModel (schema, edit-diff, soft-delete) · integrity (SHA-256 content+record seals) ·
-           patterns (aggregate roll-ups) · shiftClock (live shift math)
-  data/    db (IndexedDB) · incidentRepo · settingsRepo · shiftRepo (active shift)
-  capture/ captureForm · captureFields · quickCapture (interrupted-lunch) · geo · media
-  ui/      dom · icons · onboarding · incidentList · exportView · settingsView ·
-           shiftPanel · rightsFaq · legalView
-  export/  download · exportJson · exportCsv · exportReport · exportSummary ·
-           reportBrand · emailExport · importBackup · backup
-tests/     Node built-in runner — 93 tests
+  domain/  types (JSDoc typedefs) · timeUtils · breakRules (meal/rest/2nd-meal/waiver/off-clock/on-duty/
+           final-pay/daily-OT) · incidentModel (schema, edit-diff, soft-delete, sanity warnings) ·
+           integrity (versioned SHA-256 content+record seals) · patterns (roll-ups + weekly OT) · shiftClock
+  data/    db (IndexedDB) · incidentRepo · settingsRepo · shiftRepo · errorLog (local ring buffer)
+  capture/ captureForm · captureFields · quickCapture (interrupted-lunch) · geo · media (downscale on ingest)
+  ui/      dom (el + shared focus trap) · icons · theme (dark/light/system) · onboarding · incidentList
+           (filter/group/scoped-export) · exportView · settingsView · shiftPanel · rightsFaq · legalView
+  export/  download · exportJson (Blob backups) · exportCsv · exportReport · exportSummary ·
+           reportBrand (paper mode) · emailExport · importBackup · backup
+tests/     Node built-in runner — 105 tests
 docs/      LEGAL_FOUNDATION.md · superpowers/plans/ (design + Phase 3 plan)
 scripts/   build-app-icons.mjs (SVG → PNG app icons)
 ```
@@ -69,7 +69,7 @@ Rule-engine and export logic are covered by committed tests under `tests/`, no d
 npm test          # alias for: node --test
 ```
 
-The suite (**93 tests** at last run) covers meal timing and waivers (measured in hours *worked*), the >10h second-meal rule, picked-issue assertions (a chip alone produces its finding), on-duty-meal agreements, final-pay/waiting-time timing, off-the-clock minutes, the exempt/AWS/CBA caveats, versioned content + record sealing (including legacy-seal survival across schema growth and finalPay tamper detection), the New York rule set (noon/evening/night §162 windows, overnight shifts), the pattern + interruption roll-ups, the live shift clock, the quick-capture draft, email summary + backup import round-trips, CSV formula-injection neutralization (CWE-1236), and a plain-language copy guard. After changing any cached asset, bump `CACHE` in `service-worker.js` so installed clients update.
+The suite (**105 tests** at last run) covers meal timing and waivers (measured in hours *worked*), the >10h second-meal rule, picked-issue assertions (a chip alone produces its finding), daily + weekly overtime roll-ups, on-duty-meal agreements, final-pay/waiting-time timing, off-the-clock minutes, the exempt/AWS/CBA caveats, non-blocking time-sanity warnings, versioned content + record sealing (including legacy-seal survival across schema growth and finalPay tamper detection), the New York rule set (noon/evening/night §162 windows, overnight shifts), the pattern + interruption roll-ups, the live shift clock, the quick-capture draft, email summary + backup build/import round-trips, CSV formula-injection neutralization (CWE-1236), and a plain-language copy guard. Lint (`npm run lint`) and type-check (`npm run typecheck`, JSDoc + `tsc --checkJs` over the domain layer) run alongside tests in CI. After changing any cached asset, bump `CACHE` in `service-worker.js` so installed clients update.
 
 ## Design
 The "Field Log" UI: plain-language, navy-and-gold "legal authority" branding on a dark canvas, self-hosted fonts (Geist / Geist Mono / Cinzel), offline-safe icons from `lucide-static`, and WCAG 2.1 AA contrast/structure.

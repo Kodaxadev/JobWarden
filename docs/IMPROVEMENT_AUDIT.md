@@ -13,6 +13,30 @@ or ceiling) · 🟡 Medium (friction, drift risk) · ⚪ Low (polish).
 
 ---
 
+## Progress — shipped 2026-07-03 (SW v52→v58)
+
+Most of the actionable list below is now done and verified (105 tests, eslint + `tsc --checkJs`
++ tests all green in CI):
+
+- **✅ Photo downscaling on ingest** (~2000px, 80% smaller; seal hashes the stored bytes) + **Blob-built backups** (no more single megastring). §3, §8.
+- **✅ Weekly-hours roll-up + daily-OT note** (seven 7-hour days now flags as a >40h week; CA daily OT >8h/>12h, exempt/AWS-aware). §2.
+- **✅ Records filtering + month grouping + teaching empty state + scoped export** (filter to one employer → report exactly those). §6.
+- **✅ eslint (flat) + JSDoc typedefs with `tsc --checkJs` on the domain layer, both in CI**; fixed the Date-coercion + cross-env Buffer issues the typecheck surfaced. §4, §9.
+- **✅ Time-sanity validation warnings** (never blocking) + **overnight date convention** documented + hinted. §2.
+- **✅ Statute-of-limitations nudge** on records older than ~2 years. §2.
+- **✅ SW update toast + version + storage estimate in Settings**; **security headers + CSP on all pages** (microphone hard-blocked at the platform); **font preload**, **lazy thumbnails**. §4, §5, §8.
+- **✅ Light theme** (opt-in; dark stays default; all text AA-verified). §6.
+- **✅ Local error-log ring buffer + Settings diagnostics**; **one shared focus trap**. §9, §4.
+- **✅ Landing answers "can my employer see it?"**. §1.
+
+**Still open** (unchanged below): 🔴 attorney review (external), 🔴/🟠 **Spanish/i18n** — the
+string layer is a clean refactor but the *legal-adjacent content must be human-translated*, so
+it's a dedicated project, not an auto-translate; the fuller catalog additions in §2; E2EE sync
+(a deliberate cut); Playwright in CI (set up recommended, needs a browser runner); trusted
+timestamping; per-record *checkbox* selection (the filter-scoped export covers the main use case).
+
+---
+
 ## 1. Product & Strategy
 
 ### 🔴 No Spanish. (L)
