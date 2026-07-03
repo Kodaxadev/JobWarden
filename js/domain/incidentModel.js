@@ -181,3 +181,26 @@ export function validateIncident(i) {
   if (!i.types || i.types.length === 0) errors.push('Pick at least one issue type.');
   return { valid: errors.length === 0, errors };
 }
+
+const _mins = t => { const m = /^(\d{1,2}):(\d{2})$/.exec(t || ''); return m ? (+m[1]) * 60 + (+m[2]) : null; };
+// Overnight-aware span: if end is at/before start, assume it crossed midnight (+24h).
+const _span = (a, b) => { if (a == null || b == null) return null; let d = b - a; if (d <= 0) d += 1440; return d; };
+
+// Non-blocking sanity checks — likely-typo signals, NOT validation. The app records facts, so
+// these never block a save; the capture screen asks "save anyway?" so a real (if unusual) shift
+// still goes in, and a fat-fingered time gets a chance to be fixed. Convention: incidentDate is
+// the date the shift STARTED (an overnight shift ending after midnight keeps its clock-in date).
+export function sanityWarnings(i = {}) {
+  const w = [];
+  const ci = _mins(i.clockIn), co = _mins(i.clockOut);
+  const span = _span(ci, co);
+  if (span != null && span > 16 * 60) w.push('This shift is longer than 16 hours — double-check the start and end times.');
+  const mlen = _span(_mins(i.meal?.start), _mins(i.meal?.end));
+  if (mlen != null && mlen > 4 * 60) w.push('This lunch is longer than 4 hours — double-check the lunch times.');
+  if (i.incidentDate) {
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const d = new Date(String(i.incidentDate) + 'T00:00:00');
+    if (!Number.isNaN(d.getTime()) && d.getTime() > today.getTime()) w.push('This date is in the future.');
+  }
+  return w;
+}

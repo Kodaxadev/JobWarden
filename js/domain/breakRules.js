@@ -198,6 +198,15 @@ export function analyze(i) {
   }
   const { ci, hrs } = computeHours(i);
   if (hrs != null) flags.push(f('hoursWorked', Number(hrs.toFixed(2))));
+  // Daily-overtime context (facts, never dollars): CA pays 1.5× after 8h and 2× after 12h in a
+  // day. Suppressed for exempt/AWS, where daily OT may not apply. Informational — a long day is
+  // only a problem if the premium wasn't paid, which the app can't know; it points, doesn't judge.
+  if (hrs != null && hrs > 8 && i.classification?.payType !== 'salary_exempt' && i.classification?.awsElection !== 'yes') {
+    const note = hrs > 12
+      ? 'Worked over 12 hours in a day — California owes 1.5× after 8 hours and 2× after 12. Make sure the overtime premium was paid. Not computed here.'
+      : 'Worked over 8 hours in a day — California daily overtime (1.5×) may apply. Make sure the premium was paid. Not computed here.';
+    flags.push(f('dailyOvertime', Number(hrs.toFixed(2)), note));
+  }
   const rm = mealsRequired(hrs);
   if (rm != null) flags.push(f('mealsRequired', rm));
   flags.push(...firstMealFlags(i, ci, hrs));

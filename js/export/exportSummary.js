@@ -31,9 +31,11 @@ export async function buildSummaryHtml(incidents, settings = {}) {
     settings.employer && `Employer: ${esc(settings.employer)}`].filter(Boolean).join(' · ');
   const range = s.range.from ? `${esc(formatDate(s.range.from))} – ${esc(formatDate(s.range.to))} (${esc(s.range.span)})` : '';
 
+  const ot = s.weeklyOvertime;
   const totals = [
     ...s.headline.map(h => `<li><b>${h.count}</b> ${esc(h.label)}</li>`),
     s.offClock.records ? `<li><b>${s.offClock.totalMinutes} min</b> off-the-clock work, across ${s.offClock.records} shift(s)</li>` : '',
+    ot && ot.count ? `<li><b>${ot.count} week(s)</b> over 40 hours worked (${ot.totalOtHours}h total over 40, Sun–Sat basis) — possible weekly overtime</li>` : '',
   ].filter(Boolean).join('');
 
   const places = s.byWorkplace.length > 1

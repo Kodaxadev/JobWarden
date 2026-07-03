@@ -179,3 +179,20 @@ test('second meal past the 10th hour of work IS late', () => {
   }));
   assert.ok(flags.some(f => f.key === 'secondMealLate'));
 });
+
+// --- daily overtime context note (audit §2) --------------------------------
+
+test('over 8 hours gets a daily-OT note; over 12 mentions double time', () => {
+  assert.ok(analyze(base({ clockIn: '08:00', clockOut: '17:30', types: ['late_meal'] })).some(f => f.key === 'dailyOvertime'));
+  const long = analyze(base({ clockIn: '06:00', clockOut: '19:30', types: ['late_meal'] })).find(f => f.key === 'dailyOvertime');
+  assert.ok(long && /2×|double/i.test(long.note));
+});
+
+test('daily-OT note is suppressed for exempt and AWS (where daily OT may not apply)', () => {
+  assert.equal(analyze(base({ clockIn: '08:00', clockOut: '18:00', types: ['late_meal'], classification: { payType: 'salary_exempt' } })).some(f => f.key === 'dailyOvertime'), false);
+  assert.equal(analyze(base({ clockIn: '08:00', clockOut: '18:00', types: ['late_meal'], classification: { awsElection: 'yes' } })).some(f => f.key === 'dailyOvertime'), false);
+});
+
+test('an 8-hour day gets no daily-OT note', () => {
+  assert.equal(analyze(base({ clockIn: '09:00', clockOut: '17:00', types: ['late_meal'] })).some(f => f.key === 'dailyOvertime'), false);
+});

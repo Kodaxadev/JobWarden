@@ -63,3 +63,23 @@ test('hydrateIncident upgrades legacy records and recomputes current flags', () 
   assert.deepEqual(hydrated.meal2, { start: '', end: '', taken: null, waived: false });
   assert.ok(hydrated.flags.find(f => f.key === 'secondMealMissed'));
 });
+
+// --- non-blocking time-sanity warnings (audit §2) --------------------------
+
+test('sanityWarnings flags an implausibly long shift but not a normal one', () => {
+  // 9:00 -> 8:00 reads as ~23h (a likely clock-out/clock-in swap) -> warns.
+  assert.ok(model.sanityWarnings({ clockIn: '09:00', clockOut: '08:00' }).some(w => /16 hours/.test(w)));
+  // A real 8.5h day is silent.
+  assert.equal(model.sanityWarnings({ clockIn: '09:00', clockOut: '17:30' }).length, 0);
+});
+
+test('sanityWarnings does not false-alarm on a genuine overnight shift', () => {
+  // 22:00 -> 06:00 is 8h across midnight, not a typo.
+  assert.equal(model.sanityWarnings({ clockIn: '22:00', clockOut: '06:00' }).length, 0);
+});
+
+test('sanityWarnings flags a future date and an over-long lunch', () => {
+  const future = new Date(Date.now() + 5 * 86400000).toISOString().slice(0, 10);
+  assert.ok(model.sanityWarnings({ incidentDate: future }).some(w => /future/.test(w)));
+  assert.ok(model.sanityWarnings({ clockIn: '08:00', clockOut: '18:00', meal: { start: '10:00', end: '15:00' } }).some(w => /lunch/.test(w)));
+});

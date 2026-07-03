@@ -29,6 +29,36 @@ export function dateRange(incidents = []) {
   return { from, to, days, span: spanLabel(days) };
 }
 
+// Sunday-anchored week key for a 'YYYY-MM-DD' date (local).
+function weekStartOf(dateStr) {
+  const d = new Date(String(dateStr) + 'T00:00:00');
+  if (Number.isNaN(d.getTime())) return null;
+  d.setDate(d.getDate() - d.getDay());   // back to Sunday
+  const p = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+// Weekly overtime: sum hours WORKED into Sun–Sat weeks and surface weeks over 40. This is the
+// cross-record view a single day can't show (seven 7-hour days is 49h). Hours are facts already
+// computed per record; summing them is arithmetic, not damage math — never dollars. The employer's
+// official workweek may start on another day, so the Sun–Sat basis is disclosed as a caveat.
+export function weeklyOvertime(incidents = []) {
+  const byWeek = {};
+  for (const i of incidents) {
+    const hv = (i.flags || []).find(f => f.key === 'hoursWorked')?.value;
+    if (hv == null || !i.incidentDate) continue;
+    const k = weekStartOf(i.incidentDate);
+    if (!k) continue;
+    byWeek[k] = (byWeek[k] || 0) + Number(hv);
+  }
+  const round2 = n => Math.round(n * 100) / 100;
+  const weeks = Object.entries(byWeek)
+    .map(([weekStart, hours]) => ({ weekStart, hours: round2(hours), overtime: round2(Math.max(0, hours - 40)) }))
+    .filter(w => w.overtime > 0)
+    .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
+  return { weeks, count: weeks.length, totalOtHours: round2(weeks.reduce((s, w) => s + w.overtime, 0)) };
+}
+
 const hasFlag = (i, key) => (i.flags || []).some(f => f.key === key);
 const flagValue = (i, key) => (i.flags || []).find(f => f.key === key)?.value;
 const isReported = i => !!(i.notice && i.notice.to) || (i.types || []).includes('complaint_raised');
@@ -93,6 +123,7 @@ export function summarizePatterns(incidents = []) {
     findings,
     headline,
     offClock: { records: offClockRecords, totalMinutes: offClockMinutes },
+    weeklyOvertime: weeklyOvertime(incidents),
     interruptions: interruptionRollup(incidents),
     reportedCount: incidents.filter(isReported).length,
     withProofCount: incidents.filter(i => (i.attachments || []).length > 0).length,

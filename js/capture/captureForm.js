@@ -1,9 +1,9 @@
 // captureForm.js — the Log screen. One concern: composing the adaptive capture on one screen
 // (a slim live bar, "What happened?", the detail sections that question reveals, proof, save)
 // and persisting it. The detail sections come from captureFields; only what was picked shows.
-import { el, clear, toast } from '../ui/dom.js';
+import { el, clear, toast, confirmDialog } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { createIncident, reviseIncident, validateIncident } from '../domain/incidentModel.js';
+import { createIncident, reviseIncident, validateIncident, sanityWarnings } from '../domain/incidentModel.js';
 import { addIncident, putIncident } from '../data/incidentRepo.js';
 import { getSettings } from '../data/settingsRepo.js';
 import { todayDateStr } from '../domain/timeUtils.js';
@@ -85,6 +85,11 @@ export async function renderCaptureForm(container, { onSaved, existing, template
     if (!valid) {
       toast(errors[0] === 'Pick at least one issue type.' ? 'Pick what happened first' : errors[0]);
       whatHappened.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    // Likely-typo check — never blocks; just offers a chance to fix a fat-fingered time.
+    const warnings = sanityWarnings(draft);
+    if (warnings.length && !await confirmDialog(warnings[0] + ' Save anyway?', { confirmText: 'Save anyway', cancelText: 'Go back', danger: false })) {
       return;
     }
     try {

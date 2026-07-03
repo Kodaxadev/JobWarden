@@ -115,3 +115,32 @@ test('on-duty meal findings appear in the headline totals', () => {
   assert.ok(keys.includes('interruptedMeal'));
   assert.ok(keys.includes('onDutyNoAgreement'));
 });
+
+// --- weekly overtime roll-up (audit §2) ------------------------------------
+
+import { weeklyOvertime } from '../js/domain/patterns.js';
+
+test('weekly overtime surfaces a >40h week that no single day shows', () => {
+  // Seven 7-hour days in one Sun–Sat week = 49h worked, 9h over 40.
+  const days = ['2026-06-07', '2026-06-08', '2026-06-09', '2026-06-10', '2026-06-11', '2026-06-12', '2026-06-13']
+    .map(d => createIncident({ incidentDate: d, types: ['off_clock_work'], clockIn: '09:00', clockOut: '16:00' }));
+  const ot = weeklyOvertime(days);
+  assert.equal(ot.count, 1);
+  assert.equal(ot.totalOtHours, 9);
+  assert.equal(ot.weeks[0].hours, 49);
+});
+
+test('a 40-hour week is not flagged', () => {
+  const days = ['2026-06-08', '2026-06-09', '2026-06-10', '2026-06-11', '2026-06-12']
+    .map(d => createIncident({ incidentDate: d, types: ['off_clock_work'], clockIn: '09:00', clockOut: '17:00' })); // 8h each = 40
+  assert.equal(weeklyOvertime(days).count, 0);
+});
+
+test('summarizePatterns includes the weekly-overtime roll-up', () => {
+  const week = ['2026-06-08', '2026-06-09', '2026-06-10', '2026-06-11', '2026-06-12', '2026-06-13']
+    .map(d => createIncident({ incidentDate: d, types: ['off_clock_work'], clockIn: '08:00', clockOut: '16:00' })); // 6×8h = 48
+  const s = summarizePatterns(week);
+  assert.ok(s.weeklyOvertime);
+  assert.equal(s.weeklyOvertime.count, 1);
+  assert.equal(s.weeklyOvertime.totalOtHours, 8);
+});

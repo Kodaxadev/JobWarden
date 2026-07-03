@@ -146,3 +146,16 @@ test('v2 seals treat a "no" answer as substance — flipping it to unknown is de
   const tampered = { ...sealed, meal: { ...sealed.meal, relievedOfDuty: null } };
   assert.equal((await verifyIntegrity(tampered)).contentOk, false);
 });
+
+// --- the two-sided seal contract: empties prune, "no" answers survive -------
+
+import { pruneEmpty } from '../js/domain/integrity.js';
+
+test('pruneEmpty drops empties but keeps false/0 (the seal forward-compat contract)', () => {
+  // '' and null prune away (so a new empty-defaulted field never breaks an old seal);
+  // false and 0 are substantive answers and MUST be kept (so "no" can't be tampered to "unknown").
+  assert.deepEqual(
+    pruneEmpty({ a: '', b: null, c: false, d: 0, e: 'x', empties: {}, list: [], nested: { z: '' } }),
+    { c: false, d: 0, e: 'x' }
+  );
+});

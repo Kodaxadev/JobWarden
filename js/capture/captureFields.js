@@ -111,10 +111,13 @@ export function whatHappenedSection(state, { onChange } = {}) {
 // ---- detail sections (one per field-group) --------------------------------
 function hoursSection(state) {
   return section('hours', 'clock', 'Your hours', 'So we can check whether breaks came in time.',
-    [el('div', { class: 'grid2' }, [
-      timeRow('Started work', state.clockIn, v => state.clockIn = v),
-      timeRow('Stopped work', state.clockOut, v => state.clockOut = v),
-    ])]);
+    [
+      el('div', { class: 'grid2' }, [
+        timeRow('Started work', state.clockIn, v => state.clockIn = v),
+        timeRow('Stopped work', state.clockOut, v => state.clockOut = v),
+      ]),
+      el('p', { class: 'hint', text: 'Worked past midnight? Use the date your shift started.' }),
+    ]);
 }
 
 function lunchSection(state) {

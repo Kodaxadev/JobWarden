@@ -56,6 +56,18 @@ function glanceCard(items) {
   const interruptLine = intr.total > 0 && intr.byActor.length
     ? el('p', { class: 'glance-interrupt', text: `Lunch interrupted ${intr.total}× — ${intr.byActor.map(a => `${a.actor} (${a.count})`).join(', ')}` })
     : null;
+
+  const ot = s.weeklyOvertime;
+  const otLine = ot && ot.count > 0
+    ? el('p', { class: 'glance-interrupt', text: `${ot.count} week${ot.count === 1 ? '' : 's'} over 40 hours (${ot.totalOtHours}h total over 40, Sun–Sat) — possible weekly overtime. Your employer's workweek may start on another day; confirm it.` })
+    : null;
+
+  // Statute-of-limitations nudge: facts + route to help, no per-claim deadline math.
+  const oldestDays = s.range.from ? Math.floor((Date.now() - Date.parse(s.range.from + 'T00:00:00')) / 86400000) : 0;
+  const solLine = oldestDays >= 730
+    ? el('p', { class: 'glance-sol', text: `Your oldest record is over ${Math.floor(oldestDays / 365)} years old. Many wage claims have filing deadlines (often around three years, some shorter) — it's worth getting advice before they pass.` })
+    : null;
+
   return el('section', { class: 'card glance' }, [
     el('h2', { text: 'Your records at a glance' }),
     el('p', { class: 'glance-range', text: `${items.length} shift${items.length === 1 ? '' : 's'} logged${range ? ` · ${range}` : ''}` }),
@@ -63,6 +75,8 @@ function glanceCard(items) {
       ? el('div', { class: 'kpi-grid' }, stats)
       : el('p', { class: 'hint', text: 'No possible issues flagged yet.' }),
     interruptLine,
+    otLine,
+    solLine,
     el('p', { class: 'glance-foot hint', text: `${s.reportedCount} reported · ${s.withProofCount} with photo proof. Make a one-page summary in Export.` }),
   ]);
 }
