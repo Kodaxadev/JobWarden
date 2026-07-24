@@ -3,6 +3,7 @@ import { blobToDataUrl } from '../capture/media.js';
 import { downloadBlob, dateStamp } from './download.js';
 import { manifestHash, HASH_ALGO } from '../domain/integrity.js';
 import { jurisdictionLabel } from '../config/jurisdictions.js';
+import { encryptBackup } from './backupCrypto.js';
 
 async function serializeAttachments(atts = []) {
   const out = [];
@@ -67,5 +68,14 @@ export async function buildBackupPayload(incidents, settings) {
 export async function exportJson(incidents, settings) {
   const { blob, count, filename } = await buildBackupBlob(incidents, settings);
   downloadBlob(filename, blob);
+  return count;
+}
+
+// Same backup, locked with a passphrase. Same records, same fingerprints — only the file
+// on disk (and in whatever inbox it lands in) is unreadable without the passphrase.
+export async function exportEncryptedJson(incidents, settings, passphrase) {
+  const { parts, count } = await buildBackupParts(incidents, settings);
+  const blob = await encryptBackup(parts, passphrase);
+  downloadBlob(`jobwarden-backup-${dateStamp()}.jwbk`, blob);
   return count;
 }

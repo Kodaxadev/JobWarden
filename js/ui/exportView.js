@@ -2,9 +2,11 @@
 import { el, clear, toast, confirmDialog } from './dom.js';
 import { getAllIncidents } from '../data/incidentRepo.js';
 import { getSettings, markBackedUp } from '../data/settingsRepo.js';
-import { exportJson } from '../export/exportJson.js';
+import { exportJson, exportEncryptedJson } from '../export/exportJson.js';
 import { emailRecords } from '../export/emailExport.js';
 import { importBackup, parseBackup } from '../export/importBackup.js';
+import { isEncryptedBackup, decryptBackup } from '../export/backupCrypto.js';
+import { choosePassphrase, askPassphrase } from './passphraseDialog.js';
 import { exportCsv } from '../export/exportCsv.js';
 import { openPrintReport } from '../export/exportReport.js';
 import { openPrintSummary } from '../export/exportSummary.js';
@@ -31,6 +33,18 @@ export async function renderExportView(container, { onChanged } = {}) {
         })),
       action('Save full backup', 'Download a complete copy with photos to this device.', 'btn',
         guard(async () => { const n = await exportJson(items, settings); await markBackedUp(); toast(`Backed up ${n} record(s)`); onChanged?.(); })),
+      action('Save locked backup', 'The same backup, locked with a passphrase — so a copy sitting in your email is unreadable to anyone else. Lose the passphrase and the file is gone for good.', 'btn',
+        guard(async () => {
+          const pass = await choosePassphrase();
+          if (!pass) return;
+          toast('Locking the backup…', 8000);
+          try {
+            const n = await exportEncryptedJson(items, settings, pass);
+            await markBackedUp();
+            toast(`Locked backup saved · ${n} record(s)`);
+            onChanged?.();
+          } catch (e) { toast(e?.message || 'Could not lock the backup'); }
+        })),
       action('Make spreadsheet', 'A table you can open in Excel or Google Sheets.', 'btn',
         guard(async () => { exportCsv(items); toast('Spreadsheet saved'); })),
       action('Make printable report', 'A report to print or save as PDF for the Labor Commissioner, a lawyer, or HR.', 'btn',
@@ -42,14 +56,35 @@ export async function renderExportView(container, { onChanged } = {}) {
 
   // Restore — the counterpart to backup. Not guarded by record count (the user may be restoring
   // onto a fresh install with nothing here yet).
-  const fileInput = el('input', { type: 'file', accept: 'application/json,.json' });
+  const fileInput = el('input', { type: 'file', accept: 'application/json,.json,.jwbk' });
   fileInput.style.display = 'none';
+
+  // Read either kind of backup: plain JSON, or a locked file the user unlocks here.
+  // Returns the backup text, or null when the user backs out. A typo re-asks in place —
+  // someone restoring evidence onto a new phone should not have to walk the file picker
+  // again for a mistyped character.
+  async function readBackupText(file) {
+    const buffer = await file.arrayBuffer();
+    if (!isEncryptedBackup(buffer)) return new TextDecoder().decode(buffer);
+    for (let attempt = 0; ; attempt++) {
+      const pass = await askPassphrase(attempt > 0);
+      if (!pass) return null;
+      toast('Unlocking…', 8000);
+      try { return await decryptBackup(buffer, pass); }
+      catch (e) { if (attempt >= 4) throw e; }
+    }
+  }
+
   fileInput.addEventListener('change', async () => {
     const file = fileInput.files && fileInput.files[0];
     fileInput.value = '';
     if (!file) return;
     let text, parsed;
-    try { text = await file.text(); parsed = parseBackup(text); }
+    try {
+      text = await readBackupText(file);
+      if (text == null) return;
+      parsed = parseBackup(text);
+    }
     catch (e) { return toast(e.message || 'Could not read that file'); }
     if (!await confirmDialog(`Restore ${parsed.records.length} record(s) from this backup? Your current records stay; duplicates are skipped.`, { confirmText: 'Restore', danger: false })) return;
     try {
@@ -61,7 +96,7 @@ export async function renderExportView(container, { onChanged } = {}) {
 
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Restore from a backup' }),
-    el('p', { class: 'hint', text: 'Bring records back from a backup file — after reinstalling or on a new phone. Adds to what is here; duplicates are skipped.' }),
+    el('p', { class: 'hint', text: 'Bring records back from a backup file — after reinstalling or on a new phone. Plain or locked files both work; a locked one will ask for its passphrase. Adds to what is here; duplicates are skipped.' }),
     el('div', { class: 'actions' }, [el('button', { class: 'btn', text: 'Choose a backup file', onclick: () => fileInput.click() })]),
     fileInput,
   ]));

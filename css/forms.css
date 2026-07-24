@@ -11,7 +11,7 @@
 @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
 /* Recessed wells: inputs invert the light — sunk below the card, a shaded lip at the top,
    a hairline of caught light at the bottom rim (the One-Light Rule, inverted). */
-input[type=text], input[type=time], input[type=date], input[type=number], select, textarea {
+input[type=text], input[type=password], input[type=time], input[type=date], input[type=number], select, textarea {
   display: block; width: 100%; min-width: 0; max-width: 100%; background: var(--field-bg); color: var(--text);
   border: 1px solid var(--line-2); border-radius: var(--radius-sm); padding: 13px 14px; font: 400 16px var(--font);
   min-height: 50px; box-shadow: inset 0 1px 3px rgba(0,0,0,.5), inset 0 6px 12px -8px rgba(0,0,0,.35), inset 0 -1px 0 rgba(255,255,255,.045); transition: border-color .15s ease, box-shadow .15s ease;
@@ -88,10 +88,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .shift-live .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); }
 .shift-since { font-family: var(--mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
 .shift-meal { font-size: 14.5px; line-height: 1.4; padding: 11px 13px; border-radius: var(--radius-sm); margin-bottom: 12px; border: 1px solid var(--line-2); color: var(--muted); background: rgba(0,0,0,.14); box-shadow: inset 0 1px 2px rgba(0,0,0,.22); }
-.shift-meal.soon { color: var(--incident); border-color: rgba(230,177,90,.42); background: rgba(230,177,90,.08); }
+.shift-meal.soon { color: var(--incident); border-color: var(--iline); background: var(--ifill); }
 .shift-meal.over { color: #ffc1c1; border-color: rgba(224,89,77,.45); background: rgba(224,89,77,.1); font-weight: 500; }
 .shift-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .shift-actions .btn { flex: 1 1 0; min-width: 108px; }
+.shift-note { margin: 12px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--muted); }
 
 /* Quick capture sheet (interrupted lunch) */
 .quick-sheet { max-width: 460px; text-align: left; }

@@ -60,6 +60,15 @@ export async function renderShiftPanel(host, { settings = {}, onEndShift } = {})
       el('button', { type: 'button', class: 'btn', text: `Rest break (${shift.restCount || 0})`, onclick: addRest }),
       el('button', { type: 'button', class: 'btn', text: 'End shift', onclick: endShift }),
     ]));
+
+    // Honesty: the alert loop runs in the page. A closed app fires nothing, and there is no
+    // way around that without a server (Push) — so say it, and name the backup that works.
+    if (!st.firstMealTaken) {
+      body.appendChild(el('p', {
+        class: 'shift-note',
+        text: `Heads up: reminders only work while JobWarden is open. Leave it running, or set a phone alarm for ${fmt(fromMs(st.firstMealByMs))}.`,
+      }));
+    }
   }
 
   draw();

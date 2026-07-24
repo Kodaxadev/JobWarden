@@ -1,5 +1,5 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v59';
+const CACHE = 'jobwarden-v60';
 const ASSETS = [
   './', './index.html', './install.html', './privacy.html', './terms.html', './manifest.webmanifest',
   './css/styles.css', './css/tokens.css', './css/shell.css', './css/forms.css', './css/records.css', './css/install.css', './css/legal.css',
@@ -13,10 +13,13 @@ const ASSETS = [
   './js/rules/index.js', './js/rules/california.js', './js/rules/newYork.js',
   './js/data/db.js', './js/data/incidentRepo.js', './js/data/settingsRepo.js', './js/data/shiftRepo.js', './js/data/errorLog.js',
   './js/capture/geo.js', './js/capture/media.js', './js/capture/captureFields.js', './js/capture/captureForm.js', './js/capture/quickCapture.js',
-  './js/ui/dom.js', './js/ui/icons.js', './js/ui/incidentList.js', './js/ui/exportView.js', './js/ui/settingsView.js', './js/ui/onboarding.js', './js/ui/shiftPanel.js', './js/ui/rightsFaq.js', './js/ui/legalView.js', './js/ui/theme.js',
+  './js/ui/dom.js', './js/ui/icons.js', './js/ui/incidentList.js', './js/ui/exportView.js', './js/ui/settingsView.js', './js/ui/onboarding.js', './js/ui/shiftPanel.js', './js/ui/rightsFaq.js', './js/ui/legalView.js', './js/ui/theme.js', './js/ui/passphraseDialog.js',
   './js/export/download.js', './js/export/exportJson.js', './js/export/emailExport.js', './js/export/importBackup.js', './js/export/exportCsv.js',
-  './js/export/exportReport.js', './js/export/exportSummary.js', './js/export/reportBrand.js', './js/export/backup.js',
+  './js/export/exportReport.js', './js/export/exportSummary.js', './js/export/reportBrand.js', './js/export/backup.js', './js/export/backupCrypto.js',
 ];
+// Every module the app can import must be listed above, or the app breaks OFFLINE only —
+// the failure a browser tab never shows you. tests/serviceWorker.test.mjs walks the real
+// import graph from the entry points and fails if anything reachable is missing.
 
 self.addEventListener('install', e => {
   e.waitUntil(
@@ -41,9 +44,18 @@ self.addEventListener('message', e => {
   }
 });
 
+// Cache-first is right in production (offline is the point) and wrong in a dev loop, where
+// it serves the code you just replaced. On localhost only, go network-first with the cache as
+// the offline fallback — so a plain reload runs the edit, no fresh port required.
+const DEV_HOST = ['localhost', '127.0.0.1', '[::1]'].includes(self.location.hostname);
+
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  if (DEV_HOST) {
+    e.respondWith(fetch(req).catch(() => caches.match(req).then(hit => hit || Response.error())));
+    return;
+  }
   e.respondWith(
     caches.match(req).then(hit => hit || fetch(req).then(res => {
       if (res.ok) { // never cache an error page as if it were the asset

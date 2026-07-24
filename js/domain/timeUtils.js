@@ -19,12 +19,21 @@ export function combine(dateStr, timeStr) {
   return new Date(y, m - 1, d, hh, mm, 0, 0);
 }
 
-// Whole minutes from start to end. If end is earlier (overnight shift), add 24h.
+// Whole minutes from start to end. If end is earlier on the clock (overnight shift), the
+// end time is rolled to the NEXT CALENDAR DAY rather than having a flat 24h added — on a
+// DST-transition night a real day is 23 or 25 hours, and a worker is owed the hours they
+// actually worked. 10pm→6am is 8h normally, 7h across spring-forward, 9h across fall-back.
 export function minutesBetween(start, end) {
   if (!start || !end) return null;
-  let diff = (end - start) / MS_PER_MIN;
-  if (diff < 0) diff += 24 * 60; // crossed midnight
-  return Math.round(diff);
+  const target = end < start ? nextDay(end) : end;
+  return Math.round((target - start) / MS_PER_MIN);
+}
+
+// Same wall-clock time, one calendar day later, in local time. (A wall-clock time that
+// does not exist on that day — the spring-forward gap — normalizes forward, as it should.)
+function nextDay(d) {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1,
+    d.getHours(), d.getMinutes(), d.getSeconds(), d.getMilliseconds());
 }
 
 export function formatDuration(mins) {

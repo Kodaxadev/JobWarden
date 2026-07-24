@@ -137,6 +137,8 @@ section.band{ padding:42px 0; }
 .showcase ul.ticks{ list-style:none; padding:0; margin:0; }
 .showcase ul.ticks li{ position:relative; padding-left:24px; margin:8px 0; color:var(--muted); font-size:14.5px; }
 .showcase ul.ticks li::before{ content:"✓"; position:absolute; left:0; color:var(--ok); font-weight:700; }
+/* Honest limits, set off from the claims above so they read as disclosure, not fine print. */
+.showcase .sc-copy .caveat{ margin:16px 0 0; padding-top:13px; border-top:1px solid var(--line); font-size:13.5px; line-height:1.55; }
 .shot-wrap{ display:flex; justify-content:center; }
 
 .feat-grid{ display:grid; gap:13px; grid-template-columns:repeat(3,1fr); }

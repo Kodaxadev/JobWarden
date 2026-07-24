@@ -21,6 +21,7 @@
   --gold-1:#d8b54e; --gold-2:#b6912c; --on-gold:#14233c;
   --navy:#16263f; --navy-2:#223a61; --navy-deep:#0e1b2e;
   --incident:#e6b15a;                          /* findings / amber */
+  --iline:rgba(230,177,90,.42); --ifill:rgba(230,177,90,.08);  /* the amber "attention" tint pair */
   --danger:#e0594d; --danger-text:#ffc1c1;     /* readable light red on a danger tint */
   --ok:#7fcf92;                                /* evidence green */
   --gline:rgba(90,160,100,.34); --gfill:rgba(78,150,92,.14); --gtext:#86d597;
@@ -90,6 +91,7 @@
   --text:#16202e; --muted:#465063; --faint:#5a6474;
   --primary:#8a6a12; --primary-strong:#7a5d0f; --primary-deep:#6f5410;
   --incident:#8a5a08; --ok:#166b3a; --gtext:#166b3a;
+  --iline:rgba(138,90,8,.36); --ifill:rgba(138,90,8,.07);
   --gline:rgba(22,107,58,.4); --gfill:rgba(22,107,58,.09);
   --danger:#c0392b; --danger-text:#8a1c12;
   --field-bg:#f5f7fb;
@@ -105,6 +107,21 @@
   --page-glow:radial-gradient(135% 74% at 50% -16%, #dfe6f2 0%, rgba(223,230,242,0) 58%);
   --page-vignette:radial-gradient(140% 44% at 50% 112%, rgba(20,32,52,.06), rgba(20,32,52,0) 62%);
 }
+
+/* Three surfaces stay dark navy in BOTH themes — the brand mark, the live shift panel, and
+   the empty-state seal. They are the "instrument" of the design and inverting them would
+   flatten it. But light mode's ink is dark, and dark ink on dark navy is unreadable: the
+   header mark measured 1.87:1 and the shift status 1.68:1 before this block. So pin the
+   dark-theme ink inside them. Every value here is the dark theme's own, verified above. */
+:root[data-theme="light"] :is(.mark, .shift-panel, .empty-mark) {
+  --text:#eef1f6; --muted:#a8aebb; --faint:#949cab;
+  --primary:#cdab45; --primary-strong:#e6cd7e;
+  --incident:#e6b15a; --ok:#7fcf92; --gtext:#86d597;
+  --iline:rgba(230,177,90,.42); --ifill:rgba(230,177,90,.08);
+  --line:rgba(234,238,246,.09); --line-2:rgba(234,238,246,.16);
+  color: var(--text);
+}
+
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
