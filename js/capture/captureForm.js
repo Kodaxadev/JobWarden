@@ -8,6 +8,7 @@ import { addIncident, putIncident } from '../data/incidentRepo.js';
 import { getSettings } from '../data/settingsRepo.js';
 import { todayDateStr } from '../domain/timeUtils.js';
 import { renderShiftPanel } from '../ui/shiftPanel.js';
+import { reportSaveFailure } from '../ui/saveFailure.js';
 import { openInterruptedLunch } from './quickCapture.js';
 import { buildInitialState, whatHappenedSection, activeSections, proofSection } from './captureFields.js';
 
@@ -92,10 +93,16 @@ export async function renderCaptureForm(container, { onSaved, existing, template
     if (warnings.length && !await confirmDialog(warnings[0] + ' Save anyway?', { confirmText: 'Save anyway', cancelText: 'Go back', danger: false })) {
       return;
     }
+    const write = (rec) => (existing ? putIncident(rec) : addIncident(rec));
     try {
-      if (existing) await putIncident(draft); else await addIncident(draft);
+      await write(draft);
       toast(existing ? 'Record updated' : 'Saved on this phone ✓');
       onSaved?.(draft);
-    } catch (err) { toast('Could not save: ' + (err?.message || err)); }
+    } catch (err) {
+      // A record that will not save is evidence about to be lost, so this blocks rather
+      // than toasts, and offers the trade that keeps the facts (see saveFailure.js).
+      const r = await reportSaveFailure(err, draft, write);
+      if (r.saved) onSaved?.(draft);
+    }
   }
 }

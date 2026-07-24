@@ -70,6 +70,9 @@ body.onboarding .disclaimer { padding-bottom: calc(24px + env(safe-area-inset-bo
 /* Cool scrim, deepest at the center where the dialog sits — depth without backdrop-blur. */
 .overlay { position: fixed; inset: 0; background: radial-gradient(120% 90% at 50% 44%, rgba(4,5,8,.8), rgba(6,8,12,.68)); display: flex; align-items: center; justify-content: center; z-index: var(--z-overlay); padding: 20px; }
 .dialog { background: var(--sheen), var(--surface-3); border: 1px solid var(--line-2); border-radius: var(--radius-lg); padding: 22px; max-width: 360px; width: 100%; box-shadow: var(--shadow-3); }
+/* pre-line so a dialog can lead with a short true headline, then the explanation under it —
+   the save-failure path needs both, and a wall of one paragraph buries the headline. */
+.dialog > p { margin: 0; white-space: pre-line; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
 
 /* Passphrase dialog. The "you cannot recover this" warning is deliberately full-size

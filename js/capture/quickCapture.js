@@ -6,6 +6,7 @@ import { icon } from '../ui/icons.js';
 import { createIncident } from '../domain/incidentModel.js';
 import { addIncident } from '../data/incidentRepo.js';
 import { getSettings } from '../data/settingsRepo.js';
+import { reportSaveFailure } from '../ui/saveFailure.js';
 import { fileToAttachment, attachmentUrl, humanSize } from './media.js';
 import { todayDateStr } from '../domain/timeUtils.js';
 
@@ -75,12 +76,18 @@ export async function openInterruptedLunch({ onSaved } = {}) {
 
   const save = async () => {
     const input = interruptedLunchInput({ by, name: nameInput.value, returnedToWork: returnedCb.checked, note: note.value, workplace, attachments });
+    const draft = createIncident(input);
     try {
-      await addIncident(createIncident(input));
+      await addIncident(draft);
       toast('Interrupted lunch saved');
       close();
       onSaved?.();
-    } catch (err) { toast('Could not save: ' + (err?.message || err)); }
+    } catch (err) {
+      // Same contract as the full Log screen: a failed save blocks and offers the
+      // drop-the-photos trade, because this is evidence, not a form (see saveFailure.js).
+      const r = await reportSaveFailure(err, draft, (rec) => addIncident(rec));
+      if (r.saved) { close(); onSaved?.(); }
+    }
   };
 
   const titleId = 'qc-' + Math.random().toString(16).slice(2);
