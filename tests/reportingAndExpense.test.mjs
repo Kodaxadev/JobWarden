@@ -123,12 +123,29 @@ test('both new types are in the catalog, cited, and ask for the right fields', (
   assert.match(TYPES_BY_ID.expense_unpaid.legal, /§2802/);
 });
 
-test('every new finding key has a plain-language label', () => {
-  for (const key of ['reportingTimeShort', 'reportingTimeReported', 'reportingTimeReason',
-    'expenseUnreimbursed', 'expenseReported', 'expenseAskedRefused']) {
-    assert.ok(FINDING_LABELS[key], `${key} has no label`);
+test('the new issues are labelled, and their supporting details deliberately are not', () => {
+  // A label is what makes a flag COUNT in the pattern roll-up. Counting the reason someone
+  // was sent home, or the fact that they asked for their money back, as separate issues
+  // would overstate the record — one incident, one count.
+  for (const key of ['reportingTimeShort', 'reportingTimeReported', 'expenseUnreimbursed', 'expenseReported']) {
+    assert.ok(FINDING_LABELS[key], `${key} is an issue and needs a label`);
     assert.equal(/§|IWC|Lab\./.test(FINDING_LABELS[key]), false, `${key}'s label should be plain, not a citation`);
   }
+  for (const key of ['reportingTimeReason', 'expenseAskedRefused']) {
+    assert.equal(FINDING_LABELS[key], undefined, `${key} is supporting detail and must not be counted as its own issue`);
+  }
+});
+
+test('one incident produces one counted issue, not one per supporting fact', async () => {
+  const { summarizePatterns } = await import('../js/domain/patterns.js');
+  const s = summarizePatterns([
+    rec({ types: ['sent_home_early'], clockIn: '09:00', clockOut: '10:30',
+      schedule: { scheduledStart: '09:00', scheduledEnd: '17:00', reason: 'slow' } }),
+    rec({ types: ['expense_unpaid'],
+      expense: { item: 'boots', reimbursed: false, askedOn: '2026-06-20' } }),
+  ]);
+  assert.deepEqual(s.headline.map(h => h.key), ['reportingTimeShort', 'expenseUnreimbursed']);
+  assert.deepEqual(s.headline.map(h => h.count), [1, 1]);
 });
 
 test('the glance summary names them in words a person would use', () => {

@@ -1,7 +1,11 @@
 // rules/california.js — the California rule set: analysis (re-exported from the pure
 // logic in domain/breakRules.js) plus the plain-language labels for its finding keys.
-// Informational flags (hoursWorked / mealsRequired / restRequired / the caveats) are
-// deliberately NOT labeled — labels mark possible problems for the pattern roll-up.
+// Informational flags (hoursWorked / mealsRequired / restRequired / dailyOvertime / the
+// caveats, and supporting detail like reportingTimeReason and expenseAskedRefused) are
+// deliberately NOT labeled. A label is what makes a flag COUNT as an issue in the pattern
+// roll-up, and counting a supporting fact as its own issue would overstate the record —
+// the one thing an evidence tool cannot afford. Unlabeled flags still show their note on
+// the record and in the printable report; they just do not inflate the tally.
 export { analyze, summarize } from '../domain/breakRules.js';
 
 export const FINDING_LABELS = {
@@ -28,10 +32,8 @@ export const FINDING_LABELS = {
   retaliationNoted: 'Possible retaliation after speaking up',
   reportingTimeShort: 'Sent home early — reporting-time pay may be owed',
   reportingTimeReported: 'Sent home early (reported)',
-  reportingTimeReason: 'Reason given for being sent home',
   expenseUnreimbursed: 'Paid for work costs, not paid back',
   expenseReported: 'Work expense reported',
-  expenseAskedRefused: 'Asked for the money back and was refused',
   finalPayLate: 'Final pay late',
   finalPayUnpaid: 'Final pay not received',
   finalPayShort: 'Final pay incomplete',
