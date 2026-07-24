@@ -1,5 +1,5 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v60';
+const CACHE = 'jobwarden-v61';
 const ASSETS = [
   './', './index.html', './install.html', './privacy.html', './terms.html', './manifest.webmanifest',
   './css/styles.css', './css/tokens.css', './css/shell.css', './css/forms.css', './css/records.css', './css/install.css', './css/legal.css',
@@ -53,7 +53,13 @@ self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
   if (DEV_HOST) {
-    e.respondWith(fetch(req).catch(() => caches.match(req).then(hit => hit || Response.error())));
+    // cache:'reload' also skips the browser's HTTP cache, which `python -m http.server`
+    // invites by sending Last-Modified with no Cache-Control. Without it, a plain reload
+    // still runs yesterday's module even with the SW out of the way.
+    e.respondWith(
+      fetch(req, { cache: 'reload' })
+        .catch(() => caches.match(req).then(hit => hit || Response.error()))
+    );
     return;
   }
   e.respondWith(

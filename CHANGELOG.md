@@ -1,0 +1,89 @@
+# Changelog
+
+Versions are the service-worker cache id (`jobwarden-vNN`), shown in **Settings → About**.
+That string is the only build identifier a user can read back to you, so it is what this
+file is keyed on. Newest first.
+
+This project has not had a public production launch — see
+[`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
+
+## v61 — 2026-07-24
+
+**Encrypted backups.** New **Save locked backup** on the Export screen writes the same
+archive under AES-256-GCM, with the key derived on-device from a passphrase you choose
+(PBKDF2-SHA256, 310,000 iterations). This exists because the normal way a backup leaves
+the phone is an email to yourself, after which the whole evidence archive — names,
+employer, GPS, photos — sits in an inbox in cleartext, and for this app's users the
+adversary is sometimes a household member. No server, no key escrow, no new runtime
+dependency; the passphrase is never stored or sent. **A forgotten passphrase means the
+file cannot be opened by anyone, including us**, and the app says so at full size before
+you commit to one. Restore detects a locked file automatically and re-asks in place after
+a typo rather than sending you back to the file picker.
+
+**Time math is now DST-correct.** An overnight span used to get a flat 24 hours added,
+which is wrong by an hour across a daylight-saving transition. A 10pm–6am shift is seven
+worked hours on spring-forward and nine on fall-back, and that hour moves meal deadlines,
+the >10h second-meal threshold, and the daily-overtime line.
+
+**Findings for issues you report without details.** Picking "no second lunch on a long
+shift" or "worked but was not paid" with no times entered used to produce nothing at all.
+The pick is itself a fact, so the record now carries a `…Reported` finding that says so
+plainly, instead of looking empty.
+
+**Light-theme contrast fixes.** Three surfaces stay dark navy in both themes (the brand
+mark, the live shift panel, the empty-state seal) but were inheriting light mode's dark
+ink — measured 1.87:1 on the header mark and 1.68:1 on the shift status, both well below
+AA. Dark-theme ink is now pinned inside them: 10.2:1 and 6.11:1.
+
+**Honest copy about shift reminders.** The meal-deadline reminder only fires while
+JobWarden is open — a closed PWA cannot fire one without a server, which this app does not
+have. The shift panel and the landing page now say so and name the workaround (leave it
+running, or set a phone alarm for the deadline shown) instead of promising an alert that
+does not arrive.
+
+**Pre-release legal pages.** `privacy.html` and `terms.html` no longer ship `[Operator]` /
+`[contact email]` placeholders dressed as a policy. They state plainly that this is a
+preview and must not launch publicly until the operating entity, contact email, and
+attorney review are done. The privacy policy also documents the locked-backup option and
+its irreversibility.
+
+**Under the hood**
+
+- **Offline-asset gate.** The service worker's asset list is hand-maintained, and a module
+  missing from it breaks the app *offline only* — the one state a browser tab never shows
+  you. A test now walks the real import graph from the entry points and fails on a gap.
+- **Seal contract gate.** "Every new schema field must default to empty" lived in a comment
+  in `integrity.js`. It is now enforced: the blank record's sealed view is pinned, and a
+  golden content hash fails if the view, the normalizers, or the pruning move without a
+  deliberate `SEAL_VERSION` bump.
+- **Database migration ladder.** `db.js` had one create-if-missing block. It is now an
+  ordered, append-only list of steps with the rules for adding one written down, and the
+  version is derived from the list length so it cannot drift.
+- **The data layer has tests.** `fake-indexeddb` (devDependency only — the app still ships
+  zero runtime dependencies) covers the incident and settings repos: sealing on write,
+  soft delete and restore, restore-without-resealing, tamper detection, legacy hydration.
+- **The dev loop stopped needing a fresh port.** On localhost the service worker now goes
+  network-first and bypasses the HTTP cache, so a plain reload runs the edit.
+  `launch.json` drops from 37 accumulated one-shot servers to 2.
+- **Icon pipeline.** The generator's name list had drifted from what the UI renders
+  (`iconEl('alert')` resolved to nothing). `scripts/build-icons.mjs` is now the single
+  source of truth, with a test that fails if a name the UI uses is missing.
+- 158 tests, `eslint` and `tsc --checkJs` green. Zero vulnerabilities in the dependency
+  tree, dev included.
+
+## v58 and earlier
+
+Not individually recorded — this file starts at v61. The commit history is the record for
+earlier builds, and `docs/IMPROVEMENT_AUDIT.md` tracks what shipped against the audit.
+The larger earlier landmarks:
+
+- **v58** — scoped export: filter Records to a subset (one employer) and report exactly those.
+- **v57** — light theme (opt-in; dark stays the brand default), System/Light/Dark toggle.
+- **v56** — local error-log ring buffer + Settings diagnostics; one shared focus trap.
+- **v55** — Records search, issue/place filters, month grouping, teaching empty state.
+- **v54** — photo downscaling on ingest; backups built as Blob parts, not one megastring.
+- **v53** — overtime findings (daily + weekly), time-sanity warnings, statute-of-limitations nudge.
+- **v52** — security headers + CSP on all pages, SW update toast, version in Settings.
+- **v49** — versioned seals covering final pay; jurisdiction seam; report XSS fixes.
+- **v48** — full Privacy Policy and Terms of Service pages.
+- **v44/v47** — the per-state rules seam, and New York behind it (draft, attorney-gated).

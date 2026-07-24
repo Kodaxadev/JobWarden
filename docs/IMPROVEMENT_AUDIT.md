@@ -1,6 +1,9 @@
 # JobWarden — Where It's Weak, and Where It Could Be Better
 
-Date: 2026-07-02 · Covers commit `986e6c9` (SW v51, 93 tests passing)
+Written 2026-07-02 against `986e6c9` (SW v51, 93 tests). The two **Progress** sections below
+record what has shipped since; the numbered sections keep the original wording so the
+tradeoffs stay visible even where they were later taken. Last reviewed 2026-07-24 (SW v61,
+158 tests).
 
 This is the honest document: every place the project is bad, fragile, missing, or
 deliberately traded away — from product strategy to the tech stack — with what it would
@@ -29,11 +32,44 @@ Most of the actionable list below is now done and verified (105 tests, eslint + 
 - **✅ Local error-log ring buffer + Settings diagnostics**; **one shared focus trap**. §9, §4.
 - **✅ Landing answers "can my employer see it?"**. §1.
 
-**Still open** (unchanged below): 🔴 attorney review (external), 🔴/🟠 **Spanish/i18n** — the
-string layer is a clean refactor but the *legal-adjacent content must be human-translated*, so
-it's a dedicated project, not an auto-translate; the fuller catalog additions in §2; E2EE sync
-(a deliberate cut); Playwright in CI (set up recommended, needs a browser runner); trusted
-timestamping; per-record *checkbox* selection (the filter-scoped export covers the main use case).
+---
+
+## Progress — shipped 2026-07-24 (SW v59→v61)
+
+Second pass, aimed at the durability/trust and process items rather than features
+(158 tests, eslint + `tsc --checkJs` green, zero vulnerabilities in the dep tree):
+
+- **✅ Passphrase-encrypted backup** (AES-256-GCM, PBKDF2-SHA256 310k, on-device key, no
+  escrow, binary format so a photo-heavy archive never becomes a base64 megastring; header
+  authenticated as AAD; hostile iteration counts refused). §5.
+- **✅ DST-correct overnight time math** — the flat `+24h` wrap was an hour wrong across a
+  transition, which moves meal deadlines and the >10h line. §2.
+- **✅ Seal schema-evolution rule is now a gate**, not a comment: the blank record's sealed
+  view is pinned and a golden content hash fails on any silent change to the view. §3.
+- **✅ DB migration ladder** — append-only steps with the rules written down, version derived
+  from the ladder length, steps proven re-run-safe. §3.
+- **✅ The data layer has tests** (`fake-indexeddb`, devDependency only): sealing on write,
+  soft delete/restore, restore-without-resealing, tamper detection, legacy hydration. §4.
+- **✅ Offline-asset gate** — a test walks the real import graph and fails if a reachable
+  module is missing from the SW cache list (the failure mode that is invisible in a tab). §4.
+- **✅ The SW dev-loop friction is gone** — network-first + HTTP-cache bypass on localhost, so
+  a plain reload runs the edit; `launch.json` cut from 37 one-shot servers to 2. §4, §9.
+- **✅ CHANGELOG**, keyed on the SW cache id the user can read back in Settings. §9.
+- **✅ Shift-alert honesty** — the panel and the landing page now say the reminder only fires
+  while the app is open, and name the workaround. §1.
+- **✅ Two light-theme contrast failures fixed** — the header mark (1.87:1) and the shift
+  status (1.68:1) were inheriting light-mode ink on the permanently-navy surfaces. §6, §7.
+- **✅ Findings for reported-but-undetailed issues** — a picked chip with no times now says so
+  instead of producing nothing. §2.
+
+**Still open**: 🔴 attorney review (external) and the operator-identity/contact-email fill-in —
+together the only launch blockers; 🔴/🟠 **Spanish/i18n** — the string layer is a clean
+refactor but the *legal-adjacent content must be human-translated*, so it's a dedicated
+project, not an auto-translate; the fuller catalog additions in §2 (reporting-time pay,
+split-shift, §2802 expenses, §226 paystubs, tips, sick leave); E2EE sync (a deliberate cut);
+Playwright in CI (needs a browser runner); trusted timestamping (OpenTimestamps); per-record
+*checkbox* selection (the filter-scoped export covers the main use case); a real screen-reader
+pass on a budget Android; the reading-level pass on the rights FAQ; the logo rework.
 
 ---
 
