@@ -11,9 +11,9 @@
     "typecheck": "tsc -p jsconfig.json"
   },
   "devDependencies": {
-    "@eslint/js": "^9.13.0",
+    "@eslint/js": "^10.0.1",
     "@resvg/resvg-js": "^2.6.2",
-    "eslint": "^9.13.0",
+    "eslint": "^10.8.0",
     "fake-indexeddb": "^6.2.5",
     "globals": "^15.11.0",
     "lucide-static": "1.20.0",
