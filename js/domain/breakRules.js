@@ -192,6 +192,49 @@ function finalPayFlags(i) {
   return out;
 }
 
+// Reporting-time pay (IWC Wage Orders §5): report for a scheduled shift, get sent home before
+// working half of it, and half the scheduled day is owed — at least 2 hours, at most 4. FACTS
+// only: this records the scheduled span, what was actually worked, and that the second is less
+// than half the first. It does not compute what is owed (that needs the regular rate).
+function reportingTimeFlags(i, hrs) {
+  const s = i.schedule || {};
+  const picked = (i.types || []).includes('sent_home_early');
+  if (!picked && !s.scheduledStart && !s.scheduledEnd) return [];
+  const out = [];
+  const scheduledMin = minutesBetween(combine(i.incidentDate, s.scheduledStart), combine(i.incidentDate, s.scheduledEnd));
+  const workedMin = hrs == null ? null : Math.round(hrs * 60);
+
+  if (scheduledMin == null || workedMin == null) {
+    if (picked) out.push(f('reportingTimeReported', true, 'Reported being sent home early from a scheduled shift; the scheduled and worked times were not both recorded, so the half-shift test could not be run. Potential IWC §5 reporting-time issue as reported.'));
+    return out;
+  }
+  if (workedMin < scheduledMin / 2) {
+    const owedMin = Math.min(240, Math.max(120, Math.round(scheduledMin / 2)));
+    out.push(f('reportingTimeShort', Math.round(workedMin / 6) / 10,
+      `Scheduled for ${(scheduledMin / 60).toFixed(1)}h but worked ${(workedMin / 60).toFixed(1)}h — under half the scheduled shift. Reporting-time pay of about ${(owedMin / 60).toFixed(1)}h (half the shift, min 2h, max 4h) may be owed. IWC Wage Orders §5. Not computed here.`));
+  }
+  if (s.reason) out.push(f('reportingTimeReason', s.reason, 'Reason given for being sent home — reporting-time pay is not owed when the cause is outside the employer’s control (for example a utility failure or a threat to safety). IWC §5(C).'));
+  return out;
+}
+
+// Necessary work expenses (Lab. Code §2802): uniforms, tools, a required phone, mileage.
+// The amount stays the worker's own number and is never totaled into a claim.
+function expenseFlags(i) {
+  const e = i.expense || {};
+  const picked = (i.types || []).includes('expense_unpaid');
+  if (!picked && !e.item) return [];
+  const out = [];
+  if (e.reimbursed === false) {
+    out.push(f('expenseUnreimbursed', e.item || true, `Paid for something the job required${e.amount ? ` (${e.amount})` : ''} and was not reimbursed. An employer must cover necessary work expenses — Lab. Code §2802. Amount not computed here.`));
+  } else if (e.reimbursed == null) {
+    out.push(f('expenseReported', e.item || true, 'Reported paying for something the job required; whether it was reimbursed is not recorded yet. Potential §2802 issue as reported.'));
+  }
+  if (e.askedOn && e.reimbursed === false) {
+    out.push(f('expenseAskedRefused', e.askedOn, `Asked for reimbursement on ${formatDate(e.askedOn)} and it was not paid — the request and the refusal both matter under §2802.`));
+  }
+  return out;
+}
+
 // Analyze a stored incident -> array of factual flags. Pure; reads i.classification for exempt caveat.
 /**
  * @param {import('./types.js').Incident} i
@@ -227,6 +270,8 @@ export function analyze(i) {
   flags.push(...offClockFlags(i));
   flags.push(...noticeFlags(i));
   flags.push(...finalPayFlags(i));
+  flags.push(...reportingTimeFlags(i, hrs));
+  flags.push(...expenseFlags(i));
   return flags;
 }
 
@@ -257,5 +302,9 @@ export function summarize(flags = []) {
   if (m.finalPayLate) p.push(`Final pay ${m.finalPayLate.value}d late`);
   if (m.finalPayUnpaid) p.push('Final pay not received');
   if (m.finalPayShort) p.push('Final pay short');
+  if (m.reportingTimeShort) p.push('Sent home early');
+  if (m.reportingTimeReported) p.push('Sent home early (reported)');
+  if (m.expenseUnreimbursed) p.push('Work expense not paid back');
+  if (m.expenseReported) p.push('Work expense (reported)');
   return p;
 }

@@ -9,6 +9,8 @@ export const FIELD = {
   OFFCLOCK: 'offclock',// unpaid work start/end, task, who directed/knew, pay period
   NOTICE: 'notice',    // who was told, channel, response
   FINALPAY: 'finalpay',// separation type, last day, date paid, paid-in-full
+  SCHEDULE: 'schedule',// scheduled start/end vs. actual — reporting-time pay (IWC §5)
+  EXPENSE: 'expense',  // what was bought for the job, cost, whether reimbursed (§2802)
 };
 
 // Each type carries a ONE-LINE legal reference. These are plain-language pointers,
@@ -52,6 +54,12 @@ export const INFRACTION_TYPES = [
   { id: 'final_pay', label: 'Final pay problem', group: 'final',
     fields: [FIELD.FINALPAY],
     legal: 'Final wages are due immediately if fired, within 72h if you quit without notice; late pay can trigger waiting-time penalties. Lab. Code §§201–203.' },
+  { id: 'sent_home_early', label: 'Sent home early', group: 'pay',
+    fields: [FIELD.CLOCK, FIELD.SCHEDULE],
+    legal: 'Reporting to a scheduled shift and being sent home before working half of it can owe reporting-time pay — half the scheduled day, at least 2 and at most 4 hours. IWC Wage Orders §5.' },
+  { id: 'expense_unpaid', label: 'Paid for something the job needed', group: 'pay',
+    fields: [FIELD.EXPENSE],
+    legal: 'An employer must reimburse necessary work expenses — uniforms, tools, required phone or mileage. Lab. Code §2802.' },
 ];
 
 export const TYPES_BY_ID = Object.fromEntries(INFRACTION_TYPES.map(t => [t.id, t]));

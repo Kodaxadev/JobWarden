@@ -121,7 +121,7 @@ function contentViewV2(i) {
     types: [...(i.types || [])].sort(),
     classification: i.classification || {}, meal: i.meal || {}, meal2: i.meal2 || {},
     rest: i.rest || {}, offClock: i.offClock || {}, notice: i.notice || {},
-    finalPay: i.finalPay || {},
+    finalPay: i.finalPay || {}, schedule: i.schedule || {}, expense: i.expense || {},
     witnesses: i.witnesses || '', narrative: i.narrative || '',
     attachments: attachmentDescriptors(i.attachments),
   }) || { v: 2 };

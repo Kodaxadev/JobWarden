@@ -26,7 +26,11 @@ export const ISSUE_GROUPS = [
     { id: 'rest_missed', label: 'Missed rest break' },
     { id: 'rest_interrupted', label: 'Rest break was interrupted' },
   ] },
-  { id: 'pay', label: 'Unpaid work', items: [{ id: 'off_clock_work', label: 'Worked but was not paid' }] },
+  { id: 'pay', label: 'Unpaid work', items: [
+    { id: 'off_clock_work', label: 'Worked but was not paid' },
+    { id: 'sent_home_early', label: 'Sent home early after showing up' },
+    { id: 'expense_unpaid', label: 'Paid for something the job needed' },
+  ] },
   { id: 'notice', label: 'Speaking up', items: [
     { id: 'complaint_raised', label: 'I reported the problem' },
     { id: 'retaliation', label: 'Treated worse after I reported it' },

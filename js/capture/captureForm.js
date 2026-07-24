@@ -78,7 +78,7 @@ export async function renderCaptureForm(container, { onSaved, existing, template
       jurisdiction: settings.jurisdiction,
       classification: { payType: settings.payType, awsElection: settings.awsElection, cbaCovered: settings.cbaCovered },
       meal: state.meal, meal2: state.meal2, rest: state.rest, offClock: state.offClock, notice: state.notice,
-      finalPay: state.finalPay,
+      finalPay: state.finalPay, schedule: state.schedule, expense: state.expense,
       witnesses: state.witnesses, narrative: state.narrative, attachments: state.attachments,
     };
     const draft = existing ? reviseIncident(existing, input) : createIncident(input);

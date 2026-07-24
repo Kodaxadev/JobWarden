@@ -59,6 +59,14 @@ async function recordHtml(i) {
   if (i.finalPay?.lastDay) add('Last day worked', formatDate(i.finalPay.lastDay));
   if (i.finalPay?.datePaid) add('Final pay arrived', formatDate(i.finalPay.datePaid));
   if (i.finalPay && i.finalPay.fullyPaid != null) add('Paid everything owed', i.finalPay.fullyPaid ? 'Yes' : 'No');
+  if (i.schedule?.scheduledStart || i.schedule?.scheduledEnd) add('Scheduled shift', `${i.schedule.scheduledStart || '—'}  →  ${i.schedule.scheduledEnd || '—'}`);
+  if (i.schedule?.sentHomeBy) add('Sent home by', i.schedule.sentHomeBy);
+  if (i.schedule?.reason) add('Reason given for sending home', i.schedule.reason);
+  if (i.expense?.item) add('Paid for (work expense)', `${i.expense.item}${i.expense.amount ? ` — ${i.expense.amount}` : ''}`);
+  if (i.expense?.paidOn) add('Expense paid on', formatDate(i.expense.paidOn));
+  if (i.expense && i.expense.reimbursed != null) add('Reimbursed', i.expense.reimbursed ? 'Yes' : 'No');
+  if (i.expense?.askedOn) add('Asked to be reimbursed', formatDate(i.expense.askedOn));
+  if (i.expense?.response) add('Their answer', i.expense.response);
   if (i.notice?.to) add('Reported to', `${i.notice.to} (${i.notice.channel || '—'})`);
   if (i.notice?.response) add('Their response', i.notice.response);
   if (i.notice?.adverseAction) add('What happened after I spoke up', i.notice.adverseAction);

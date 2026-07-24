@@ -39,6 +39,17 @@ function normNotice(n = {}) {
 function normClassification(c = {}) {
   return { payType: c.payType || '', awsElection: c.awsElection || '', cbaCovered: c.cbaCovered || '' };
 }
+// Reporting-time pay (IWC §5): what the shift was scheduled to be, vs. what was worked.
+// Every default is '' or null — never false — so records sealed before this field existed
+// keep verifying (see integrity.js and tests/sealContract.test.mjs).
+function normSchedule(s = {}) {
+  return { scheduledStart: s.scheduledStart || '', scheduledEnd: s.scheduledEnd || '', sentHomeBy: s.sentHomeBy || '', reason: s.reason || '' };
+}
+// Necessary work expenses (§2802). `amount` is the user's own number, kept as a string —
+// the app records what they paid and never computes what is owed.
+function normExpense(e = {}) {
+  return { item: e.item || '', amount: e.amount || '', paidOn: e.paidOn || '', askedOn: e.askedOn || '', reimbursed: e.reimbursed ?? null, response: e.response || '' };
+}
 function normFinalPay(p = {}) {
   // separation: '' | 'fired' | 'quit_notice' | 'quit_no_notice'; dates 'YYYY-MM-DD'; fullyPaid tri.
   return { separation: p.separation || '', lastDay: p.lastDay || '', datePaid: p.datePaid || '', fullyPaid: p.fullyPaid ?? null };
@@ -64,6 +75,8 @@ export function createIncident(input = {}) {
     offClock: normOffClock(input.offClock),
     notice: normNotice(input.notice),
     finalPay: normFinalPay(input.finalPay),
+    schedule: normSchedule(input.schedule),
+    expense: normExpense(input.expense),
     witnesses: input.witnesses || '',
     narrative: input.narrative || '',
     attachments: input.attachments || [],
@@ -95,6 +108,8 @@ export function hydrateIncident(stored = {}) {
     offClock: normOffClock(stored.offClock),
     notice: normNotice(stored.notice),
     finalPay: normFinalPay(stored.finalPay),
+    schedule: normSchedule(stored.schedule),
+    expense: normExpense(stored.expense),
     witnesses: stored.witnesses || '',
     narrative: stored.narrative || '',
     attachments: stored.attachments || [],
@@ -117,6 +132,8 @@ const TRACKED = [
   'offClock.start', 'offClock.end', 'offClock.task', 'offClock.directedBy', 'offClock.knownBy', 'offClock.payPeriod', 'offClock.expectedPay', 'offClock.employerEdited',
   'notice.to', 'notice.channel', 'notice.response', 'notice.adverseAction',
   'finalPay.separation', 'finalPay.lastDay', 'finalPay.datePaid', 'finalPay.fullyPaid',
+  'schedule.scheduledStart', 'schedule.scheduledEnd', 'schedule.sentHomeBy', 'schedule.reason',
+  'expense.item', 'expense.amount', 'expense.paidOn', 'expense.askedOn', 'expense.reimbursed', 'expense.response',
   'witnesses', 'narrative',
 ];
 const getPath = (o, p) => p.split('.').reduce((acc, k) => (acc == null ? undefined : acc[k]), o);
@@ -151,6 +168,8 @@ export function reviseIncident(existing, changes = {}) {
     offClock: normOffClock({ ...existing.offClock, ...(changes.offClock || {}) }),
     notice: normNotice({ ...existing.notice, ...(changes.notice || {}) }),
     finalPay: normFinalPay({ ...existing.finalPay, ...(changes.finalPay || {}) }),
+    schedule: normSchedule({ ...existing.schedule, ...(changes.schedule || {}) }),
+    expense: normExpense({ ...existing.expense, ...(changes.expense || {}) }),
   };
   merged.id = existing.id;
   merged.createdAt = existing.createdAt;

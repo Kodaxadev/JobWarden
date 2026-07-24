@@ -20,6 +20,8 @@ export function buildInitialState(existing, settings) {
     offClock: { start: '', end: '', task: '', directedBy: '', knownBy: '', payPeriod: '', expectedPay: '', employerEdited: null },
     notice: { to: '', channel: '', response: '', adverseAction: '' },
     finalPay: { separation: '', lastDay: '', datePaid: '', fullyPaid: null },
+    schedule: { scheduledStart: '', scheduledEnd: '', sentHomeBy: '', reason: '' },
+    expense: { item: '', amount: '', paidOn: '', askedOn: '', reimbursed: null, response: '' },
     witnesses: '', narrative: '', location: null, attachments: [],
   };
   if (!existing) return base;
@@ -30,6 +32,7 @@ export function buildInitialState(existing, settings) {
     meal: { ...base.meal, ...(existing.meal || {}) }, meal2: { ...base.meal2, ...(existing.meal2 || {}) },
     rest: { ...base.rest, ...(existing.rest || {}) }, offClock: { ...base.offClock, ...(existing.offClock || {}) },
     notice: { ...base.notice, ...(existing.notice || {}) }, finalPay: { ...base.finalPay, ...(existing.finalPay || {}) },
+    schedule: { ...base.schedule, ...(existing.schedule || {}) }, expense: { ...base.expense, ...(existing.expense || {}) },
     witnesses: existing.witnesses || '', narrative: existing.narrative || '',
     location: existing.location || null, attachments: [...(existing.attachments || [])],
   };
@@ -212,12 +215,51 @@ function finalPaySection(state) {
     ]);
 }
 
+// Reporting-time pay (IWC §5). The comparison that matters is scheduled vs. actually worked,
+// so ask for the schedule plainly — the hours section already has the clock times.
+function scheduleSection(state) {
+  const sc = state.schedule;
+  return section('schedule', 'calendar', 'The shift you were scheduled for', 'Sent home early? What you were scheduled for is what the rule compares against.',
+    [
+      el('div', { class: 'grid2' }, [
+        timeRow('Scheduled to start', sc.scheduledStart, v => sc.scheduledStart = v),
+        timeRow('Scheduled to end', sc.scheduledEnd, v => sc.scheduledEnd = v),
+      ]),
+      field('Who sent you home', textInput(sc.sentHomeBy, v => sc.sentHomeBy = v, { placeholder: 'e.g. manager name' })),
+    ],
+    [
+      field('Reason you were given', textInput(sc.reason, v => sc.reason = v, { placeholder: 'e.g. slow, overstaffed, power out' }),
+        'Write it as they said it. Some reasons outside the employer’s control change the rule.'),
+    ]);
+}
+
+// Necessary work expenses (§2802). The amount stays free text — it is the worker’s own
+// number, and the app records what they paid, never what it thinks is owed.
+function expenseSection(state) {
+  const ex = state.expense;
+  return section('expense', 'wallet', 'What you paid for', 'Work things you bought yourself — uniform, tools, phone, mileage.',
+    [
+      field('What you paid for', textInput(ex.item, v => ex.item = v, { placeholder: 'e.g. work boots, phone plan, gas' })),
+      el('div', { class: 'grid2' }, [
+        field('How much', textInput(ex.amount, v => ex.amount = v, { placeholder: 'e.g. $84.19', inputmode: 'decimal' })),
+        dateField('When you paid it', ex.paidOn, v => ex.paidOn = v),
+      ]),
+      field('Were you paid back?', triSelect(ex.reimbursed, v => ex.reimbursed = v)),
+    ],
+    [
+      dateField('When you asked to be paid back', ex.askedOn, v => ex.askedOn = v),
+      field('What they said', textInput(ex.response, v => ex.response = v, { placeholder: 'their answer, in their words' })),
+    ]);
+}
+
 const SECTION_DEFS = [
   { id: 'hours', needs: f => f.includes(FIELD.CLOCK), render: hoursSection },
   { id: 'lunch', needs: f => f.includes(FIELD.MEAL) || f.includes(FIELD.MEAL2), render: lunchSection },
   { id: 'rest', needs: f => f.includes(FIELD.REST), render: restSection },
   { id: 'unpaid', needs: f => f.includes(FIELD.OFFCLOCK), render: unpaidSection },
   { id: 'spokeUp', needs: f => f.includes(FIELD.NOTICE), render: spokeUpSection },
+  { id: 'schedule', needs: f => f.includes(FIELD.SCHEDULE), render: scheduleSection },
+  { id: 'expense', needs: f => f.includes(FIELD.EXPENSE), render: expenseSection },
   { id: 'finalPay', needs: f => f.includes(FIELD.FINALPAY), render: finalPaySection },
 ];
 

@@ -110,3 +110,29 @@ UPL posture, (d) the app correctly scopes findings to the user's selected state.
 - [x] "Information last updated <date>" stamp surfaced (per jurisdiction, via `jurisdictions.rulesAsOf`).
 - [ ] **[ATTORNEY]** CA employment-attorney review of findings language + UPL posture.
 - [ ] Final copy sweep for banned UPL phrasing.
+
+### Findings surface awaiting that review
+
+Everything the app tells a user about the law is in one of two places: the finding notes in
+`js/domain/breakRules.js` (California) and the topic text in `js/ui/rightsFaq.js`. Reviewing
+those two files covers the whole surface. The list below exists so nothing is reviewed twice
+or missed, not as a claim that any of it is correct today.
+
+| Area | Authority the app cites | Added |
+| --- | --- | --- |
+| Meal timing, length, waivers, second meal | Lab. Code §512; IWC Wage Orders | initial |
+| On-duty meal agreements | Lab. Code §512; Wage Order §11 | initial |
+| Rest breaks, duty-free requirement | Lab. Code §226.7; *Augustus v. ABM* | initial |
+| Off-the-clock / suffered-or-permitted work | Lab. Code §§1194, 1198, 226 | initial |
+| Retaliation after a complaint | Lab. Code §§98.6, 1102.5 | initial |
+| Final pay timing + waiting time | Lab. Code §§201–203 | initial |
+| Daily/weekly overtime notes, AWS caveat | Lab. Code §§510, 511 | SW v53 |
+| **Reporting-time pay** (sent home before half the scheduled shift) | **IWC Wage Orders §5** | **SW v65** |
+| **Necessary work expenses** (uniform, tools, phone, mileage) | **Lab. Code §2802** | **SW v65** |
+
+The two additions marked **SW v65** are the newest and least-settled. Specific questions for
+review: whether the half-the-scheduled-shift trigger should also fire on the second-reporting
+rule (§5(B), two hours' pay for a second daily report of under two hours, which the app does
+not model); whether naming the §5(C) exceptions in a finding note edges toward advice; and
+whether the §2802 findings should distinguish a *necessary* expense from any work-related
+purchase, which the app deliberately does not attempt to judge.

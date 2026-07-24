@@ -69,6 +69,27 @@
  */
 
 /**
+ * The shift as scheduled, for the reporting-time comparison (IWC Wage Orders §5).
+ * @typedef {Object} Schedule
+ * @property {string} [scheduledStart]  'HH:MM'
+ * @property {string} [scheduledEnd]    'HH:MM'
+ * @property {string} [sentHomeBy]
+ * @property {string} [reason]          in the words it was given
+ */
+
+/**
+ * A necessary work expense the worker paid for (Lab. Code §2802). `amount` stays a string:
+ * it is the worker's own number, and the app never computes what is owed from it.
+ * @typedef {Object} Expense
+ * @property {string} [item]
+ * @property {string} [amount]
+ * @property {string} [paidOn]    'YYYY-MM-DD'
+ * @property {string} [askedOn]   'YYYY-MM-DD'
+ * @property {boolean|null} [reimbursed]
+ * @property {string} [response]
+ */
+
+/**
  * @typedef {Object} GeoLoc
  * @property {number} lat
  * @property {number} lng
@@ -131,6 +152,8 @@
  * @property {OffClock} offClock
  * @property {Notice} notice
  * @property {FinalPay} finalPay
+ * @property {Schedule} schedule
+ * @property {Expense} expense
  * @property {string} witnesses
  * @property {string} narrative
  * @property {Attachment[]} attachments

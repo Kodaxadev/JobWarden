@@ -7,6 +7,34 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v65 — 2026-07-24
+
+**Two claims a California hourly worker meets constantly, that the app had nowhere to log.**
+
+- **Sent home early after showing up** — reporting-time pay. Report for a scheduled shift,
+  get sent home before working half of it, and half the scheduled day is owed (at least 2
+  hours, at most 4). The Log screen now asks what the shift was *scheduled* to be, because
+  that is what the rule compares against, plus who sent you home and the reason they gave.
+  A shift worked at under half its schedule is flagged, with the unpaid meal netted out
+  first. IWC Wage Orders §5.
+- **Paid for something the job needed** — uniforms, tools, a required phone, mileage. Record
+  what it was, what it cost, when you paid, whether you were paid back, when you asked, and
+  what they said. Lab. Code §2802.
+
+Both behave like everything else here: facts, never a dollar figure. The finding says a
+premium *may* be owed and points at the section; the arithmetic is left to the DLSE or
+counsel. Picking either issue without filling in details still produces a *reported* finding
+rather than nothing, and both new field groups are sealed evidence — editing one after the
+fact is caught.
+
+Existing records are untouched and their fingerprints still verify: the new fields default
+empty, which the v2 seal prunes before hashing. That is the forward-compatibility contract,
+and the gate added in v61 is what proves it held here.
+
+**These are new attorney-review surface.** `docs/LEGAL_FOUNDATION.md` now carries a table of
+every legal claim the app makes and where it came from, with the specific open questions on
+these two written down rather than assumed settled.
+
 ## v64 — 2026-07-24
 
 **A failed save no longer flashes past.** Both capture paths used to answer a write failure
