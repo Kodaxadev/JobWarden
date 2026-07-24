@@ -93,8 +93,15 @@ function firstMealFlags(i, ci, hrs) {
 }
 
 function secondMealFlags(i, ci, hrs) {
-  if (hrs == null || hrs <= 10) return [];
   const out = [];
+  const typeReported = (i.types || []).includes('second_meal_missed');
+  if (hrs == null) {
+    if (typeReported) {
+      out.push(f('secondMealReported', true, 'Reported no second lunch on a long shift; work times were not recorded, so the 10-hour threshold could not be checked. Potential issue as reported.'));
+    }
+    return out;
+  }
+  if (hrs <= 10) return out;
   const m2 = i.meal2 || {};
   const m2s = combine(i.incidentDate, m2.start);
   const len = mealLength(m2s, combine(i.incidentDate, m2.end));
@@ -144,6 +151,7 @@ function offClockFlags(i) {
   const flagged = (i.types || []).includes('off_clock_work') || o.start || o.end || o.task;
   if (!flagged) return out;
   const mins = minutesBetween(combine(i.incidentDate, o.start), combine(i.incidentDate, o.end));
+  if (mins == null) out.push(f('offClockReported', true, 'Reported work that was not paid; add start/end times or the task if you have them. Potential issue as reported.'));
   if (mins != null) out.push(f('offClockMinutes', mins, 'Unrecorded work time — all hours worked must be paid (suffered/permitted work).'));
   if (o.employerEdited === true) out.push(f('timeRecordEdited', true, 'Employer edited the time record — bears on §226 accuracy and §1174 recordkeeping.'));
   return out;
@@ -236,6 +244,7 @@ export function summarize(flags = []) {
   if (m.onDutyNoAgreement) p.push('No on-duty meal agreement');
   if (m.firstMealWaiverInvalid) p.push('Bad 1st-meal waiver');
   if (m.secondMealMissed) p.push('No 2nd meal');
+  if (m.secondMealReported) p.push('No 2nd meal (reported)');
   if (m.secondMealLate) p.push('Late 2nd meal');
   if (m.secondMealShort) p.push(`Short 2nd meal (${m.secondMealShort.value}m)`);
   if (m.secondMealWaiverInvalid) p.push('Bad 2nd-meal waiver');
@@ -243,6 +252,7 @@ export function summarize(flags = []) {
   if (m.restMissedReported) p.push('Rest missed (reported)');
   if (m.restOnCall) p.push('Rest on-call');
   if (m.offClockMinutes) p.push(`Off-clock ${m.offClockMinutes.value}m`);
+  if (m.offClockReported) p.push('Unpaid work (reported)');
   if (m.retaliationNoted) p.push('Possible retaliation');
   if (m.finalPayLate) p.push(`Final pay ${m.finalPayLate.value}d late`);
   if (m.finalPayUnpaid) p.push('Final pay not received');

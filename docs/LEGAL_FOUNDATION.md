@@ -60,8 +60,8 @@ require one regardless. Must state plainly and truthfully:
 **Drafted 2026-06-22:** [`privacy.html`](../privacy.html) — full policy covering all of the
 above, written to match how the app actually behaves (no collection, no servers, local-only).
 Linked from the in-app Legal screen (`legalView.js` "Full policies" card) and the landing
-footer. Placeholders to fill before launch: operating entity name + contact email. Still
-needs **[ATTORNEY]** review of the final wording.
+footer. Public release is blocked until the operating entity name and contact email are
+filled in. Still needs **[ATTORNEY]** review of the final wording.
 
 ## 4. Terms of Service **[ATTORNEY]**
 
@@ -74,7 +74,8 @@ needs **[ATTORNEY]** review of the final wording.
 **Drafted 2026-06-22:** [`terms.html`](../terms.html) — full ToS with the not-legal-advice /
 no-attorney-client clause, "as is" / no-warranty, limitation of liability, acceptable use
 (incl. the no-audio-recording rule), IP/license, governing law (California), and severability.
-Same two placeholders (entity + contact email). Still needs **[ATTORNEY]** review.
+Public release is blocked until the operating entity name and contact email are filled in.
+Still needs **[ATTORNEY]** review.
 
 ## 5. Accuracy & currency of the law **[ATTORNEY]**
 
@@ -100,8 +101,8 @@ UPL posture, (d) the app correctly scopes findings to the user's selected state.
 ## Launch checklist (California, v1 public)
 
 > **Attorney status (2026-06-21): not yet engaged.** The `[ATTORNEY]` items below need a
-> California employment-attorney referral; none is retained yet. They are the only launch-blocking
-> work remaining — the in-app, non-attorney pieces are done.
+> California employment-attorney referral; none is retained yet. Public production launch is also
+> blocked on the operating entity name and contact email for the policy pages.
 
 - [x] Disclaimer line on onboarding + a Settings "Legal & privacy" screen (`js/ui/legalView.js`, SW v38): disclaimer, plain-language privacy summary, facts-not-a-calculator, "as is," and "information last updated" stamp.
 - [ ] **[ATTORNEY]** Formal privacy policy — review/replace the in-app plain-language summary; linked in-app + in the store listing.

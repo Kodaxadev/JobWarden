@@ -45,6 +45,12 @@ test('second meal owed and missed on a >10h shift', () => {
   assert.equal(fk.secondMealMissed, true);
 });
 
+test('the "no second lunch" pick without work times is flagged as reported', () => {
+  const flags = analyze(base({ types: ['second_meal_missed'] }));
+  assert.ok(flags.some(f => f.key === 'secondMealReported'));
+  assert.equal(flags.some(f => f.key === 'secondMealMissed'), false);
+});
+
 test('valid second-meal waiver (≤12h, first not waived)', () => {
   const fk = flagsOf(base({ clockIn: '08:00', clockOut: '19:00', meal: { start: '12:00', end: '12:30' }, meal2: { waived: true } }));
   assert.equal(fk.secondMealWaived, true);
@@ -118,6 +124,12 @@ test('on-time final pay produces no late flag', () => {
 
 test('off-the-clock minutes are computed', () => {
   assert.equal(flagsOf(base({ types: ['off_clock_work'], offClock: { start: '08:30', end: '09:00' } })).offClockMinutes, 30);
+});
+
+test('the "worked but was not paid" pick without details is flagged as reported', () => {
+  const flags = analyze(base({ types: ['off_clock_work'] }));
+  assert.ok(flags.some(f => f.key === 'offClockReported'));
+  assert.equal(flags.some(f => f.key === 'offClockMinutes'), false);
 });
 
 // --- picking an issue asserts the fact (audit A1) --------------------------

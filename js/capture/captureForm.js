@@ -27,7 +27,7 @@ export async function renderCaptureForm(container, { onSaved, existing, template
   if (!existing && !template && !prefill) {
     const liveBar = el('div', { class: 'live-bar' });
     const quickBtn = el('button', { type: 'button', class: 'btn live-quick', onclick: () => openInterruptedLunch({ onSaved }) },
-      [iconEl('alert'), document.createTextNode(' Quick log')]);
+      [iconEl('circle-alert'), document.createTextNode(' Quick log')]);
     const shiftHost = el('div', { class: 'shift-host' });
     liveBar.append(quickBtn, shiftHost);
     container.appendChild(liveBar);

@@ -6,7 +6,7 @@ A private, offline-first PWA for documenting California wage-and-hour problems *
 
 It records **facts, not legal conclusions** — meal/rest-break timing (§512, §226.7), off-the-clock work, on-duty meals, final-pay timing (§§201–203), and adverse action after speaking up. It is **not legal advice**.
 
-Live: <https://jobwarden.kodaxa.dev>
+Preview: <https://jobwarden.kodaxa.dev> (not cleared for public production launch until operator identity, contact email, and attorney review are complete)
 
 ## Privacy model (read this)
 - **All data stays in the browser on the device** (IndexedDB). Nothing is sent to any server. No account, no tracking, no analytics, no network calls.
@@ -69,7 +69,7 @@ Rule-engine and export logic are covered by committed tests under `tests/`, no d
 npm test          # alias for: node --test
 ```
 
-The suite (**105 tests** at last run) covers meal timing and waivers (measured in hours *worked*), the >10h second-meal rule, picked-issue assertions (a chip alone produces its finding), daily + weekly overtime roll-ups, on-duty-meal agreements, final-pay/waiting-time timing, off-the-clock minutes, the exempt/AWS/CBA caveats, non-blocking time-sanity warnings, versioned content + record sealing (including legacy-seal survival across schema growth and finalPay tamper detection), the New York rule set (noon/evening/night §162 windows, overnight shifts), the pattern + interruption roll-ups, the live shift clock, the quick-capture draft, email summary + backup build/import round-trips, CSV formula-injection neutralization (CWE-1236), and a plain-language copy guard. Lint (`npm run lint`) and type-check (`npm run typecheck`, JSDoc + `tsc --checkJs` over the domain layer) run alongside tests in CI. After changing any cached asset, bump `CACHE` in `service-worker.js` so installed clients update.
+The suite (**110 tests** at last run) covers meal timing and waivers (measured in hours *worked*), the >10h second-meal rule, picked-issue assertions (a chip alone produces its finding), daily + weekly overtime roll-ups, on-duty-meal agreements, final-pay/waiting-time timing, off-the-clock minutes and reported unpaid work, the exempt/AWS/CBA caveats, non-blocking time-sanity warnings, versioned content + record sealing (including legacy-seal survival across schema growth and finalPay tamper detection), the New York rule set (noon/evening/night §162 windows, overnight shifts), the pattern + interruption roll-ups, the live shift clock, the quick-capture draft, email summary + backup build/import round-trips, CSV formula-injection neutralization (CWE-1236), the icon build pipeline, and a plain-language copy guard. Lint (`npm run lint`) and type-check (`npm run typecheck`, JSDoc + `tsc --checkJs` over the domain layer) run alongside tests in CI. After changing any cached asset, bump `CACHE` in `service-worker.js` so installed clients update.
 
 ## Design
 The "Field Log" UI: plain-language, navy-and-gold "legal authority" branding on a dark canvas, self-hosted fonts (Geist / Geist Mono / Cinzel), offline-safe icons from `lucide-static`, and WCAG 2.1 AA contrast/structure.

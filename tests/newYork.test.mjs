@@ -54,6 +54,12 @@ test('retaliation cites NY §215', () => {
   assert.ok((i.flags || []).find(f => f.key === 'nyRetaliation').note.includes('§215'));
 });
 
+test('off-clock pick without times is flagged as reported in NY draft rules', () => {
+  const fk = flagsOf(ny({ types: ['off_clock_work'] }));
+  assert.equal(fk.offClockReported, true);
+  assert.equal(fk.offClockMinutes, undefined);
+});
+
 test('California still gets CA rest findings (regression: the seam did not change CA)', () => {
   const fk = flagsOf(createIncident({ jurisdiction: 'CA', incidentDate: '2026-06-16', clockIn: '08:00', clockOut: '18:00', rest: { taken: 0 } }));
   assert.ok(fk.restRequired != null);                  // CA emits the rest ladder; NY does not

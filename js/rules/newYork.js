@@ -107,6 +107,7 @@ function offClockFlags(i) {
   if (!flagged) return [];
   const out = [];
   const mins = minutesBetween(combine(i.incidentDate, o.start), combine(i.incidentDate, o.end));
+  if (mins == null) out.push(f('offClockReported', true, 'Reported work that was not paid; add start/end times or the task if you have them. Potential issue as reported.'));
   if (mins != null) out.push(f('offClockMinutes', mins, 'Unrecorded work time — all hours suffered or permitted must be paid (NY Labor Law §§191, 663).'));
   if (o.employerEdited === true) out.push(f('timeRecordEdited', true, 'Employer edited the time record — bears on NY recordkeeping (§195).'));
   return out;
@@ -147,6 +148,7 @@ export function summarize(flags = []) {
   if (m.nyEveningMeal) p.push('No evening meal');
   if (m.spreadOver10) p.push(`Spread of hours (${m.spreadOver10.value}h)`);
   if (m.offClockMinutes) p.push(`Off-clock ${m.offClockMinutes.value}m`);
+  if (m.offClockReported) p.push('Unpaid work (reported)');
   if (m.nyRetaliation) p.push('Possible retaliation');
   if (m.nyFinalPayShort) p.push('Final pay short');
   if (m.nyFinalPayUnpaid) p.push('Final pay not received');
@@ -163,5 +165,6 @@ export const FINDING_LABELS = {
   nyRetaliation: 'Possible retaliation after speaking up',
   nyFinalPayShort: 'Final pay incomplete',
   nyFinalPayUnpaid: 'Final pay not received',
+  offClockReported: 'Unpaid work reported',
   timeRecordEdited: 'Employer changed the time record',
 };
