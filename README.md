@@ -62,7 +62,7 @@ js/
            passphraseDialog (locked backups)
   export/  download · exportJson (Blob backups) · backupCrypto (AES-GCM passphrase lock) · exportCsv ·
            exportReport · exportSummary · reportBrand (paper mode) · emailExport · importBackup · backup
-tests/     Node built-in runner — 158 tests
+tests/     Node built-in runner — 180 tests
 docs/      LEGAL_FOUNDATION.md · IMPROVEMENT_AUDIT.md · superpowers/plans/ (design + Phase 3 plan)
 scripts/   build-app-icons.mjs (SVG → PNG app icons) · build-icons.mjs (Lucide → js/ui/icons.js)
 CHANGELOG.md   keyed on the service-worker cache id shown in Settings → About
@@ -75,14 +75,16 @@ Committed tests under `tests/`, using Node's built-in runner. The app ships **ze
 npm test          # alias for: node --test
 ```
 
-The suite (**158 tests** at last run) covers:
+The suite (**180 tests** at last run) covers:
 
 - **Rules** — meal timing and waivers (measured in hours *worked*), the >10h second-meal rule, picked-issue assertions (a chip alone produces its finding, and a chip with no times produces a *reported* finding rather than silence), daily + weekly overtime roll-ups, on-duty-meal agreements, final-pay/waiting-time timing, off-the-clock minutes, the exempt/AWS/CBA caveats, non-blocking time-sanity warnings, and the New York draft set (noon/evening/night §162 windows, overnight shifts).
 - **Time** — DST-correct overnight spans (a 10pm–6am shift is 7h on spring-forward, 9h on fall-back), and the null-in/null-out edges.
 - **Integrity** — versioned content + record sealing, legacy-seal survival across schema growth, finalPay tamper detection, and a **seal contract** gate: the blank record's sealed view and a golden content hash are pinned, so the view cannot change without a deliberate `SEAL_VERSION` bump.
 - **Storage** — the incident and settings repos against `fake-indexeddb`: sealing on write, soft delete and restore, restore-without-resealing, tamper detection on read, legacy hydration, and the migration ladder (steps are re-run-safe; the version is the ladder length).
 - **Export** — email summary + backup build/import round-trips, CSV formula-injection neutralization (CWE-1236), and the locked backup (round-trip, wrong passphrase, edited ciphertext, edited header, absurd-iteration refusal, and a check that no plaintext leaks into the file).
-- **Shell** — an offline-asset gate that walks the real import graph and fails if a reachable module is missing from the service worker's cache list, the icon build pipeline, and a plain-language copy guard.
+- **Failure paths** — every storage-write failure (full phone, blocked/private-mode storage, a second tab holding the database, the unknown case) maps to a message that says the record was *not* saved and what to do next, and cannot be made to throw by any junk passed to it.
+- **Print** — both printable documents are built from a record whose every free-text field carries a script payload; no tag, event handler, or `javascript:` URL survives, and each document declares its own `script-src 'none'` policy.
+- **Shell** — an offline-asset gate that walks the real import graph and fails if a reachable module is missing from the service worker's cache list, the icon build pipeline, a plain-language copy guard (banned jargon *and* a 28-word sentence ceiling on the rights guide), and repo hygiene: the 400-line cap, no debug markers, zero runtime dependencies.
 
 Lint (`npm run lint`) and type-check (`npm run typecheck`, JSDoc + `tsc --checkJs` over the domain layer) run alongside tests in CI. After changing any cached asset, bump `CACHE` in `service-worker.js` so installed clients update — and note it in [`CHANGELOG.md`](CHANGELOG.md), which is keyed on that same string.
 

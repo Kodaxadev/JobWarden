@@ -7,6 +7,33 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v64 — 2026-07-24
+
+**A failed save no longer flashes past.** Both capture paths used to answer a write failure
+with a two-second toast carrying a raw error name. That is the wrong instrument here: the
+next thing a user does is put the phone away believing the record is kept, and what is lost
+is not a form but a record of something that already happened and cannot be observed again.
+A failure now blocks until acknowledged, says plainly that the record was **not** saved, and
+gives a next step per cause — a full phone, a private/incognito window, a second tab holding
+the database, or the unknown case. When the cause is space, it offers the trade that keeps
+the evidence: **save without the photos, keep the facts.**
+
+**A content policy inside the printed report.** The printable report and summary are
+generated HTML written into a same-origin window. Escaping and the `data:image/` allowlist
+were the only defence, and a restored backup file is untrusted input. Both documents now
+carry their own CSP (`script-src 'none'`), so anything that slipped past the escaper still
+cannot run. Plus edge headers: `X-Frame-Options`, COOP, CORP, and topic/cohort opt-outs.
+
+**Legibility and reading level.** Record metadata on the Records screen was 11.5px mono —
+fine on a good screen, hostile on a cheap one in a parking lot; now 12.5px. Issue-group
+labels 11 → 12px. In the rights guide, five paragraphs ran 31–35 words in a single sentence:
+median reading grade is now 7.6 (was 8.9), worst 12.0 (was 14.2), nothing past 28 words per
+sentence — and a test keeps it there.
+
+**Under the hood:** AGENTS.md's 400-line cap, the no-debug-marker rule, and the
+zero-runtime-dependencies promise are now CI checks rather than things to remember.
+176 tests.
+
 ## v61 — 2026-07-24
 
 **Encrypted backups.** New **Save locked backup** on the Export screen writes the same
