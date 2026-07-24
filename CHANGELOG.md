@@ -7,7 +7,7 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
-## v65 — 2026-07-24
+## v65–v67 — 2026-07-24
 
 **Two claims a California hourly worker meets constantly, that the app had nowhere to log.**
 
@@ -31,9 +31,18 @@ Existing records are untouched and their fingerprints still verify: the new fiel
 empty, which the v2 seal prunes before hashing. That is the forward-compatibility contract,
 and the gate added in v61 is what proves it held here.
 
+The rights guide gained matching topics, so a worker who logs one of these can read what the
+rule actually is without leaving the app.
+
 **These are new attorney-review surface.** `docs/LEGAL_FOUNDATION.md` now carries a table of
 every legal claim the app makes and where it came from, with the specific open questions on
 these two written down rather than assumed settled.
+
+*Corrected in v67:* the first cut of these findings counted supporting detail — the reason
+you were given for being sent home, the fact that you asked to be reimbursed — as separate
+issues in the pattern roll-up, so a six-record week reported eight. One incident now counts
+once. Supporting facts still appear on the record and in the report; they no longer inflate
+the tally.
 
 ## v64 — 2026-07-24
 

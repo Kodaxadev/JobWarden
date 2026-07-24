@@ -2,8 +2,8 @@
 
 Written 2026-07-02 against `986e6c9` (SW v51, 93 tests). The two **Progress** sections below
 record what has shipped since; the numbered sections keep the original wording so the
-tradeoffs stay visible even where they were later taken. Last reviewed 2026-07-24 (SW v61,
-158 tests).
+tradeoffs stay visible even where they were later taken. Last reviewed 2026-07-24 (SW v67,
+198 tests).
 
 This is the honest document: every place the project is bad, fragile, missing, or
 deliberately traded away — from product strategy to the tech stack — with what it would
@@ -34,10 +34,11 @@ Most of the actionable list below is now done and verified (105 tests, eslint + 
 
 ---
 
-## Progress — shipped 2026-07-24 (SW v59→v61)
+## Progress — shipped 2026-07-24 (SW v59→v67)
 
-Second pass, aimed at the durability/trust and process items rather than features
-(158 tests, eslint + `tsc --checkJs` green, zero vulnerabilities in the dep tree):
+Second pass, aimed at durability, trust, and failure paths — plus the two catalog gaps a
+California worker hits most often (198 tests, eslint + `tsc --checkJs` green, zero
+vulnerabilities in the dependency tree, dev included):
 
 - **✅ Passphrase-encrypted backup** (AES-256-GCM, PBKDF2-SHA256 310k, on-device key, no
   escrow, binary format so a photo-heavy archive never becomes a base64 megastring; header
@@ -61,15 +62,26 @@ Second pass, aimed at the durability/trust and process items rather than feature
   status (1.68:1) were inheriting light-mode ink on the permanently-navy surfaces. §6, §7.
 - **✅ Findings for reported-but-undetailed issues** — a picked chip with no times now says so
   instead of producing nothing. §2.
+- **✅ A failed save blocks instead of toasting**, explains the cause in plain words, and offers
+  the drop-the-photos trade that keeps the facts. §3.
+- **✅ Two of §2's catalog gaps closed**: reporting-time pay (IWC §5) and necessary work
+  expenses (§2802), with matching rights-guide topics — and logged as new attorney-review
+  surface in `LEGAL_FOUNDATION.md`, which now tables every legal claim the app makes. §2.
+- **✅ Reading-level pass on the rights guide** (median grade 8.9 → 7.0, no sentence past 28
+  words) — and the sentence ceiling is a test now, not a one-time cleanup. §7.
+- **✅ Sub-12px metadata audit**: record content raised to 12.5px, issue labels to 12px; the
+  10px wordmark stays, being a brand lockup rather than reading text. §6.
+- **✅ House rules are CI checks**: the 400-line cap, no debug markers, zero runtime deps. §9.
 
 **Still open**: 🔴 attorney review (external) and the operator-identity/contact-email fill-in —
 together the only launch blockers; 🔴/🟠 **Spanish/i18n** — the string layer is a clean
 refactor but the *legal-adjacent content must be human-translated*, so it's a dedicated
-project, not an auto-translate; the fuller catalog additions in §2 (reporting-time pay,
-split-shift, §2802 expenses, §226 paystubs, tips, sick leave); E2EE sync (a deliberate cut);
-Playwright in CI (needs a browser runner); trusted timestamping (OpenTimestamps); per-record
-*checkbox* selection (the filter-scoped export covers the main use case); a real screen-reader
-pass on a budget Android; the reading-level pass on the rights FAQ; the logo rework.
+project, not an auto-translate; the *remaining* catalog additions in §2 (split-shift premium,
+§226 paystubs as a structured type, tip theft, sick-leave retaliation); E2EE sync (a
+deliberate cut); Playwright in CI (the loop is verified by hand each pass, but automating it
+needs a browser runner); trusted timestamping (OpenTimestamps); per-record *checkbox*
+selection (the filter-scoped export covers the main use case); a real screen-reader pass on a
+budget Android; the logo rework (needs a direction call).
 
 ---
 
