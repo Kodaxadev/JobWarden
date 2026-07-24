@@ -29,7 +29,9 @@ test('primary copy avoids jargon', () => {
 // app, read on a phone by someone who is upset. Short words in a 35-word sentence still
 // lose the reader. This is the guard for that.
 const MAX_SENTENCE_WORDS = 28;
-const sentencesOf = (text) => text.split(/(?<=[.!?])\s+/).map(s => s.trim()).filter(Boolean);
+// Split on terminal punctuation, allowing a closing quote or paren after it — this copy uses
+// curly quotes, and `pay.”` ends a sentence just as much as `pay.` does.
+const sentencesOf = (text) => text.split(/(?<=[.!?][”"’')\]]?)\s+/).map(s => s.trim()).filter(Boolean);
 const wordCount = (s) => s.split(/\s+/).filter(Boolean).length;
 
 test('no sentence in the rights guide runs past 28 words', () => {

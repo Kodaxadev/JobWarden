@@ -46,6 +46,26 @@ export const TOPICS = [
     app: 'The off-the-clock step records the unpaid minutes, who directed the work, and whether your time record was changed.',
   },
   {
+    q: 'Sent home early after you showed up',
+    paras: [
+      'Show up for a scheduled shift, get sent home before working half of it, and you are owed “reporting-time pay.” That is half the scheduled shift — at least 2 hours of pay, and at most 4.',
+      'It is about the shift you were scheduled for, not the hours you ended up working. So the scheduled start and end are the numbers to write down.',
+      'There are exceptions. If the cause was outside the employer’s control — a power failure, a threat to safety, an official shutdown — reporting-time pay may not be owed. Write down the reason you were given, in their words.',
+    ],
+    cite: 'IWC Wage Orders §5',
+    app: 'Pick “Sent home early after showing up” and the Log screen asks for the scheduled shift, who sent you home, and the reason. A shift worked at under half its schedule gets flagged.',
+  },
+  {
+    q: 'Paying for things the job needs',
+    paras: [
+      'Your employer must pay you back for what you have to spend to do the job. That covers required uniforms, tools and equipment, mileage in your own car, and a phone or data plan you are expected to use for work.',
+      'This holds even if you agreed to pay. You cannot sign away the right to be reimbursed.',
+      'Keep the receipt, and keep the message where you asked to be paid back. The asking is evidence too.',
+    ],
+    cite: 'Labor Code §2802',
+    app: 'Pick “Paid for something the job needed” and the Log screen records what it was and what it cost. It also asks whether you were paid back, when you asked, and what they said.',
+  },
+  {
     q: 'Overtime and the four-10s schedule',
     paras: [
       'Normally overtime is 1.5× pay after 8 hours in a day or 40 in a week, and 2× after 12 in a day.',
