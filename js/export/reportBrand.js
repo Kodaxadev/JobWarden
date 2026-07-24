@@ -7,6 +7,21 @@
 // "Paper mode") — the one place these values live. Both export files consume it and
 // keep only their own layout rules, referencing the tokens.
 
+// A report is generated HTML written into a same-origin window, which is a shape that keeps
+// an injection class alive no matter how careful the escaping is: anything that got through
+// would run with the app's origin and could read the whole record store. Escaping and the
+// data:image/ allowlist are the first line; this is the second, and it does not depend on
+// getting the first one right. `script-src 'none'` means a tag that slipped past the escaper
+// still cannot execute. Inline styles are needed (the stylesheet is written into the doc),
+// data:/blob: images are the attached photos, and nothing else may load at all.
+//
+// This lives in the document itself rather than a header because the print window has no
+// server response to attach one to, and it must not rely on inheriting the opener's policy —
+// browsers disagree about whether a document.write'n about:blank does.
+export const REPORT_CSP =
+  "default-src 'none'; script-src 'none'; style-src 'unsafe-inline'; " +
+  "img-src data: blob:; base-uri 'none'; form-action 'none'; object-src 'none'";
+
 export const PAPER_CSS = `
   :root {
     --paper-navy:#16263f; --paper-gold:#b78f2c; --paper-gold-2:#c8a23a; --paper-gold-deep:#8a6a12;

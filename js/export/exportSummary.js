@@ -5,7 +5,7 @@ import { summarizePatterns, buildTimeline } from '../domain/patterns.js';
 import { manifestHash, HASH_ALGO } from '../domain/integrity.js';
 import { jurisdictionLabel } from '../config/jurisdictions.js';
 import { formatDate } from '../domain/timeUtils.js';
-import { PAPER_CSS, BRAND_CSS, docHead } from './reportBrand.js';
+import { PAPER_CSS, BRAND_CSS, REPORT_CSP, docHead } from './reportBrand.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -52,7 +52,8 @@ export async function buildSummaryHtml(incidents, settings = {}) {
 
   const integrity = mh ? `<div class="integrity"><strong>Integrity:</strong> ${HASH_ALGO} · Set fingerprint <code>${esc(mh)}</code> — detects any change to the underlying records. A self-kept log, not a third-party timestamp.</div>` : '';
 
-  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title>
+  return `<!doctype html><html><head><meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="${REPORT_CSP}"><title>${esc(title)}</title>
     <style>${PAPER_CSS}${BRAND_CSS}${STYLE}</style></head><body>
     ${docHead()}
     <h1>${esc(title)}</h1>

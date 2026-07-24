@@ -5,7 +5,7 @@ import { jurisdictionLabel } from '../config/jurisdictions.js';
 import { formatDate } from '../domain/timeUtils.js';
 import { formatLoc } from '../capture/geo.js';
 import { verifyIntegrity, manifestHash, HASH_ALGO } from '../domain/integrity.js';
-import { PAPER_CSS, BRAND_CSS, docHead } from './reportBrand.js';
+import { PAPER_CSS, BRAND_CSS, REPORT_CSP, docHead } from './reportBrand.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const when = iso => { try { return new Date(iso).toLocaleString(); } catch { return iso || '—'; } };
@@ -125,7 +125,8 @@ export async function buildReportHtml(incidents, settings = {}) {
       <div><strong>Set fingerprint:</strong> <code>${esc(mh)}</code></div>
       <p>Each record below carries a fingerprint of its contents and edit history, and each photo carries a fingerprint of its file. These let anyone detect whether a record was changed after it was saved. This is a self-kept log, not a third-party timestamp — the fingerprints do not prove the times entered are true.</p>
     </div>` : '';
-  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title>
+  return `<!doctype html><html><head><meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="${REPORT_CSP}"><title>${esc(title)}</title>
     <style>${PAPER_CSS}${BRAND_CSS}${STYLE}</style></head><body>
     ${docHead()}
     <h1>${esc(title)}</h1>
