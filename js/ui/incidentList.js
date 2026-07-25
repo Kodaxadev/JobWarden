@@ -196,20 +196,29 @@ function row(item, { onEdit, onChanged, onRepeat }) {
       chipRow(item),
       flagText ? el('div', { class: 'row-flags', text: flagText }) : null,
     ]),
-    el('div', { class: 'row-meta', text: meta.join('  ') }),
+    el('div', { class: 'row-trailing' }, [
+      meta.length ? el('div', { class: 'row-meta', text: meta.join('  ') }) : null,
+      el('span', { class: 'row-chevron', 'aria-hidden': 'true' }, [iconEl('chevron-down')]),
+    ]),
   ]);
 
   const detail = el('div', { class: 'row-detail', id: detailId, hidden: true });
+  const article = el('article', { class: 'row' }, [head, detail]);
   let built = false;
   head.addEventListener('click', () => {
     detail.hidden = !detail.hidden;
     head.setAttribute('aria-expanded', detail.hidden ? 'false' : 'true');
+    article.classList.toggle('expanded', !detail.hidden);
     if (!built) { buildDetail(detail, item, { onEdit, onChanged, onRepeat }); built = true; }
   });
-  return el('article', { class: 'row' }, [head, detail]);
+  return article;
 }
 
 function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
+  host.appendChild(el('div', { class: 'record-detail-label' }, [
+    iconEl('clipboard-pen'),
+    el('span', { text: 'Record details' }),
+  ]));
   const facts = el('dl', { class: 'facts' });
   const add = (k, v) => { if (v == null || v === '') return; facts.appendChild(el('dt', { text: k })); facts.appendChild(el('dd', { text: String(v) })); };
   add('Started work', item.clockIn); add('Stopped work', item.clockOut);
@@ -290,10 +299,22 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
   }).catch(() => seal.remove());
 
   const noted = (item.flags || []).filter(f => f.note);
-  if (noted.length) host.appendChild(el('ul', { class: 'flaglist' }, noted.map(f => el('li', { text: f.note }))));
+  if (noted.length) {
+    host.appendChild(el('section', { class: 'finding-panel' }, [
+      el('div', { class: 'finding-head' }, [
+        iconEl('triangle-alert'),
+        el('strong', { text: 'Possible issue notes' }),
+      ]),
+      el('p', { class: 'finding-limit', text: 'Pointers from what you entered — not legal decisions.' }),
+      el('ul', { class: 'flaglist' }, noted.map(f => el('li', { text: f.note }))),
+    ]));
+  }
   const hrs = (item.flags || []).find(f => f.key === 'hoursWorked');
   if (hrs) host.appendChild(el('p', { class: 'hint', text: `Hours worked (estimated): ${hrs.value}` }));
-  if (item.narrative) host.appendChild(el('p', { class: 'narrative', text: item.narrative }));
+  if (item.narrative) host.appendChild(el('section', { class: 'record-note' }, [
+    el('strong', { class: 'record-note-label', text: 'Your notes' }),
+    el('p', { class: 'narrative', text: item.narrative }),
+  ]));
 
   if (item.location) {
     const link = mapsLink(item.location);
@@ -318,13 +339,17 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
   }
 
   host.appendChild(el('div', { class: 'row-actions' }, [
-    el('button', { class: 'btn', text: 'Log again', onclick: () => onRepeat?.(item) }),
-    el('button', { class: 'btn', text: 'Edit', onclick: () => onEdit?.(item) }),
-    el('button', { class: 'btn danger', text: 'Delete', onclick: async () => {
+    el('button', { class: 'btn record-action', onclick: () => onRepeat?.(item) }, [
+      iconEl('rotate-ccw'), document.createTextNode(' Log similar'),
+    ]),
+    el('button', { class: 'btn record-action', onclick: () => onEdit?.(item) }, [
+      iconEl('clipboard-pen'), document.createTextNode(' Edit record'),
+    ]),
+    el('button', { class: 'btn danger record-delete', onclick: async () => {
       if (await confirmDialog('Move this record to Deleted? It stays recoverable under “Deleted”.')) {
         await putIncident(softDelete(item)); toast('Moved to Deleted'); onChanged?.();
       }
-    } }),
+    } }, [iconEl('trash-2'), document.createTextNode(' Move to Deleted')]),
   ]));
 }
 

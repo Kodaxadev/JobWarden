@@ -11,6 +11,8 @@ import { renderShiftPanel } from '../ui/shiftPanel.js';
 import { reportSaveFailure } from '../ui/saveFailure.js';
 import { openInterruptedLunch } from './quickCapture.js';
 import { buildInitialState, whatHappenedSection, activeSections, proofSection } from './captureFields.js';
+import { backButton } from '../ui/actionRow.js';
+import { createNavigationGuard } from '../ui/navigationGuard.js';
 
 const iconEl = (n) => { const s = el('span'); s.innerHTML = icon(n); return s.firstElementChild || s; };
 function dateLabel(ds) {
@@ -20,19 +22,29 @@ function dateLabel(ds) {
   return (ds === todayDateStr() ? 'Today, ' : '') + nice;
 }
 
-export async function renderCaptureForm(container, { onSaved, existing, template, prefill } = {}) {
+export async function renderCaptureForm(container, {
+  onSaved, onQuickSaved, onCancel, setNavigationGuard, existing, template, prefill,
+} = {}) {
   clear(container);
   const settings = await getSettings();
 
   // Slim "right now" bar (fresh log only): interrupted-lunch capture + shift tracker.
   if (!existing && !template && !prefill) {
     const liveBar = el('div', { class: 'live-bar' });
-    const quickBtn = el('button', { type: 'button', class: 'btn live-quick', onclick: () => openInterruptedLunch({ onSaved }) },
+    const quickBtn = el('button', {
+      type: 'button', class: 'btn live-quick',
+      onclick: () => openInterruptedLunch({ onSaved: onQuickSaved }),
+    },
       [iconEl('circle-alert'), document.createTextNode(' Interrupted lunch')]);
     const shiftHost = el('div', { class: 'shift-host' });
     liveBar.append(quickBtn, shiftHost);
     container.appendChild(liveBar);
-    await renderShiftPanel(shiftHost, { settings, onEndShift: (draft) => renderCaptureForm(container, { onSaved, prefill: draft }) });
+    await renderShiftPanel(shiftHost, {
+      settings,
+      onEndShift: (draft) => renderCaptureForm(container, {
+        onSaved, onQuickSaved, onCancel, setNavigationGuard, prefill: draft,
+      }),
+    });
   }
 
   const state = buildInitialState(existing || template || prefill, settings);
@@ -45,8 +57,30 @@ export async function renderCaptureForm(container, { onSaved, existing, template
   }
   if (prefill && !existing) toast('Filled in from your shift — review and save');
 
+  if (existing || template) {
+    container.appendChild(el('section', { class: 'capture-mode' }, [
+      backButton(onCancel),
+      el('div', { class: 'capture-mode-copy' }, [
+        el('span', { class: 'capture-mode-kicker', text: existing ? 'Editing saved record' : 'New record from prior entry' }),
+        el('strong', { text: dateLabel((existing || template).incidentDate) }),
+      ]),
+      el('span', { class: 'capture-mode-icon', 'aria-hidden': 'true' }, [iconEl(existing ? 'clipboard-pen' : 'rotate-ccw')]),
+    ]));
+  }
+
   const form = el('form', { class: 'capture', autocomplete: 'off' });
   form.addEventListener('submit', e => e.preventDefault());
+  const guard = createNavigationGuard(() => confirmDialog(
+    'Leave this record? Your unsaved changes will be lost.',
+    { confirmText: 'Leave', cancelText: 'Keep editing', danger: false },
+  ));
+  const markDirty = () => guard.markDirty();
+  form.addEventListener('input', markDirty);
+  form.addEventListener('change', markDirty);
+  form.addEventListener('click', e => {
+    if (e.target.closest('button') && !e.target.closest('.save')) markDirty();
+  });
+  setNavigationGuard?.(() => guard.canLeave());
   const body = el('div', { class: 'capture-body' });
   const adaptiveHost = el('div', { class: 'adaptive' });
   const saveBtn = el('button', { type: 'button', class: 'btn save big', onclick: () => save() },
@@ -60,7 +94,7 @@ export async function renderCaptureForm(container, { onSaved, existing, template
   }
   container.appendChild(form);
 
-  const whatHappened = whatHappenedSection(state, { onChange: renderAdaptive });
+  const whatHappened = whatHappenedSection(state, { onChange: () => { markDirty(); renderAdaptive(); } });
   const proof = proofSection(state);
   body.append(whatHappened, adaptiveHost, proof);
   renderAdaptive();
@@ -97,13 +131,19 @@ export async function renderCaptureForm(container, { onSaved, existing, template
     const write = (rec) => (existing ? putIncident(rec) : addIncident(rec));
     try {
       await write(draft);
+      guard.reset();
+      setNavigationGuard?.(null);
       toast(existing ? 'Record updated' : 'Saved on this phone ✓');
       onSaved?.(draft);
     } catch (err) {
       // A record that will not save is evidence about to be lost, so this blocks rather
       // than toasts, and offers the trade that keeps the facts (see saveFailure.js).
       const r = await reportSaveFailure(err, draft, write);
-      if (r.saved) onSaved?.(draft);
+      if (r.saved) {
+        guard.reset();
+        setNavigationGuard?.(null);
+        onSaved?.(draft);
+      }
     }
   }
 }

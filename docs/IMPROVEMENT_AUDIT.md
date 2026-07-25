@@ -2,8 +2,8 @@
 
 Written 2026-07-02 against `986e6c9` (SW v51, 93 tests). The two **Progress** sections below
 record what has shipped since; the numbered sections keep the original wording so the
-tradeoffs stay visible even where they were later taken. Last reviewed 2026-07-25 (SW v85,
-245 tests).
+tradeoffs stay visible even where they were later taken. Last reviewed 2026-07-25 (SW v86,
+248 tests).
 
 This is the honest document: every place the project is bad, fragile, missing, or
 deliberately traded away — from product strategy to the tech stack — with what it would
@@ -73,14 +73,14 @@ vulnerabilities in the dependency tree, dev included):
   10px wordmark stays, being a brand lockup rather than reading text. §6.
 - **✅ House rules are CI checks**: the 400-line cap, no debug markers, zero runtime deps. §9.
 
-## Progress — shipped 2026-07-25 (SW v85)
+## Progress — shipped 2026-07-25 (SW v85→v86)
 
 The first app-wide visual-system pass is verified at phone widths in both themes. Issue
 selection now uses five icon-led disclosures instead of sixteen equal-weight buttons.
-Export and Settings share action cells; controls share tap, focus, and icon treatment;
-first-run and backup surfaces fit mobile; and the public preview shows the v85 interface.
+Action cells, quick capture, record review, and edit mode now share hierarchy, labels,
+icons, caution semantics, visible save actions, and unsaved-change protection.
 
-**Still open after SW v85**: 🔴 attorney review (external), now the only public-launch
+**Still open after SW v86**: 🔴 attorney review (external), now the only public-launch
 blocker; 🔴/🟠 **Spanish/i18n** — the string layer is a clean
 refactor but the *legal-adjacent content must be human-translated*, so it's a dedicated
 project, not an auto-translate. SW v84 closed the remaining structured California catalog

@@ -190,12 +190,43 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .shift-note { margin: 12px 0 0; font-size: var(--fs-sm); line-height: 1.5; color: var(--muted); }
 
 /* Quick capture sheet (interrupted lunch) */
-.quick-sheet { max-width: 460px; text-align: left; }
-.quick-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 8px; }
+.quick-sheet { max-width: 460px; max-height: min(760px, calc(100dvh - 32px)); display: flex; flex-direction: column; overflow: hidden; text-align: left; }
+.quick-head { display: grid; grid-template-columns: 40px minmax(0,1fr); align-items: center; gap: 3px 12px; margin: 0 0 8px; }
+.quick-head-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; color: var(--danger-text); background: rgba(224,89,77,.1); border: 1px solid rgba(224,89,77,.3); }
+.quick-head-icon svg { width: 20px; height: 20px; }
+.quick-title { min-width: 0; }
+.quick-kicker, .capture-mode-kicker { display: block; margin-bottom: 3px; font-family: var(--mono); font-size: var(--fs-micro); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
 .quick-head h2 { margin: 0; font-size: var(--fs-title); }
-.quick-now { font-family: var(--mono); font-size: var(--fs-sm); color: var(--primary); white-space: nowrap; }
-.quick-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 12px; }
-.quick-sheet > textarea, .quick-sheet > input[type=text] { width: 100%; margin: 8px 0 0; }
-.quick-sheet .check { margin-top: 12px; }
-.quick-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; align-items: center; }
-.quick-actions .primary { margin-left: auto; }
+.quick-now { grid-column: 2; font-family: var(--mono); font-size: var(--fs-sm); color: var(--primary); white-space: nowrap; }
+.quick-intro { flex: none; margin: 0 0 14px; color: var(--muted); font-size: var(--fs-sm); line-height: 1.45; }
+.quick-body { min-height: 0; overflow-y: auto; padding: 0 3px 2px 0; }
+.quick-who { min-width: 0; padding: 0; margin: 0; border: 0; }
+.quick-who legend { padding: 0; font-weight: 600; font-size: var(--fs-sm); color: var(--text); }
+.quick-who .opt { font-family: var(--mono); font-size: var(--fs-micro); letter-spacing: .04em; text-transform: uppercase; color: var(--faint); }
+.quick-chips { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin: 8px 0 16px; }
+.quick-chips .chip { width: 100%; min-width: 0; justify-content: center; }
+.quick-chips .chip:last-child { grid-column: 1 / -1; }
+.quick-field { display: block; margin-top: 14px; }
+.quick-field > .field-label { display: block; margin-bottom: 7px; }
+.quick-field :is(input,textarea) { width: 100%; }
+.quick-returned { align-items: flex-start; margin-top: 16px; padding: 12px; border-color: var(--line-2); background: rgba(255,255,255,.02); }
+.quick-returned > span { display: flex; flex-direction: column; gap: 3px; }
+.quick-returned strong { font-size: var(--fs-ui); line-height: 1.35; }
+.quick-returned .hint { line-height: 1.4; }
+.quick-photo { width: 100%; margin-top: 14px; color: var(--muted); border-style: dashed; box-shadow: none; }
+.quick-save-note { flex: none; display: flex; align-items: center; justify-content: center; gap: 6px; margin: 10px 0 0; color: var(--gtext); font-size: var(--fs-sm); }
+.quick-save-note svg { width: 15px; height: 15px; }
+.quick-actions { flex: none; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.5fr); gap: 8px; margin-top: 12px; }
+.quick-actions .btn { width: 100%; }
+
+/* Edit/repeat context: a saved record should never look like a fresh blank log. */
+.capture-mode { display: grid; grid-template-columns: auto minmax(0,1fr) 36px; gap: 10px; align-items: center; margin: 0 0 var(--space-4); padding: 10px 12px 10px 6px; border: 1px solid rgba(205,171,69,.28); border-radius: var(--radius); background: rgba(205,171,69,.055); }
+.capture-mode-copy { min-width: 0; display: flex; flex-direction: column; }
+.capture-mode-copy strong { font-size: var(--fs-sm); }
+.capture-mode-icon { width: 36px; height: 36px; display: grid; place-items: center; color: var(--primary); border: 1px solid rgba(205,171,69,.2); border-radius: 10px; background: rgba(205,171,69,.07); }
+.capture-mode-icon svg { width: 18px; height: 18px; }
+
+@media (max-width: 360px) {
+  .quick-sheet { padding: 16px; }
+  .quick-head-icon { width: 36px; height: 36px; }
+}

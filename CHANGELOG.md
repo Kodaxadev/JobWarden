@@ -7,6 +7,22 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v86 — 2026-07-25
+
+**Quick capture and record review now carry the same finish as the main Log screen.**
+The interrupted-lunch sheet keeps its save action visible while optional details scroll,
+uses real labels instead of placeholder-only fields, and makes every unconfirmed fact
+optional. Saving a quick record no longer throws away a separate Log draft.
+
+Records now show that rows expand, separate green fingerprint verification from gold
+possible-issue notes, label the worker's own notes, and give repeat, edit, and recoverable
+delete actions a clear hierarchy. Edit mode identifies the saved record being changed and
+warns before navigation can discard unsaved work.
+
+Both flows were rechecked on a phone-sized viewport in dark and light themes. The formal
+policy and findings language still require review by a licensed California employment
+attorney before public launch.
+
 ## v85 — 2026-07-25
 
 **The mobile interface now behaves like one designed system.** The Log screen replaces

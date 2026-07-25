@@ -86,6 +86,10 @@
 .row-head.static { cursor: default; align-items: center; }
 .row-head.static:hover, .row-head.static:active { background: none; }
 .row-main { min-width: 0; }
+.row-trailing { display: flex; align-items: flex-start; gap: 8px; flex: none; }
+.row-chevron { display: grid; place-items: center; margin-top: 1px; color: var(--faint); }
+.row-chevron svg { width: 18px; height: 18px; transition: transform var(--dur-state) var(--ease-out); }
+.row.expanded .row-chevron svg { transform: rotate(180deg); color: var(--primary); }
 .row-date { font-family: var(--mono); font-weight: 500; font-size: var(--fs-ui); margin-bottom: 8px; }
 .row-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip.mini { display: inline-block; background: var(--surface-3); border: 1px solid var(--line-2); border-radius: var(--radius-pill); padding: 4px 12px; font-size: var(--fs-micro); min-height: 0; color: var(--muted); }
@@ -94,14 +98,32 @@
    which is legible on a good screen and hostile on a cheap one in a parking lot. */
 .row-meta { font-family: var(--mono); color: var(--faint); font-size: var(--fs-sm); white-space: nowrap; text-align: right; }
 .row-detail { padding: 0 16px 16px; border-top: 1px solid var(--line); }
+.record-detail-label { display: flex; align-items: center; gap: 8px; margin: 14px 0 0; font-family: var(--mono); font-size: var(--fs-micro); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.record-detail-label svg { width: 15px; height: 15px; color: var(--primary); }
 .facts { display: grid; grid-template-columns: 132px 1fr; gap: 8px 12px; margin: 16px 0; font-size: var(--fs-ui); }
 .facts dt { color: var(--muted); }
 .facts dd { margin: 0; }
-.flaglist { margin: 12px 0; padding-left: 16px; }
-.flaglist li { color: var(--ok); font-size: var(--fs-sm); line-height: 1.45; margin-bottom: 8px; }
-.narrative { white-space: pre-wrap; background: var(--surface-2); border: 1px solid var(--line); padding: 12px 16px; border-radius: var(--radius-sm); font-size: var(--fs-ui); line-height: 1.55; box-shadow: inset 0 1px 2px rgba(0,0,0,.2), inset 0 -1px 0 rgba(255,255,255,.03); }
-.row-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.finding-panel { margin: 12px 0; padding: 12px; border: 1px solid var(--iline); border-radius: var(--radius-sm); background: var(--ifill); }
+.finding-head { display: flex; align-items: center; gap: 8px; color: var(--incident); font-size: var(--fs-sm); }
+.finding-head svg { width: 16px; height: 16px; }
+.finding-limit { margin: 5px 0 0; color: var(--muted); font-size: var(--fs-sm); line-height: 1.4; }
+.flaglist { margin: 10px 0 0; padding-left: 18px; }
+.flaglist li { color: var(--incident); font-size: var(--fs-sm); line-height: 1.45; margin-bottom: 8px; }
+.flaglist li:last-child { margin-bottom: 0; }
+.record-note { margin-top: 14px; }
+.record-note-label { display: block; margin-bottom: 7px; font-size: var(--fs-sm); color: var(--muted); }
+.narrative { margin: 0; white-space: pre-wrap; background: var(--surface-2); border: 1px solid var(--line); padding: 12px 16px; border-radius: var(--radius-sm); font-size: var(--fs-ui); line-height: 1.55; box-shadow: inset 0 1px 2px rgba(0,0,0,.2), inset 0 -1px 0 rgba(255,255,255,.03); }
+.row-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin-top: 16px; }
+.record-action { min-width: 0; padding-inline: 10px; }
+.record-action svg, .record-delete svg { width: 17px; height: 17px; }
+.record-delete { grid-column: 1 / -1; color: var(--danger-text); background: rgba(224,89,77,.055); box-shadow: none; }
 .row-detail a { color: var(--primary-strong); }
+
+@media (max-width: 420px) {
+  .facts { grid-template-columns: 1fr; gap: 3px; }
+  .facts dd { margin-bottom: 8px; }
+  .facts dd:last-child { margin-bottom: 0; }
+}
 
 /* The signature component. It resolves rather than pops: the verification is real async work,
    so the result eases into its tint instead of snapping, and the mark settles the last pixel

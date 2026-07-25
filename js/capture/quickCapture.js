@@ -55,9 +55,9 @@ export async function openInterruptedLunch({ onSaved } = {}) {
     chips.forEach(c => { const on = c === btn; c.classList.toggle('on', on); c.setAttribute('aria-pressed', on ? 'true' : 'false'); });
   }));
 
-  const nameInput = el('input', { type: 'text', placeholder: 'Name (optional)' });
+  const nameInput = el('input', { type: 'text', placeholder: 'Name or role' });
   const returnedCb = el('input', { type: 'checkbox' });
-  const note = el('textarea', { rows: '2', placeholder: 'What happened (optional)' });
+  const note = el('textarea', { rows: '2', placeholder: 'What did they ask you to do?' });
 
   const thumbs = el('div', { class: 'thumbs' });
   const fileInput = el('input', { type: 'file', accept: 'image/*', hidden: true });
@@ -72,7 +72,9 @@ export async function openInterruptedLunch({ onSaved } = {}) {
     for (const file of e.target.files) { const a = await fileToAttachment(file); if (a) attachments.push(a); }
     fileInput.value = ''; renderThumbs();
   });
-  const photoBtn = el('button', { type: 'button', class: 'btn', onclick: () => fileInput.click() }, [iconEl('camera'), document.createTextNode(' Add photo')]);
+  const photoBtn = el('button', {
+    type: 'button', class: 'btn quick-photo', onclick: () => fileInput.click(),
+  }, [iconEl('camera'), document.createTextNode(' Add a photo (optional)')]);
 
   const save = async () => {
     const input = interruptedLunchInput({ by, name: nameInput.value, returnedToWork: returnedCb.checked, note: note.value, workplace, attachments });
@@ -91,21 +93,51 @@ export async function openInterruptedLunch({ onSaved } = {}) {
   };
 
   const titleId = 'qc-' + Math.random().toString(16).slice(2);
+  const quickBody = el('div', { class: 'quick-body' }, [
+    el('fieldset', { class: 'quick-who' }, [
+      el('legend', {}, [
+        document.createTextNode('Who interrupted you? '),
+        el('span', { class: 'opt', text: 'optional' }),
+      ]),
+      el('div', { class: 'quick-chips' }, chips),
+    ]),
+    el('label', { class: 'quick-field' }, [
+      el('span', { class: 'field-label', text: 'Name (optional)' }),
+      nameInput,
+    ]),
+    el('label', { class: 'check quick-returned' }, [
+      returnedCb,
+      el('span', {}, [
+        el('strong', { text: 'I stopped my lunch and returned to work' }),
+        el('span', { class: 'hint', text: 'Check only if you resumed work before the meal ended.' }),
+      ]),
+    ]),
+    el('label', { class: 'quick-field' }, [
+      el('span', { class: 'field-label', text: 'What happened (optional)' }),
+      note,
+    ]),
+    thumbs,
+    photoBtn,
+    fileInput,
+  ]);
   const sheet = el('div', { class: 'dialog quick-sheet', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': titleId }, [
     el('div', { class: 'quick-head' }, [
-      el('h2', { id: titleId, text: 'Interrupted lunch' }),
-      el('span', { class: 'quick-now', text: now }),
+      el('span', { class: 'quick-head-icon', 'aria-hidden': 'true' }, [iconEl('circle-alert')]),
+      el('div', { class: 'quick-title' }, [
+        el('span', { class: 'quick-kicker', text: 'Quick record' }),
+        el('h2', { id: titleId, text: 'Lunch interrupted' }),
+      ]),
+      el('span', { class: 'quick-now', text: `Today · ${now}` }),
     ]),
-    el('p', { class: 'field-label', text: 'Who interrupted you?' }),
-    el('div', { class: 'quick-chips' }, chips),
-    nameInput,
-    el('label', { class: 'check' }, [returnedCb, el('span', { text: 'I returned to work during the meal' })]),
-    note,
-    thumbs,
+    el('p', { class: 'quick-intro', text: 'Capture the interruption now. You can add more detail later.' }),
+    quickBody,
+    el('p', { class: 'quick-save-note' }, [
+      iconEl('shield-check'),
+      el('span', { text: 'Timestamped and saved only on this phone.' }),
+    ]),
     el('div', { class: 'quick-actions' }, [
-      photoBtn, fileInput,
       el('button', { type: 'button', class: 'btn', text: 'Cancel', onclick: close }),
-      el('button', { type: 'button', class: 'btn primary', text: 'Save', onclick: save }),
+      el('button', { type: 'button', class: 'btn primary', text: 'Save record', onclick: save }),
     ]),
   ]);
   const overlay = el('div', { class: 'overlay' }, [sheet]);

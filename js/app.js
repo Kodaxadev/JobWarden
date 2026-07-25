@@ -25,6 +25,7 @@ window.addEventListener('unhandledrejection', e => logError(e.reason?.message ||
 const main = qs('#view');
 const bannerHost = qs('#banner');
 const tabs = [...document.querySelectorAll('.tab')];
+let navigationGuard = null;
 
 async function refreshBanner() {
   const [settings, count] = await Promise.all([getSettings(), countIncidents()]);
@@ -49,10 +50,23 @@ function setActive(name) {
 }
 
 async function show(name, opts = {}) {
+  if (!opts.force && navigationGuard && !await navigationGuard()) return;
+  navigationGuard = null;
   setActive(name === 'rights' || name === 'legal' ? 'settings' : name);
   main.scrollTop = 0;
   if (name === 'log') {
-    await renderCaptureForm(main, { existing: opts.existing, template: opts.template, onSaved: () => { refreshBanner(); show('records'); } });
+    await renderCaptureForm(main, {
+      existing: opts.existing,
+      template: opts.template,
+      setNavigationGuard: guard => { navigationGuard = guard; },
+      onCancel: () => show('records'),
+      onQuickSaved: refreshBanner,
+      onSaved: () => {
+        navigationGuard = null;
+        refreshBanner();
+        show('records', { force: true });
+      },
+    });
   } else if (name === 'records') {
     await renderIncidentList(main, {
       onEdit: it => show('log', { existing: it }),
