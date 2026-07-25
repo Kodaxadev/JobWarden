@@ -10,33 +10,46 @@
   --text:#eef2f8; --muted:#aebbce; --faint:#7e90ab;
   --gold:#cdab45; --gold-bright:#e7cd7e;
   --serif:"Cinzel",Georgia,serif; --sans:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+
+  /* One scale for the longest reading on the site. 14.5 and 16.5 were eyeballed; a legal page
+     is read top to bottom on a phone and the hierarchy has to be unambiguous. */
+  --lg-sm:13px;    /* stamps, footer, captions      */
+  --lg-note:14px;  /* the toc, notes, back link     */
+  --lg-body:17px;  /* the reading size              */
+  --lg-h3:17px;    /* sub-headings, weight does it  */
+  --lg-h2:20px;    /* numbered sections             */
+  --lg-h1:clamp(26px, 6vw, 30px);
 }
-*{box-sizing:border-box} html,body{margin:0}
-body{ font:400 16.5px/1.7 var(--sans); color:var(--text);
+*{box-sizing:border-box} html,body{margin: 0}
+body{ font:400 var(--lg-body)/1.7 var(--sans); color:var(--text);
   background:radial-gradient(120% 60% at 50% -8%, #16243c 0%, rgba(22,36,60,0) 55%), var(--bg);
   -webkit-font-smoothing:antialiased; }
-.wrap{ max-width:720px; margin:0 auto; padding:0 22px 72px; }
+.wrap{ max-width:720px; margin: 0 auto; padding: 0 20px 64px; }
 a{ color:var(--gold-bright); }
-.top{ display:flex; align-items:center; gap:11px; padding:22px 0 0; }
+.top{ display:flex; align-items:center; gap: 12px; padding: 20px 0 0; }
 .top .chip{ width:36px;height:36px;flex:none;border-radius:11px;display:grid;place-items:center;background:linear-gradient(160deg,var(--navy-2),var(--navy-deep));border:1px solid rgba(205,171,69,.32); }
 .top .chip svg{ width:20px;height:20px;color:var(--gold-bright); }
-.top .name{ font-family:var(--serif); font-weight:600; font-size:17px; letter-spacing:.05em; }
+.top .name{ font-family:var(--serif); font-weight:600; font-size:var(--lg-h3); letter-spacing:.05em; }
 .top .name .w{ color:var(--gold); }
-.top .back{ margin-left:auto; font-size:14px; text-decoration:none; }
-h1{ font-size:30px; line-height:1.15; font-weight:600; letter-spacing:-.01em; margin:30px 0 6px; }
-.updated{ font-family:var(--sans); color:var(--faint); font-size:13px; margin:0 0 6px; }
-.tldr{ background:var(--surface); border:1px solid rgba(205,171,69,.28); border-radius:14px; padding:16px 18px; margin:22px 0 8px; }
+.top .back{ margin-left: auto; font-size:var(--lg-note); text-decoration:none; display:inline-flex; align-items:center; min-height:44px; padding: 0 8px; margin-right: -8px; }
+h1{ font-size:var(--lg-h1); line-height:1.15; text-wrap:balance; font-weight:600; letter-spacing:-.01em; margin: 32px 0 8px; }
+.updated{ font-family:var(--sans); color:var(--faint); font-size:var(--lg-sm); margin: 0 0 8px; }
+.tldr{ background:var(--surface); border:1px solid rgba(205,171,69,.28); border-radius:14px; padding: 16px; margin: 24px 0 8px; }
 .tldr strong{ color:var(--gold-bright); }
-.tldr p{ margin:0; color:var(--text); }
-.toc{ font-size:14.5px; color:var(--muted); margin:18px 0 8px; }
-.toc a{ color:var(--muted); }
-h2{ font-size:20px; font-weight:600; margin:34px 0 8px; padding-top:14px; border-top:1px solid var(--line); scroll-margin-top:16px; }
-h2 .num{ color:var(--gold); font-variant-numeric:tabular-nums; margin-right:8px; }
-h3{ font-size:16px; font-weight:600; margin:18px 0 4px; }
+.tldr p{ margin: 0; color:var(--text); }
+/* The contents list is how anyone actually navigates a long policy on a phone. As inline
+   text its links were 16px tall and packed against each other; each one is now its own
+   44px target with room around it. */
+.toc{ font-size:var(--lg-note); color:var(--faint); margin: 20px 0 8px; display:flex; flex-wrap:wrap; align-items:center; gap: 0 4px; }
+.toc a{ color:var(--muted); display:inline-flex; align-items:center; min-height:44px; padding: 0 8px; text-decoration:none; border-bottom:1px solid transparent; }
+.toc a:hover{ color:var(--gold-bright); border-bottom-color:currentColor; }
+h2{ font-size:var(--lg-h2); font-weight:600; margin: 32px 0 8px; padding-top: 16px; text-wrap:balance; border-top:1px solid var(--line); scroll-margin-top: 16px; }
+h2 .num{ color:var(--gold); font-variant-numeric:tabular-nums; margin-right: 8px; }
+h3{ font-size:var(--lg-h3); font-weight:600; margin: 20px 0 4px; }
 p,li{ color:var(--muted); }
-p{ margin:0 0 12px; }
+p{ margin: 0 0 12px; text-wrap:pretty; }
 strong{ color:var(--text); font-weight:600; }
-ul{ margin:0 0 12px; padding-left:22px; } li{ margin:6px 0; }
-.note{ font-size:14.5px; color:var(--faint); background:rgba(214,224,240,.04); border:1px solid var(--line); border-radius:14px; padding:13px 15px; margin:16px 0; }
-footer{ border-top:1px solid var(--line); margin-top:40px; padding-top:20px; color:var(--faint); font-size:13px; }
+ul{ margin: 0 0 12px; padding-left: 24px; } li{ margin: 8px 0; }
+.note{ font-size:var(--lg-note); color:var(--faint); background:rgba(214,224,240,.04); border:1px solid var(--line); border-radius:14px; padding: 12px 16px; margin: 16px 0; }
+footer{ border-top:1px solid var(--line); margin-top: 40px; padding-top: 20px; color:var(--faint); font-size:var(--lg-sm); }
 footer a{ color:var(--faint); }
