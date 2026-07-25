@@ -14,6 +14,13 @@ const field = (label, input, hint) => el('label', { class: 'field' }, [
   hint ? el('span', { class: 'hint', text: hint }) : null,
 ]);
 const text = (v, ph) => el('input', { type: 'text', value: v || '', placeholder: ph || '' });
+const expectation = (iconName, title, detail) => el('li', { class: 'onboard-expectation' }, [
+  el('span', { class: 'onboard-expectation-icon', 'aria-hidden': 'true' }, [iconEl(iconName)]),
+  el('span', { class: 'onboard-expectation-copy' }, [
+    el('strong', { text: title }),
+    el('span', { text: detail }),
+  ]),
+]);
 
 export async function renderOnboarding(container, { onDone } = {}) {
   clear(container);
@@ -43,13 +50,27 @@ export async function renderOnboarding(container, { onDone } = {}) {
     ackBox,
     el('span', { text: ONBOARD_ACK }),
   ]);
-  const ackHint = el('p', { class: 'hint', hidden: true, text: 'Tick the box above to continue.' });
-  ackBox.addEventListener('change', () => { ackHint.hidden = true; });
+  const ackHint = el('p', {
+    id: 'ack-error',
+    class: 'onboard-error',
+    role: 'alert',
+    hidden: true,
+    text: 'Check the box above before you start.',
+  });
+  ackBox.addEventListener('change', () => {
+    ackHint.hidden = true;
+    ack.classList.remove('is-invalid');
+    ackBox.removeAttribute('aria-invalid');
+    ackBox.removeAttribute('aria-describedby');
+  });
 
   async function finish() {
     if (!ackBox.checked) {
       ackHint.hidden = false;
-      ack.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      ack.classList.add('is-invalid');
+      ackBox.setAttribute('aria-invalid', 'true');
+      ackBox.setAttribute('aria-describedby', 'ack-error');
+      ack.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       ackBox.focus();
       return;
     }
@@ -80,6 +101,14 @@ export async function renderOnboarding(container, { onDone } = {}) {
       el('h1', { text: 'Welcome to JobWarden' }),
       el('p', { class: 'onboard-tag', text: 'Keep a private work log on this phone. Record breaks, unpaid work, and pay problems when they happen.' }),
       el('p', { class: 'onboard-scope', text: 'Built for California · More states coming' }),
+    ]),
+    el('section', { class: 'card onboard-expectations', 'aria-labelledby': 'before-you-begin' }, [
+      el('h2', { id: 'before-you-begin', text: 'Before you begin' }),
+      el('ul', {}, [
+        expectation('lock', 'Private by default', 'No account or cloud sync. Records stay in this browser on this phone.'),
+        expectation('wifi-off', 'Ready offline', 'After this first visit, logging works without a connection.'),
+        expectation('download', 'Backups are yours', 'Use Export regularly. Losing this phone or clearing browser data can erase records.'),
+      ]),
     ]),
     el('details', { class: 'card onboard-setup', open: !!(s.employeeName || s.employer || s.role || s.workplaces?.length) }, [
       el('summary', { class: 'onboard-setup-summary' }, [

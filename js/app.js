@@ -17,6 +17,7 @@ import { dueAlerts } from './domain/shiftClock.js';
 import { qs, clear, toast } from './ui/dom.js';
 import { logError } from './data/errorLog.js';
 import { applyTheme, watchSystemTheme } from './ui/theme.js';
+import { bindSystemStatus } from './ui/systemStatus.js';
 
 // Local error capture (never sent anywhere) — surfaced in Settings so "it's broken" is diagnosable.
 window.addEventListener('error', e => logError(e.message, e.filename ? `${e.filename}:${e.lineno || ''}` : ''));
@@ -24,8 +25,16 @@ window.addEventListener('unhandledrejection', e => logError(e.reason?.message ||
 
 const main = qs('#view');
 const bannerHost = qs('#banner');
+const systemHost = qs('#system-status');
 const tabs = [...document.querySelectorAll('.tab')];
 let navigationGuard = null;
+
+const systemStatus = bindSystemStatus(systemHost, {
+  onApplyUpdate: async () => {
+    if (navigationGuard && !await navigationGuard()) return;
+    location.reload();
+  },
+});
 
 async function refreshBanner() {
   const [settings, count] = await Promise.all([getSettings(), countIncidents()]);
@@ -152,12 +161,13 @@ if ('serviceWorker' in navigator) {
     // When a newer build finishes installing AND we were already controlled by an older
     // one, this is an update (not first install) — invite a reopen. Never auto-reload:
     // a capture could be in progress.
+    if (reg.waiting && navigator.serviceWorker.controller) systemStatus.showUpdateReady();
     reg.addEventListener('updatefound', () => {
       const nw = reg.installing;
       if (!nw) return;
       nw.addEventListener('statechange', () => {
         if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-          toast('New version ready — reopen JobWarden to update', 6000);
+          systemStatus.showUpdateReady();
         }
       });
     });

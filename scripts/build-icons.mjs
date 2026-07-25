@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 export const ICON_NAMES = Object.freeze([
   'badge-alert',
   'badge-dollar-sign',
+  'bell-off',
+  'bell-ring',
   'briefcase-business',
   'calendar',
   'calendar-heart',
@@ -34,6 +36,7 @@ export const ICON_NAMES = Object.freeze([
   'notebook-pen',
   'rotate-ccw',
   'receipt-text',
+  'refresh-cw',
   'sandwich',
   'save',
   'settings',
@@ -47,6 +50,7 @@ export const ICON_NAMES = Object.freeze([
   'utensils',
   'wallet',
   'wallet-cards',
+  'wifi-off',
   'x',
 ]);
 

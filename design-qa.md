@@ -217,3 +217,29 @@ actions, empty Export path, settings save, leave-without-saving cancellation, cl
 navigation after saving, status announcements, and zero horizontal overflow were exercised.
 Screenshot review cannot establish full assistive-technology behavior, so a physical iOS
 VoiceOver and Android TalkBack pass remains separate release evidence.
+
+## v90 first-run and resilience addendum
+
+Final result: passed for the captured mobile states.
+
+- Prior first-run state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-edge-states-audit-v90\01-first-run-before.png`
+- Prior shift-reminder state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-edge-states-audit-v90\03-shift-reminder-before.png`
+- Final first-run expectations:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-edge-states-audit-v90\06-first-run-v90.png`
+- Final required-acknowledgment feedback:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-edge-states-audit-v90\07-first-run-validation-v90.png`
+- Final denied-alert recovery and update-ready state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-edge-states-audit-v90\04-shift-alerts-blocked-v90.png`
+- Final update/unsaved-work confirmation:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-edge-states-audit-v90\05-update-unsaved-guard-v90.png`
+- Final daylight denied-alert recovery:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-edge-states-audit-v90\08-shift-alerts-light-v90.png`
+
+The run used fresh localhost origins and a 375 × 812 viewport. It exercised first-run
+validation and focus, the browser-denied notification state, dark and daylight rendering,
+service-worker update discovery, and cancellation of an update around an unsaved record.
+The offline state model is covered by focused tests; this browser surface did not expose a
+network-offline control for a true connectivity transition. Physical-device notification,
+VoiceOver, and TalkBack behavior remain separate release evidence.

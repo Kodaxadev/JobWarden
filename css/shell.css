@@ -97,6 +97,26 @@
 .onboard-head h1 { font-size: var(--fs-display); font-weight: 600; letter-spacing: -.02em; margin: 12px 0 8px; }
 .onboard-tag { color: var(--muted); font-size: var(--fs-ui); line-height: 1.5; margin: 0 auto; max-width: 38ch; }
 .onboard-scope { display: inline-block; margin: 12px auto 0; padding: 4px 12px; font-family: var(--mono); font-size: var(--fs-micro); color: var(--primary); background: rgba(205,171,69,.08); border: 1px solid rgba(205,171,69,.28); border-radius: 999px; }
+.onboard-expectations { padding: 14px 16px; }
+.onboard-expectations h2 {
+  margin-bottom: 10px; font-family: var(--mono); font-size: var(--fs-micro);
+  font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--faint);
+}
+.onboard-expectations ul { margin: 0; padding: 0; list-style: none; }
+.onboard-expectation {
+  min-height: 54px; display: grid; grid-template-columns: 36px minmax(0,1fr);
+  align-items: center; gap: 11px; padding: 8px 0; border-bottom: 1px solid var(--line);
+}
+.onboard-expectation:last-child { border-bottom: 0; }
+.onboard-expectation-icon {
+  width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px;
+  color: var(--primary-strong); border: 1px solid rgba(205,171,69,.22);
+  background: rgba(205,171,69,.07);
+}
+.onboard-expectation-icon .icon svg { width: 18px; height: 18px; }
+.onboard-expectation-copy { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.onboard-expectation-copy strong { font-size: var(--fs-sm); line-height: 1.35; }
+.onboard-expectation-copy > span { color: var(--muted); font-size: var(--fs-sm); line-height: 1.45; }
 .onboard-setup { padding: 0; }
 .onboard-setup-summary { min-height: 58px; padding: 16px; cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .onboard-setup-summary::-webkit-details-marker { display: none; }
@@ -106,6 +126,14 @@
 .onboard-setup-body { padding: 0 16px 16px; border-top: 1px solid var(--line); }
 .onboard-setup-body > .hint:first-child { margin: 12px 0 16px; }
 .onboard-foot { text-align: center; color: var(--faint); font-size: var(--fs-sm); margin: 16px 0 0; }
+.onboard-ack.is-invalid {
+  border-color: rgba(224,89,77,.48); border-radius: var(--radius-sm);
+  background: rgba(224,89,77,.08);
+}
+.onboard-error {
+  margin: 8px 0 0; color: var(--danger-text); font-size: var(--fs-sm);
+  font-weight: 600; line-height: 1.45;
+}
 body.onboarding .tabbar { display: none; }
 body.onboarding .disclaimer { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
 

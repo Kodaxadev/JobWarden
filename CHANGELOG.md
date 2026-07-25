@@ -7,6 +7,23 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v90 — 2026-07-25
+
+**First run, shift-alert access, offline use, and app updates now explain themselves.**
+The welcome flow names the local-only storage boundary, offline behavior, and the user’s
+backup responsibility before the first record. Its required acknowledgment now uses a
+visible error state, focus, `aria-invalid`, and an announced instruction instead of a faint
+hint.
+
+Starting a shift no longer triggers a surprise browser permission prompt. The live panel
+shows whether shift alerts are available, allowed, or blocked, provides the explicit allow
+action when appropriate, and always names the phone-alarm fallback. Offline use now gets a
+persistent reassuring shell status. A ready update gets a persistent action and passes
+through the existing unsaved-work guard before reloading.
+
+The formal policy and findings language still require review by a licensed California
+employment attorney before public launch.
+
 ## v89 — 2026-07-25
 
 **Empty, loading, success, and recovery states now behave like a finished product.**

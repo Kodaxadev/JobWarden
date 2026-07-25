@@ -5,6 +5,8 @@ import { ICON_NAMES, extractIconBody } from '../scripts/build-icons.mjs';
 
 const USED_ICON_NAMES = [
   'circle-alert',
+  'bell-off',
+  'bell-ring',
   'clock',
   'camera',
   'clipboard-pen',
@@ -13,11 +15,13 @@ const USED_ICON_NAMES = [
   'map-pin',
   'message-square',
   'notebook-pen',
+  'refresh-cw',
   'sandwich',
   'save',
   'shield-check',
   'triangle-alert',
   'wallet',
+  'wifi-off',
 ];
 
 test('icon generator covers every icon used by the app UI', () => {

@@ -4,6 +4,7 @@
 import { el, clear, toast } from './dom.js';
 import { icon } from './icons.js';
 import { confirmDialog } from './confirmDialog.js';
+import { reminderPermissionCard } from './reminderPermission.js';
 import { getActiveShift, saveActiveShift, clearActiveShift } from '../data/shiftRepo.js';
 import { newShift, shiftStatus, shiftToDraft } from '../domain/shiftClock.js';
 
@@ -18,7 +19,6 @@ export async function renderShiftPanel(host, { settings = {}, onEndShift } = {})
 
   if (!shift) {
     const start = async () => {
-      try { if ('Notification' in window && Notification.permission === 'default') await Notification.requestPermission(); } catch { /* optional */ }
       shift = newShift((settings.workplaces || [])[0] || '');
       await saveActiveShift(shift);
       await renderShiftPanel(host, { settings, onEndShift });
@@ -124,16 +124,12 @@ export async function renderShiftPanel(host, { settings = {}, onEndShift } = {})
       ]),
     ]));
 
-    // Honesty: the alert loop runs in the page. A closed app fires nothing, and there is no
-    // way around that without a server (Push) — so say it, and name the backup that works.
-    if (!st.firstMealTaken) {
-      body.appendChild(el('p', {
-        class: 'shift-note',
-      }, [
-        iconEl('clock-alert'),
-        el('span', { text: `Reminders need JobWarden open. Set a phone alarm for ${fmt(fromMs(st.firstMealByMs))}.` }),
-      ]));
-    }
+    // Honesty: this is a page timer, not push. Permission is requested only from the
+    // explained action below, and every state names the phone-alarm fallback.
+    const backupText = !st.firstMealTaken
+      ? `Set a phone alarm for ${fmt(fromMs(st.firstMealByMs))} as backup.`
+      : 'Use phone alarms as backup for later deadlines.';
+    body.appendChild(reminderPermissionCard({ backupText, onChanged: draw }));
   }
 
   draw();

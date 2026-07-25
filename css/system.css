@@ -1,0 +1,31 @@
+/* system.css — app-wide offline and update status. */
+.system-status-host:empty { display: none; }
+.system-banner {
+  min-height: 58px; padding: 8px 16px; display: grid;
+  grid-template-columns: 36px minmax(0,1fr) auto; align-items: center; gap: 10px;
+  color: var(--banner-text); background: var(--banner-bg);
+  border-bottom: 1px solid var(--banner-line);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.system-banner-icon {
+  width: 36px; height: 36px; display: grid; place-items: center;
+  border: 1px solid currentColor; border-radius: 10px; opacity: .9;
+  background: rgba(0,0,0,.08);
+}
+.system-banner-icon .icon svg { width: 18px; height: 18px; }
+.system-banner-copy { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.system-banner-copy strong { font-size: var(--fs-sm); line-height: 1.35; }
+.system-banner-copy > span {
+  font-size: var(--fs-micro); line-height: 1.4; opacity: .85;
+  overflow-wrap: anywhere;
+}
+.system-banner-action { min-height: 40px; color: var(--text); }
+.system-banner.offline {
+  color: var(--muted); background: var(--sheen), var(--surface-2);
+  border-color: var(--line);
+}
+@media (max-width: 390px) {
+  .system-banner { padding-inline: 12px; grid-template-columns: 34px minmax(0,1fr) auto; gap: 8px; }
+  .system-banner-icon { width: 34px; height: 34px; }
+  .system-banner-action { padding-inline: 11px; }
+}
