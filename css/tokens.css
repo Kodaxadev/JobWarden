@@ -28,6 +28,26 @@
 
   --radius-xs:4px; --radius:14px; --radius-sm:11px; --radius-lg:18px; --radius-pill:999px; --tap:48px;
   --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px;
+
+  /* Type scale. There was none, so every file invented its own number and the app rendered
+     fourteen sizes — eleven of them between 10 and 15px, including half-pixel steps nobody
+     can perceive as hierarchy. Eight steps, each with one job. Nothing below 12; nothing
+     between 13 and 15. If a new element needs a size, it takes the nearest role, not a new
+     number. (Product register: tight ratio, fixed px — this UI is read at one DPI.) */
+  --fs-micro:12px;    /* mono small-caps categorization: group labels, month heads, counts   */
+  --fs-sm:13px;       /* secondary text: labels, hints, meta, machine data, findings         */
+  --fs-ui:15px;       /* interactive labels: buttons, chips, checkboxes, dense prose         */
+  --fs-body:16px;     /* read prose and text inputs (16 also stops iOS zoom-on-focus)        */
+  --fs-title:18px;    /* card and section titles                                             */
+  --fs-h:20px;        /* screen headings, glyph affordances (+/− and disclosure carets)      */
+  --fs-num:23px;      /* KPI numerals — the one place a number is the content                */
+  --fs-display:27px;  /* the single welcome headline                                         */
+
+  /* Line height by role, not by eyeball: nine values were in play (1.05→1.6). */
+  --lh-tight:1.1;     /* numerals, wordmarks, single-line glyphs */
+  --lh-snug:1.35;     /* headings, buttons, chips               */
+  --lh-body:1.5;      /* everything read as a sentence          */
+  --lh-prose:1.6;     /* long-form legal and rights copy        */
   --field-bg:#0d0e13;  /* recessed input fill — cool, matched to the navy canvas (was a warm relic) */
 
   /* Elevation for a dark canvas: one cool light, always from above (the One-Light Rule).
