@@ -33,6 +33,27 @@ export function toast(msg, ms = 2600) {
   _toastTimer = setTimeout(() => t.classList.remove('show'), ms);
 }
 
+// Run an async action with the button showing it. One vocabulary for every slow thing in the
+// app — locking a backup derives a key for a couple of seconds, building a report inlines
+// every photo — so the control never sits there looking inert while work happens behind it.
+// Restores the original label whatever happens, including on a thrown error.
+export async function withBusy(button, busyLabel, fn) {
+  if (!button) return fn();
+  const label = button.querySelector('.btn-label');
+  const original = label ? label.textContent : button.textContent;
+  const setLabel = (t) => { if (label) label.textContent = t; else button.textContent = t; };
+  button.setAttribute('aria-busy', 'true');
+  button.disabled = true;
+  if (busyLabel) setLabel(busyLabel);
+  try {
+    return await fn();
+  } finally {
+    button.removeAttribute('aria-busy');
+    button.disabled = false;
+    setLabel(original);
+  }
+}
+
 // Trap Tab focus within `container`; route Escape to onEscape. Returns a cleanup fn.
 // One implementation for every modal surface (confirm dialog, quick-capture sheet).
 const FOCUSABLE = 'button, input, textarea, select, a[href], [tabindex]:not([tabindex="-1"])';

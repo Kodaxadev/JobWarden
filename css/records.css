@@ -28,7 +28,9 @@
 .glance-foot { margin: 16px 0 0; }
 /* Sits right under the counts, because "3 · No lunch" is what gets misread as a verdict. */
 .glance-means { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); }
-.glance-means > summary { display: flex; align-items: center; min-height: var(--tap); padding: var(--space-2) 0; cursor: pointer; font-size: var(--fs-sm); color: var(--primary-strong); list-style: none; }
+.glance-means > summary { display: flex; align-items: center; min-height: var(--tap); padding: var(--space-2) 0; cursor: pointer; font-size: var(--fs-sm); color: var(--primary-strong); list-style: none; transition: color var(--dur-state) var(--ease-out); }
+.glance-means > summary:hover { color: var(--primary); }
+.glance-means > summary:active { opacity: .7; }
 .glance-means > summary::-webkit-details-marker { display: none; }
 .glance-means > summary::after { content: ' ›'; }
 .glance-means[open] > summary::after { content: ' ⌄'; }
@@ -40,8 +42,9 @@
 .rights-head { display: flex; align-items: center; gap: 12px; margin: 0 0 8px; }
 .rights-head h2 { margin: 0; }
 .rights-item { background: var(--sheen), var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin: 12px 0 0; box-shadow: var(--shadow-1); overflow: hidden; }
-.rights-item summary { cursor: pointer; padding: 16px 16px; font-weight: 600; font-size: var(--fs-ui); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; transition: background .15s ease; }
+.rights-item summary { cursor: pointer; padding: 16px 16px; font-weight: 600; font-size: var(--fs-ui); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; transition: background var(--dur-state) var(--ease-out); }
 .rights-item summary:hover { background: rgba(255,255,255,.025); }
+.rights-item summary:active { background: rgba(255,255,255,.045); }
 .rights-item summary::-webkit-details-marker { display: none; }
 .rights-item summary::after { content: "+"; color: var(--primary); font-size: var(--fs-h); line-height: 1; flex: none; }
 .rights-item[open] summary::after { content: "\2013"; }
@@ -71,7 +74,7 @@
 .legal-p:last-child { margin-bottom: 0; }
 
 .row { background: var(--sheen), var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); margin: 0 0 12px; overflow: hidden; box-shadow: var(--shadow-1); }
-.row-head { width: 100%; text-align: left; background: none; border: none; color: var(--text); padding: 16px; display: flex; justify-content: space-between; gap: 12px; cursor: pointer; transition: background .15s ease; }
+.row-head { width: 100%; text-align: left; background: none; border: none; color: var(--text); padding: 16px; display: flex; justify-content: space-between; gap: 12px; cursor: pointer; transition: background var(--dur-state) var(--ease-out); }
 .row-head:hover { background: rgba(255,255,255,.025); }
 .row-head:active { background: rgba(255,255,255,.045); }
 .row-head.static { cursor: default; align-items: center; }

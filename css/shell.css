@@ -19,7 +19,7 @@
 .card { background: var(--sheen), var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 16px; margin: 0 0 16px; box-shadow: var(--shadow-1); }
 .card h2 { font-size: var(--fs-title); font-weight: 600; letter-spacing: -.01em; margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
 
-.btn { background: var(--sheen), var(--surface-2); color: var(--text); border: 1px solid var(--line-2); border-radius: var(--radius); padding: 12px 16px; font: 500 var(--fs-ui)/var(--lh-snug) var(--font); min-height: var(--tap); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; justify-content: center; box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(0,0,0,.32), 0 4px 10px -6px rgba(0,0,0,.4); transition: transform .12s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease; }
+.btn { background: var(--sheen), var(--surface-2); color: var(--text); border: 1px solid var(--line-2); border-radius: var(--radius); padding: 12px 16px; font: 500 var(--fs-ui)/var(--lh-snug) var(--font); min-height: var(--tap); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; justify-content: center; box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(0,0,0,.32), 0 4px 10px -6px rgba(0,0,0,.4); transition: transform var(--dur-press) var(--ease-out), border-color var(--dur-state) var(--ease-out), background var(--dur-state) var(--ease-out), box-shadow var(--dur-state) var(--ease-out); }
 .btn:hover { border-color: var(--node); background: var(--sheen), var(--surface-3); box-shadow: inset 0 1px 0 var(--edge-top), 0 2px 4px rgba(0,0,0,.34), 0 6px 14px -6px rgba(0,0,0,.44); }
 .btn:active { transform: translateY(1px); box-shadow: inset 0 2px 3px rgba(0,0,0,.42); }
 /* The one gold action on a screen: machined gold — bright catch, body, deep base, seated bevel. */
@@ -36,6 +36,21 @@
 .btn.save:active { transform: translateY(1px); background: linear-gradient(180deg, #83c993, #74c087); box-shadow: inset 0 2px 4px rgba(6,40,16,.4); }
 .btn.save .icon svg { width: 22px; height: 22px; }
 .btn:disabled { opacity: .5; cursor: default; transform: none; }
+/* Busy is its own state, not a disabled button. Locking a backup runs PBKDF2 for a couple of
+   seconds on a phone and building a report inlines every photo; without this the control looks
+   inert and people tap it again. The label says what is happening, the gold seam sweeps to
+   show it is still running, and the control stops accepting input. */
+.btn[aria-busy="true"] { cursor: progress; position: relative; overflow: hidden; color: var(--muted); }
+.btn[aria-busy="true"]::after {
+  content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 40%;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  animation: btn-busy 1.1s var(--ease-out) infinite;
+}
+@keyframes btn-busy { from { transform: translateX(-100%); } to { transform: translateX(350%); } }
+/* Reduced motion: hold a steady seam rather than sweeping one. */
+@media (prefers-reduced-motion: reduce) {
+  .btn[aria-busy="true"]::after { animation: none; width: 100%; opacity: .5; }
+}
 .btn-col { display: flex; flex-direction: column; gap: var(--space-5); }
 /* An action is a control plus the sentence that explains it: one unit, deliberate gap. */
 .action { display: flex; flex-direction: column; gap: var(--space-2); }
@@ -44,8 +59,8 @@
 /* Docked and solid (no floating glass): a cool fascia with a lit top hairline, floating
    the page's shadowed foot behind it. */
 .tabbar { position: fixed; bottom: 0; left: 0; right: 0; z-index: var(--z-tabbar); display: flex; background: var(--tabbar-bg); border-top: 1px solid var(--line); box-shadow: inset 0 1px 0 var(--hi), 0 -12px 30px -14px rgba(0,0,0,.4); padding-bottom: env(safe-area-inset-bottom); }
-.tab { flex: 1; background: none; border: none; color: var(--faint); padding: 8px 0 12px; font: 500 var(--fs-micro)/var(--lh-snug) var(--font); display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; min-height: 58px; position: relative; transition: color .15s ease; }
-.tab .icon { width: 42px; height: 30px; border-radius: var(--radius-sm); display: grid; place-items: center; transition: background .15s ease, box-shadow .15s ease; }
+.tab { flex: 1; background: none; border: none; color: var(--faint); padding: 8px 0 12px; font: 500 var(--fs-micro)/var(--lh-snug) var(--font); display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; min-height: 58px; position: relative; transition: color var(--dur-state) var(--ease-out); }
+.tab .icon { width: 42px; height: 30px; border-radius: var(--radius-sm); display: grid; place-items: center; transition: background var(--dur-state) var(--ease-out), box-shadow var(--dur-state) var(--ease-out); }
 .tab .icon svg { width: 23px; height: 23px; }
 .tab:hover { color: var(--muted); }
 .tab:active .icon { background: rgba(255,255,255,.05); }
@@ -67,7 +82,7 @@
 body.onboarding .tabbar { display: none; }
 body.onboarding .disclaimer { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
 
-.toast { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px); opacity: 0; background: var(--sheen), var(--surface-3); border: 1px solid var(--line-2); color: var(--text); padding: 12px 16px; border-radius: var(--radius); z-index: var(--z-toast); transition: .25s cubic-bezier(.22,1,.36,1); max-width: 90%; text-align: center; box-shadow: var(--shadow-3); }
+.toast { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px); opacity: 0; background: var(--sheen), var(--surface-3); border: 1px solid var(--line-2); color: var(--text); padding: 12px 16px; border-radius: var(--radius); z-index: var(--z-toast); transition: opacity var(--dur-enter) var(--ease-out), transform var(--dur-enter) var(--ease-out); max-width: 90%; text-align: center; box-shadow: var(--shadow-3); }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 /* Cool scrim, deepest at the center where the dialog sits — depth without backdrop-blur. */
 .overlay { position: fixed; inset: 0; background: radial-gradient(120% 90% at 50% 44%, rgba(4,5,8,.8), rgba(6,8,12,.68)); display: flex; align-items: center; justify-content: center; z-index: var(--z-overlay); padding: 20px; }

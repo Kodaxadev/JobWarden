@@ -1,5 +1,5 @@
 // exportView.js — export & backup screen. One concern: export UI.
-import { el, clear, toast, confirmDialog } from './dom.js';
+import { el, clear, toast, confirmDialog, withBusy } from './dom.js';
 import { getAllIncidents } from '../data/incidentRepo.js';
 import { getSettings, markBackedUp } from '../data/settingsRepo.js';
 import { exportJson, exportEncryptedJson } from '../export/exportJson.js';
@@ -11,46 +11,57 @@ import { exportCsv } from '../export/exportCsv.js';
 import { openPrintReport } from '../export/exportReport.js';
 import { openPrintSummary } from '../export/exportSummary.js';
 
-const action = (label, desc, cls, onclick) => el('div', { class: 'action' }, [
-  el('button', { class: cls, text: label, onclick }),
-  el('p', { class: 'hint', text: desc }),
-]);
+// The label sits in its own span so the busy state can swap it and put it back. The handler
+// receives its own button, which is what lets every action here report that it is working.
+const action = (label, desc, cls, onclick) => {
+  const btn = el('button', { type: 'button', class: cls }, [el('span', { class: 'btn-label', text: label })]);
+  btn.addEventListener('click', () => onclick(btn));
+  return el('div', { class: 'action' }, [btn, el('p', { class: 'hint', text: desc })]);
+};
 
 export async function renderExportView(container, { onChanged } = {}) {
   clear(container);
   const [items, settings] = await Promise.all([getAllIncidents(), getSettings()]);
-  const guard = fn => async () => { if (!items.length) return toast('No records yet'); await fn(); };
+  // Every export does real work — deriving a key, inlining photos, building a document — so
+  // each one says so on its own button rather than leaving the control looking dead.
+  const guard = (busyLabel, fn) => async (btn) => {
+    if (!items.length) return toast('No records yet');
+    await withBusy(btn, busyLabel, fn);
+  };
 
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Export & back up' }),
     el('p', { class: 'hint', text: `${items.length} record${items.length === 1 ? '' : 's'}, saved on this phone only.` }),
     el('div', { class: 'btn-col' }, [
       action('Email to myself', 'Opens your email with a summary + the backup file attached — the fastest way to keep a copy off this phone.', 'btn primary',
-        guard(async () => {
+        guard('Preparing…', async () => {
           const r = await emailRecords(items, settings);
           if (r !== 'cancelled') { await markBackedUp(); onChanged?.(); }
           toast(r === 'shared' ? 'Shared ✓' : r === 'fallback' ? 'Opening email — attach the saved file' : 'Email canceled');
         })),
       action('Save full backup', 'Download a complete copy with photos to this device.', 'btn',
-        guard(async () => { const n = await exportJson(items, settings); await markBackedUp(); toast(`Backed up ${n} record(s)`); onChanged?.(); })),
+        guard('Building backup…', async () => { const n = await exportJson(items, settings); await markBackedUp(); toast(`Backed up ${n} record(s)`); onChanged?.(); })),
       action('Save locked backup', 'The same backup, locked with a passphrase — so a copy sitting in your email is unreadable to anyone else. Lose the passphrase and the file is gone for good.', 'btn',
-        guard(async () => {
+        guard(null, async (btn) => {
           const pass = await choosePassphrase();
           if (!pass) return;
-          toast('Locking the backup…', 8000);
-          try {
-            const n = await exportEncryptedJson(items, settings, pass);
-            await markBackedUp();
-            toast(`Locked backup saved · ${n} record(s)`);
-            onChanged?.();
-          } catch (e) { toast(e?.message || 'Could not lock the backup'); }
+          // Busy starts after the passphrase dialog closes — that is when the key derivation
+          // actually runs, and it is the couple of seconds the user would otherwise doubt.
+          await withBusy(btn, 'Locking…', async () => {
+            try {
+              const n = await exportEncryptedJson(items, settings, pass);
+              await markBackedUp();
+              toast(`Locked backup saved · ${n} record(s)`);
+              onChanged?.();
+            } catch (e) { toast(e?.message || 'Could not lock the backup'); }
+          });
         })),
       action('Make spreadsheet', 'A table you can open in Excel or Google Sheets.', 'btn',
-        guard(async () => { exportCsv(items); toast('Spreadsheet saved'); })),
+        guard('Building…', async () => { exportCsv(items); toast('Spreadsheet saved'); })),
       action('Make printable report', 'A report to print or save as PDF for the Labor Commissioner, a lawyer, or HR.', 'btn',
-        guard(async () => { const ok = await openPrintReport(items, settings); if (!ok) toast('Allow pop-ups to print'); })),
+        guard('Building report…', async () => { const ok = await openPrintReport(items, settings); if (!ok) toast('Allow pop-ups to print'); })),
       action('Make summary report', 'A one-page overview — the patterns and a timeline — a lawyer can read in 30 seconds.', 'btn',
-        guard(async () => { const ok = await openPrintSummary(items, settings); if (!ok) toast('Allow pop-ups to print'); })),
+        guard('Building summary…', async () => { const ok = await openPrintSummary(items, settings); if (!ok) toast('Allow pop-ups to print'); })),
     ]),
   ]));
 

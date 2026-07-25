@@ -43,6 +43,16 @@
   --fs-num:23px;      /* KPI numerals — the one place a number is the content                */
   --fs-display:27px;  /* the single welcome headline                                         */
 
+  /* Motion. One curve — an ease-out quint, already proven on the toast — because UI feedback
+     should decelerate into place, not the browser's default `ease`, which is symmetrical and
+     reads as mushy on a state change. Three durations: press, state, entrance. Anything
+     slower than --dur-slow is choreography, and this is a tool, not a title sequence.
+     (The global prefers-reduced-motion block at the foot of this file flattens all of it.) */
+  --ease-out:cubic-bezier(.22, 1, .36, 1);
+  --dur-press:.12s;   /* the finger is still down; feedback must be immediate */
+  --dur-state:.16s;   /* hover, border, background, colour                    */
+  --dur-enter:.25s;   /* something arriving: toast, sheet, disclosure          */
+
   /* Line height by role, not by eyeball: nine values were in play (1.05→1.6). */
   --lh-tight:1.1;     /* numerals, wordmarks, single-line glyphs */
   --lh-snug:1.35;     /* headings, buttons, chips               */
