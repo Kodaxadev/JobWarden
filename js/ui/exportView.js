@@ -12,14 +12,14 @@ import { exportCsv } from '../export/exportCsv.js';
 import { openPrintReport } from '../export/exportReport.js';
 import { openPrintSummary } from '../export/exportSummary.js';
 import { actionRow } from './actionRow.js';
+import { emptyState } from './statusUi.js';
 
-export async function renderExportView(container, { onChanged } = {}) {
+export async function renderExportView(container, { onChanged, onCreate } = {}) {
   clear(container);
   const [items, settings] = await Promise.all([getAllIncidents(), getSettings()]);
   // Every export does real work — deriving a key, inlining photos, building a document — so
   // each one says so on its own button rather than leaving the control looking dead.
   const guard = (busyLabel, fn) => async (btn) => {
-    if (!items.length) return toast('No records yet');
     await withBusy(btn, busyLabel, fn);
   };
   const confirmPlainBackup = () => confirmDialog(
@@ -31,7 +31,7 @@ export async function renderExportView(container, { onChanged } = {}) {
     },
   );
 
-  container.appendChild(el('section', { class: 'card' }, [
+  if (items.length) container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Export & back up' }),
     el('p', { class: 'hint', text: `${items.length} record${items.length === 1 ? '' : 's'}, saved on this phone only.` }),
     el('div', { class: 'action-list' }, [
@@ -44,7 +44,10 @@ export async function renderExportView(container, { onChanged } = {}) {
           if (!await confirmPlainBackup()) return;
           const r = await emailRecords(items, settings);
           if (r !== 'cancelled') { await markBackedUp(); onChanged?.(); }
-          toast(r === 'shared' ? 'Shared ✓' : r === 'fallback' ? 'Backup saved — attach it in the email that opened' : 'Share canceled');
+          toast(
+            r === 'shared' ? 'Backup shared' : r === 'fallback' ? 'Backup saved — attach it in the email that opened' : 'Share canceled',
+            { tone: r === 'shared' ? 'success' : 'neutral' },
+          );
         }),
       }),
       actionRow({
@@ -56,7 +59,7 @@ export async function renderExportView(container, { onChanged } = {}) {
           if (!await confirmPlainBackup()) return;
           const n = await exportJson(items, settings);
           await markBackedUp();
-          toast(`Backed up ${n} record(s)`);
+          toast(`Backed up ${n} record(s)`, { tone: 'success' });
           onChanged?.();
         }),
       }),
@@ -74,9 +77,9 @@ export async function renderExportView(container, { onChanged } = {}) {
             try {
               const n = await exportEncryptedJson(items, settings, pass);
               await markBackedUp();
-              toast(`Locked backup saved · ${n} record(s)`);
+              toast(`Locked backup saved · ${n} record(s)`, { tone: 'success' });
               onChanged?.();
-            } catch (e) { toast(e?.message || 'Could not lock the backup'); }
+            } catch (e) { toast(e?.message || 'Could not lock the backup', { tone: 'error' }); }
           });
         }),
       }),
@@ -84,7 +87,7 @@ export async function renderExportView(container, { onChanged } = {}) {
         label: 'Make spreadsheet',
         description: 'Open a table in Excel, Numbers, or Google Sheets.',
         iconName: 'list',
-        onClick: guard('Building…', async () => { exportCsv(items); toast('Spreadsheet saved'); }),
+        onClick: guard('Building…', async () => { exportCsv(items); toast('Spreadsheet saved', { tone: 'success' }); }),
       }),
       actionRow({
         label: 'Make printable report',
@@ -92,7 +95,7 @@ export async function renderExportView(container, { onChanged } = {}) {
         iconName: 'clipboard-pen',
         onClick: guard('Building report…', async () => {
           const ok = await openPrintReport(items, settings);
-          if (!ok) toast('Allow pop-ups to print');
+          if (!ok) toast('Allow pop-ups to print', { tone: 'warning' });
         }),
       }),
       actionRow({
@@ -101,10 +104,22 @@ export async function renderExportView(container, { onChanged } = {}) {
         iconName: 'notebook-pen',
         onClick: guard('Building summary…', async () => {
           const ok = await openPrintSummary(items, settings);
-          if (!ok) toast('Allow pop-ups to print');
+          if (!ok) toast('Allow pop-ups to print', { tone: 'warning' });
         }),
       }),
     ]),
+  ]));
+  else container.appendChild(el('section', { class: 'card export-empty-card' }, [
+    el('h2', { text: 'Export & back up' }),
+    emptyState({
+      title: 'Nothing to export yet',
+      description: 'Save a record first, or restore an existing backup below.',
+      iconName: 'download',
+      actionLabel: 'Log a record',
+      onAction: onCreate,
+      compact: true,
+      headingLevel: 3,
+    }),
   ]));
 
   // Restore — the counterpart to backup. Not guarded by record count (the user may be restoring
@@ -138,7 +153,7 @@ export async function renderExportView(container, { onChanged } = {}) {
       if (text == null) return;
       parsed = parseBackup(text);
     }
-    catch (e) { return toast(e.message || 'Could not read that file'); }
+    catch (e) { return toast(e.message || 'Could not read that file', { tone: 'error' }); }
     if (!await confirmDialog(
       `This adds ${parsed.records.length} record(s). Your current records stay, and duplicates are skipped.`,
       {
@@ -149,9 +164,12 @@ export async function renderExportView(container, { onChanged } = {}) {
     )) return;
     try {
       const r = await importBackup(text);
-      toast(`Restored ${r.added} · skipped ${r.skipped} duplicate(s)` + (r.changed ? ` · ${r.changed} fingerprint warning(s)` : ''));
+      toast(
+        `Restored ${r.added} · skipped ${r.skipped} duplicate(s)` + (r.changed ? ` · ${r.changed} fingerprint warning(s)` : ''),
+        { tone: r.changed ? 'warning' : 'success' },
+      );
       onChanged?.();
-    } catch (e) { toast('Could not restore: ' + (e?.message || e)); }
+    } catch (e) { toast('Could not restore: ' + (e?.message || e), { tone: 'error' }); }
   });
 
   container.appendChild(el('section', { class: 'card' }, [

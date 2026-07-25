@@ -37,7 +37,7 @@ export async function renderShiftPanel(host, { settings = {}, onEndShift } = {})
   const addRest = async () => {
     shift.restCount = (shift.restCount || 0) + 1;
     await save();
-    toast(`Rest break ${shift.restCount} logged`);
+    toast(`Rest break ${shift.restCount} logged`, { tone: 'success' });
     draw();
   };
   const endShift = async () => {

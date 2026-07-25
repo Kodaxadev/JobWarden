@@ -109,8 +109,29 @@
 body.onboarding .tabbar { display: none; }
 body.onboarding .disclaimer { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
 
-.toast { position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px); opacity: 0; background: var(--sheen), var(--surface-3); border: 1px solid var(--line-2); color: var(--text); padding: 12px 16px; border-radius: var(--radius); z-index: var(--z-toast); transition: opacity var(--dur-enter) var(--ease-out), transform var(--dur-enter) var(--ease-out); max-width: 90%; text-align: center; box-shadow: var(--shadow-3); }
+.toast {
+  position: fixed; left: 50%; bottom: calc(92px + env(safe-area-inset-bottom));
+  transform: translateX(-50%) translateY(20px); opacity: 0;
+  width: max-content; max-width: min(90%, 380px); min-height: 48px; padding: 9px 12px;
+  display: grid; grid-template-columns: 30px minmax(0,1fr); align-items: center; gap: 10px;
+  background: var(--sheen), var(--surface-3); border: 1px solid var(--line-2);
+  color: var(--text); border-radius: var(--radius); z-index: var(--z-toast);
+  transition: opacity var(--dur-enter) var(--ease-out), transform var(--dur-enter) var(--ease-out);
+  box-shadow: var(--shadow-3); text-align: left;
+}
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast-icon {
+  width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px;
+  color: var(--primary-strong); background: rgba(205,171,69,.08); border: 1px solid rgba(205,171,69,.2);
+}
+.toast-icon .icon svg { width: 17px; height: 17px; }
+.toast-copy { min-width: 0; font-size: var(--fs-sm); font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; }
+.toast.tone-success { border-color: var(--gline); }
+.toast.tone-success .toast-icon { color: var(--gtext); background: var(--gfill); border-color: var(--gline); }
+.toast.tone-warning { border-color: var(--iline); }
+.toast.tone-warning .toast-icon { color: var(--incident); background: var(--ifill); border-color: var(--iline); }
+.toast.tone-error { border-color: rgba(224,89,77,.42); }
+.toast.tone-error .toast-icon { color: var(--danger-text); background: rgba(224,89,77,.1); border-color: rgba(224,89,77,.34); }
 /* Cool scrim, deepest at the center where the dialog sits — depth without backdrop-blur. */
 .overlay { position: fixed; inset: 0; background: radial-gradient(120% 90% at 50% 44%, rgba(4,5,8,.8), rgba(6,8,12,.68)); display: flex; align-items: center; justify-content: center; z-index: var(--z-overlay); padding: 20px; }
 .dialog { background: var(--sheen), var(--surface-3); border: 1px solid var(--line-2); border-radius: var(--radius-lg); padding: 24px; max-width: 360px; width: 100%; box-shadow: var(--shadow-3); }

@@ -7,6 +7,24 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v89 — 2026-07-25
+
+**Empty, loading, success, and recovery states now behave like a finished product.**
+Records gives a direct first-record action instead of pointing at the tab bar. Export no
+longer presents six unusable actions when there is nothing to export; it offers a clear
+path to Log while keeping backup restore available. Settings replaces an empty “Copy error
+log” action with an honest app-health result and turns storage, auto-delete protection, and
+the installed build into scannable status rows.
+
+Transient feedback now uses a shared icon-led status capsule with distinct success,
+warning, error, and neutral treatments. Settings protects unsaved profile, schedule, and
+workplace changes, explains that theme changes save immediately, and places the global save
+action outside the Workplaces card so its scope is unambiguous. The accepted phone states
+were checked in dark and light themes on fresh browser origins.
+
+The formal policy and findings language still require review by a licensed California
+employment attorney before public launch.
+
 ## v88 — 2026-07-25
 
 **Live tracking and consequential decisions now use one deliberate feedback system.**

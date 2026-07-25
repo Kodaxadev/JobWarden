@@ -1,5 +1,6 @@
 // settingsView.js — profile, workplaces, data safety. One concern: settings UI.
-import { el, clear, toast } from './dom.js';
+import { el, clear, toast, withBusy } from './dom.js';
+import { confirmDialog } from './confirmDialog.js';
 import { getSettings, saveSettings } from '../data/settingsRepo.js';
 import { requestPersistence } from '../data/db.js';
 import { jurisdictionLabel } from '../config/jurisdictions.js';
@@ -8,6 +9,8 @@ import { readErrors, clearErrors, errorLogText } from '../data/errorLog.js';
 import { setTheme } from './theme.js';
 import { PAY_STATUS_OPTIONS, PAY_STATUS_HINT, EXEMPT_STATUS_WARNING } from '../config/payStatus.js';
 import { actionRow } from './actionRow.js';
+import { statusRow, updateStatusRow } from './statusUi.js';
+import { createNavigationGuard } from './navigationGuard.js';
 
 // Bytes → a short human string that also handles GB (humanSize in media.js stops at MB).
 function fmtBytes(n) {
@@ -24,9 +27,23 @@ const field = (label, input, hint) => el('label', { class: 'field' }, [
 ]);
 const text = (v, ph) => el('input', { type: 'text', value: v || '', placeholder: ph || '' });
 
-export async function renderSettingsView(container, { onShowRights, onShowLegal } = {}) {
+export async function renderSettingsView(container, {
+  onShowRights,
+  onShowLegal,
+  setNavigationGuard,
+} = {}) {
   clear(container);
   const s = await getSettings();
+  const guard = createNavigationGuard(() => confirmDialog(
+    'Changes to your profile, schedule, or workplaces will be lost. Theme changes are already saved.',
+    {
+      title: 'Leave settings without saving?',
+      confirmText: 'Leave',
+      cancelText: 'Keep editing',
+      iconName: 'settings',
+    },
+  ));
+  setNavigationGuard?.(() => guard.canLeave());
 
   const name = text(s.employeeName, 'Your name');
   const role = text(s.role, 'e.g. cashier, server, caregiver');
@@ -50,13 +67,20 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
   places.value = (s.workplaces || []).join('\n');
 
   const save = el('button', { class: 'btn primary settings-save', text: 'Save settings', onclick: async () => {
-    await saveSettings({
-      employeeName: name.value.trim(), role: role.value.trim(), employer: employer.value.trim(),
-      payType: pay.value, awsElection: aws.value, cbaCovered: cba.value,
-      workplaces: places.value.split('\n').map(x => x.trim()).filter(Boolean),
+    await withBusy(save, 'Saving…', async () => {
+      await saveSettings({
+        employeeName: name.value.trim(), role: role.value.trim(), employer: employer.value.trim(),
+        payType: pay.value, awsElection: aws.value, cbaCovered: cba.value,
+        workplaces: places.value.split('\n').map(x => x.trim()).filter(Boolean),
+      });
     });
-    toast('Settings saved');
+    guard.reset();
+    toast('Settings saved on this phone', { tone: 'success' });
   } });
+  [name, role, employer, pay, aws, cba, places].forEach(control => {
+    control.addEventListener('input', () => guard.markDirty());
+    control.addEventListener('change', () => guard.markDirty());
+  });
   const persistBtn = actionRow({
     label: 'Protect records on this device',
     description: 'Ask the browser not to clear JobWarden automatically.',
@@ -64,7 +88,23 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
     variant: 'secure',
     onClick: async () => {
       const ok = await requestPersistence();
-      toast(ok ? 'Protected — your browser won’t auto-delete these records' : 'Your browser declined — back up often');
+      updateStatusRow(persistStatus, ok
+        ? {
+          label: 'Auto-delete protection',
+          detail: 'Enabled for this browser.',
+          iconName: 'shield-check',
+          tone: 'success',
+        }
+        : {
+          label: 'Auto-delete protection',
+          detail: 'Not enabled. Back up often.',
+          iconName: 'shield-alert',
+          tone: 'warning',
+        });
+      toast(
+        ok ? 'Auto-delete protection enabled' : 'Protection was not enabled — back up often',
+        { tone: ok ? 'success' : 'warning' },
+      );
     },
   });
 
@@ -79,7 +119,7 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
   theme.addEventListener('change', () => setTheme(theme.value));
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Appearance' }),
-    field('Theme', theme, 'Light is easier to read in bright sun.'),
+    field('Theme', theme, 'Light is easier to read in bright sun. Theme changes save immediately.'),
   ]));
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Schedule & coverage' }),
@@ -90,7 +130,10 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Workplaces' }),
     field('Your workplaces', places, 'These fill in the place box when you log.'),
-    el('div', { class: 'actions' }, [save]),
+  ]));
+  container.appendChild(el('div', { class: 'settings-save-wrap' }, [
+    save,
+    el('p', { class: 'settings-save-note', text: 'Saves your profile, schedule, and workplaces on this phone.' }),
   ]));
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Know your rights' }),
@@ -118,61 +161,131 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
     ]),
   ]));
   // Storage + build facts, filled in after the async probes resolve.
-  const storageLine = el('p', { class: 'hint mono', text: 'Checking device storage…' });
-  const persistLine = el('p', { class: 'hint' });
-  const versionLine = el('p', { class: 'hint mono' });
+  const storageStatus = statusRow({
+    label: 'Device storage',
+    detail: 'Checking browser storage…',
+    iconName: 'save',
+    tone: 'loading',
+  });
+  const persistStatus = statusRow({
+    label: 'Auto-delete protection',
+    detail: 'Checking protection…',
+    iconName: 'shield',
+    tone: 'loading',
+  });
+  const versionStatus = statusRow({
+    label: 'Installed build',
+    detail: 'Checking version…',
+    iconName: 'settings',
+    tone: 'loading',
+  });
   Promise.all([
     navigator.storage?.estimate?.() ?? Promise.resolve(null),
     navigator.storage?.persisted?.() ?? Promise.resolve(false),
     swVersion(),
   ]).then(([est, persisted, version]) => {
-    storageLine.textContent = est && est.quota
-      ? `Storage used on this device: ${fmtBytes(est.usage || 0)} of ${fmtBytes(est.quota)} available.`
-      : 'Storage estimate not available in this browser.';
-    persistLine.textContent = persisted
-      ? 'Protected from auto-deletion: yes.'
-      : 'Protected from auto-deletion: not yet — tap the button below, and back up often.';
-    persistLine.classList.toggle('warn-text', !persisted);
-    versionLine.textContent = version ? `App version: ${version}` : '';
-  }).catch(() => { storageLine.textContent = ''; });
+    updateStatusRow(storageStatus, est && est.quota
+      ? {
+        label: 'Device storage',
+        detail: `${fmtBytes(est.usage || 0)} used · browser allows up to ${fmtBytes(est.quota)}`,
+        iconName: 'save',
+      }
+      : {
+        label: 'Device storage',
+        detail: 'This browser does not provide a storage estimate.',
+        iconName: 'save',
+      });
+    updateStatusRow(persistStatus, persisted
+      ? {
+        label: 'Auto-delete protection',
+        detail: 'Enabled for this browser.',
+        iconName: 'shield-check',
+        tone: 'success',
+      }
+      : {
+        label: 'Auto-delete protection',
+        detail: 'Not enabled. Back up often.',
+        iconName: 'shield-alert',
+        tone: 'warning',
+      });
+    updateStatusRow(versionStatus, {
+      label: 'Installed build',
+      detail: version || 'Version unavailable in this browser.',
+      iconName: 'settings',
+    });
+  }).catch(() => {
+    updateStatusRow(storageStatus, {
+      label: 'Device storage',
+      detail: 'Storage details could not be checked.',
+      iconName: 'circle-alert',
+      tone: 'warning',
+    });
+    updateStatusRow(persistStatus, {
+      label: 'Auto-delete protection',
+      detail: 'Protection could not be checked. Back up often.',
+      iconName: 'shield-alert',
+      tone: 'warning',
+    });
+    updateStatusRow(versionStatus, {
+      label: 'Installed build',
+      detail: 'Version could not be checked.',
+      iconName: 'settings',
+    });
+  });
 
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Data safety' }),
-    el('p', { class: 'hint', text: 'Records stay on this phone only. This asks your browser not to auto-delete them (some browsers clear unused data after a while) — it is not a backup, so export often.' }),
-    storageLine,
-    persistLine,
+    el('p', { class: 'hint', text: 'Records stay on this device. Browser protection can reduce automatic cleanup, but it is not a backup.' }),
+    el('div', { class: 'status-list' }, [storageStatus, persistStatus, versionStatus]),
     el('p', { class: 'hint', text: 'Not legal advice. JobWarden does not record audio; California generally requires every party’s consent to record a confidential conversation.' }),
     el('div', { class: 'action-list compact' }, [persistBtn]),
-    versionLine,
   ]));
 
   // Diagnostics — local error log, copyable for support. Zero privacy cost; nothing is sent.
   const errs = readErrors();
-  container.appendChild(el('section', { class: 'card' }, [
-    el('h2', { text: 'Something went wrong?' }),
-    el('p', { class: 'hint', text: errs.length
-      ? `${errs.length} recent error${errs.length === 1 ? '' : 's'} recorded on this device. Nothing is sent anywhere — copy the log if you report a problem.`
-      : 'No recent errors recorded on this device.' }),
-    el('div', { class: 'action-list compact' }, [
+  const healthStatus = errs.length
+    ? statusRow({
+      label: `${errs.length} recent app error${errs.length === 1 ? '' : 's'}`,
+      detail: 'Stored only on this device. Copy them when asking for support.',
+      iconName: 'circle-alert',
+      tone: 'warning',
+    })
+    : statusRow({
+      label: 'No recent app errors',
+      detail: 'Local diagnostics have not recorded a failure.',
+      iconName: 'circle-check',
+      tone: 'success',
+    });
+  const diagnosticActions = errs.length ? el('div', { class: 'action-list compact' }, [
       actionRow({
         label: 'Copy error log',
         description: 'Copy local diagnostics to share with support.',
         iconName: 'clipboard-pen',
         onClick: async () => {
-          try { await navigator.clipboard.writeText(errorLogText()); toast('Error log copied'); }
-          catch { toast('Copy not available on this browser'); }
+          try { await navigator.clipboard.writeText(errorLogText()); toast('Error log copied', { tone: 'success' }); }
+          catch { toast('Copy is not available in this browser', { tone: 'error' }); }
         },
       }),
-      errs.length ? actionRow({
+      actionRow({
         label: 'Clear error log',
         description: 'Remove the diagnostics stored on this device.',
         iconName: 'trash-2',
         onClick: () => {
           clearErrors();
-          toast('Cleared');
-          renderSettingsView(container, { onShowRights, onShowLegal });
+          toast('Error log cleared', { tone: 'success' });
+          updateStatusRow(healthStatus, {
+            label: 'No recent app errors',
+            detail: 'Local diagnostics have not recorded a failure.',
+            iconName: 'circle-check',
+            tone: 'success',
+          });
+          diagnosticActions?.remove();
         },
-      }) : null,
-    ]),
+      }),
+    ]) : null;
+  container.appendChild(el('section', { class: 'card' }, [
+    el('h2', { text: 'App health' }),
+    el('div', { class: 'status-list' }, [healthStatus]),
+    diagnosticActions,
   ]));
 }

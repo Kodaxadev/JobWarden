@@ -34,10 +34,10 @@ async function refreshBanner() {
 
 async function quickBackup() {
   const [items, settings] = await Promise.all([getAllIncidents(), getSettings()]);
-  if (!items.length) return toast('Nothing to back up');
+  if (!items.length) return toast('Nothing to back up yet', { tone: 'warning' });
   await exportJson(items, settings);
   await markBackedUp();
-  toast('Backed up ✓');
+  toast('Backup saved', { tone: 'success' });
   refreshBanner();
 }
 
@@ -69,14 +69,19 @@ async function show(name, opts = {}) {
     });
   } else if (name === 'records') {
     await renderIncidentList(main, {
+      onCreate: () => show('log'),
       onEdit: it => show('log', { existing: it }),
       onRepeat: it => show('log', { template: it }),
       onChanged: () => { refreshBanner(); show('records'); },
     });
   } else if (name === 'export') {
-    await renderExportView(main, { onChanged: refreshBanner });
+    await renderExportView(main, { onChanged: refreshBanner, onCreate: () => show('log') });
   } else if (name === 'settings') {
-    await renderSettingsView(main, { onShowRights: () => show('rights'), onShowLegal: () => show('legal') });
+    await renderSettingsView(main, {
+      onShowRights: () => show('rights'),
+      onShowLegal: () => show('legal'),
+      setNavigationGuard: guard => { navigationGuard = guard; },
+    });
   } else if (name === 'rights') {
     renderRightsFaq(main, { onBack: () => show('settings') });
   } else if (name === 'legal') {
@@ -110,7 +115,7 @@ function notifyShift(title, body) {
       return;
     }
   } catch { /* fall back to a toast */ }
-  toast(title);
+  toast(title, { tone: 'warning' });
 }
 async function monitorShift() {
   let shift;
@@ -125,7 +130,7 @@ async function monitorShift() {
 
 async function boot() {
   try { await openDb(); requestPersistence(); }
-  catch (e) { toast('Storage unavailable: ' + (e?.message || e)); }
+  catch (e) { toast('Storage unavailable: ' + (e?.message || e), { tone: 'error' }); }
   setInterval(monitorShift, 60000);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') monitorShift(); });
   monitorShift();

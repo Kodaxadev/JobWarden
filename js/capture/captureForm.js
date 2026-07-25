@@ -168,7 +168,7 @@ export async function renderCaptureForm(container, {
       await write(draft);
       guard.reset();
       setNavigationGuard?.(null);
-      toast(existing ? 'Record updated' : 'Saved on this phone ✓');
+      toast(existing ? 'Record updated' : 'Record saved on this phone', { tone: 'success' });
       onSaved?.(draft);
     } catch (err) {
       // A record that will not save is evidence about to be lost, so this blocks rather

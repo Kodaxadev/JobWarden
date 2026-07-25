@@ -66,11 +66,11 @@ export async function renderOnboarding(container, { onDone } = {}) {
         disclaimerAckAt: new Date().toISOString(),
         disclaimerAckText: ONBOARD_ACK,
       });
-      toast('Saved on this phone ✓');
+      toast('Setup saved on this phone', { tone: 'success' });
       onDone?.();
     } catch (err) {
       start.disabled = false;
-      toast('Could not save: ' + (err?.message || err));
+      toast('Could not save: ' + (err?.message || err), { tone: 'error' });
     }
   }
 

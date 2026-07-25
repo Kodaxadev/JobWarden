@@ -1,13 +1,5 @@
 /* records.css — records list, detail, history, deleted, export & settings bits. */
 .count { margin: 4px 0 12px; font-family: var(--mono); color: var(--faint); font-size: var(--fs-micro); letter-spacing: .08em; text-transform: uppercase; }
-.empty { text-align: center; color: var(--muted); padding: 52px 16px; }
-.empty p { margin: 0 0 8px; }
-.empty.teach { padding: 44px 20px; max-width: 40ch; margin: 0 auto; }
-.empty .empty-mark { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: var(--radius-lg); display: grid; place-items: center; color: var(--primary-strong); background: var(--sheen), linear-gradient(160deg, var(--navy-2), var(--navy-deep)); border: 1px solid rgba(205,171,69,.3); box-shadow: var(--shadow-1); }
-.empty .empty-mark svg { width: 32px; height: 32px; }
-.empty .empty-title { font-size: var(--fs-title); font-weight: 600; color: var(--text); letter-spacing: -.01em; margin: 0 0 12px; }
-.empty.teach .hint { line-height: 1.55; }
-
 /* Records filter + month grouping — the screen stays usable at hundreds of records. */
 .rec-filter { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
 .rec-filter .rec-search { flex: 1 1 100%; min-height: 44px; }

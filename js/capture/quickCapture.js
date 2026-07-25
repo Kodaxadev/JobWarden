@@ -81,7 +81,7 @@ export async function openInterruptedLunch({ onSaved } = {}) {
     const draft = createIncident(input);
     try {
       await addIncident(draft);
-      toast('Interrupted lunch saved');
+      toast('Interrupted lunch saved', { tone: 'success' });
       close();
       onSaved?.();
     } catch (err) {

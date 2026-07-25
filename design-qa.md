@@ -192,3 +192,28 @@ cache could not supply stale theme CSS. This exposed and verified the fix for pa
 materials leaking into the navy shift panel. The interaction pass exercised cancellation,
 focus return, and the missing-issue save path. No horizontal overflow or browser console
 errors were observed in the accepted states.
+
+## v89 feedback and recovery addendum
+
+Final result: passed for the captured mobile states.
+
+- Prior Records empty state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-status-states-audit\01-records-empty-before.png`
+- Prior no-record Export state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-status-states-audit\02-export-empty-before.png`
+- Final Records empty state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-status-states-audit\06-records-empty-v89.png`
+- Final no-record Export state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-status-states-audit\07-export-empty-v89.png`
+- Final Settings status and app-health state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-status-states-audit\13-settings-status-final-v89.png`
+- Final unsaved-Settings confirmation:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-status-states-audit\12-settings-unsaved-dialog-v89.png`
+- Final daylight success feedback:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-status-states-audit\10-settings-toast-light-v89.png`
+
+The final run used a fresh localhost origin and a 375 × 812 viewport. The direct Log
+actions, empty Export path, settings save, leave-without-saving cancellation, clean
+navigation after saving, status announcements, and zero horizontal overflow were exercised.
+Screenshot review cannot establish full assistive-technology behavior, so a physical iOS
+VoiceOver and Android TalkBack pass remains separate release evidence.

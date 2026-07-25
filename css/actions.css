@@ -65,3 +65,47 @@
 .back-button-icon { display: grid; place-items: center; }
 .back-button-icon svg { width: 19px; height: 19px; }
 .settings-save { width: 100%; }
+.settings-save-wrap { margin: -4px 0 var(--space-4); }
+.settings-save-note { margin: 8px 0 0; text-align: center; color: var(--faint); font-size: var(--fs-sm); line-height: 1.4; }
+
+/* Empty and status states use the same vocabulary across Records, Export, and Settings. */
+.feedback-empty {
+  min-height: 430px; padding: 56px 20px; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start; text-align: center; color: var(--muted);
+}
+.feedback-empty.compact { min-height: 0; padding: 24px 12px 12px; }
+.feedback-empty-icon {
+  width: 64px; height: 64px; display: grid; place-items: center; margin: 0 0 18px;
+  color: var(--primary-strong); border: 1px solid rgba(205,171,69,.3);
+  border-radius: var(--radius-lg); background: var(--sheen), linear-gradient(160deg, var(--navy-2), var(--navy-deep));
+  box-shadow: var(--shadow-1);
+}
+.feedback-empty.compact .feedback-empty-icon { width: 52px; height: 52px; margin-bottom: 14px; }
+.feedback-empty-icon svg { width: 30px; height: 30px; }
+.feedback-empty.compact .feedback-empty-icon svg { width: 24px; height: 24px; }
+.feedback-empty-title { margin: 0 0 10px; color: var(--text); font-size: var(--fs-title); letter-spacing: -.012em; }
+.feedback-empty-description { max-width: 36ch; margin: 0; color: var(--muted); font-size: var(--fs-ui); line-height: 1.55; }
+.feedback-empty-action { min-width: 170px; margin-top: 20px; }
+
+.status-list {
+  display: flex; flex-direction: column; overflow: hidden; margin-top: var(--space-3);
+  border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.018);
+}
+.status-row {
+  min-height: 64px; padding: 10px 12px; display: grid;
+  grid-template-columns: 36px minmax(0,1fr); align-items: center; gap: 11px;
+  border-bottom: 1px solid var(--line);
+}
+.status-row:last-child { border-bottom: 0; }
+.status-row-icon {
+  width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px;
+  color: var(--primary-strong); background: rgba(205,171,69,.07); border: 1px solid rgba(205,171,69,.2);
+}
+.status-row-icon .icon svg { width: 18px; height: 18px; }
+.status-row-copy { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.status-row-label { color: var(--text); font-size: var(--fs-sm); font-weight: 600; line-height: 1.35; }
+.status-row-detail { color: var(--muted); font-size: var(--fs-sm); line-height: 1.4; overflow-wrap: anywhere; }
+.status-row.success .status-row-icon { color: var(--gtext); border-color: var(--gline); background: var(--gfill); }
+.status-row.warning .status-row-icon { color: var(--incident); border-color: var(--iline); background: var(--ifill); }
+.status-row.error .status-row-icon { color: var(--danger-text); border-color: rgba(224,89,77,.4); background: rgba(224,89,77,.1); }
+.status-row.loading .status-row-icon { color: var(--faint); }

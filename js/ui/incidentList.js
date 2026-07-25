@@ -15,15 +15,22 @@ import { mapsLink, formatLoc } from '../capture/geo.js';
 import { getSettings } from '../data/settingsRepo.js';
 import { openPrintSummary } from '../export/exportSummary.js';
 import { payStubIssueLabel, tipProblemLabel, sickActionLabel } from '../config/payIssueOptions.js';
+import { emptyState } from './statusUi.js';
 
 const fmt = v => (Array.isArray(v) ? v.join(', ') : v === true ? 'Yes' : v === false ? 'No' : v === '' || v == null ? '—' : String(v));
 
-export async function renderIncidentList(container, { onEdit, onChanged, onRepeat } = {}) {
+export async function renderIncidentList(container, { onCreate, onEdit, onChanged, onRepeat } = {}) {
   clear(container);
   const [items, deleted] = await Promise.all([getAllIncidents(), getDeletedIncidents()]);
 
   if (!items.length && !deleted.length) {
-    container.appendChild(emptyState());
+    container.appendChild(emptyState({
+      title: 'Your record starts here',
+      description: 'Log a skipped lunch, unpaid work, a shortened break, or another workplace event. Each saved record keeps its capture time and later edit history.',
+      iconName: 'shield-check',
+      actionLabel: 'Log your first record',
+      onAction: onCreate,
+    }));
     return;
   }
 
@@ -51,7 +58,7 @@ export async function renderIncidentList(container, { onEdit, onChanged, onRepea
     if (filtered && list.length) {
       scopedBar.appendChild(el('button', { type: 'button', class: 'btn tiny', onclick: async () => {
         const ok = await openPrintSummary(list, await getSettings());
-        if (!ok) toast('Allow pop-ups to make the report');
+        if (!ok) toast('Allow pop-ups to make the report', { tone: 'warning' });
       } }, [document.createTextNode(`Make a report of these ${list.length}`)]));
     }
 
@@ -74,16 +81,6 @@ export async function renderIncidentList(container, { onEdit, onChanged, onRepea
 }
 
 const iconEl = (n) => { const s = el('span'); s.innerHTML = icon(n); return s.firstElementChild || s; };
-
-// First-run empty state that teaches what the tool does, not just "nothing here".
-function emptyState() {
-  return el('div', { class: 'empty teach' }, [
-    el('div', { class: 'empty-mark' }, [iconEl('shield-check')]),
-    el('p', { class: 'empty-title', text: 'Your record starts here' }),
-    el('p', { class: 'hint', text: 'When something happens at work — a skipped lunch, unpaid minutes, a break cut short — log it in seconds. JobWarden stamps the time, fingerprints the record, and lists any later edits.' }),
-    el('p', { class: 'hint', text: 'Tap Log below to add the first one.' }),
-  ]);
-}
 
 function matchesFilter(i, f) {
   if (f.type && !(i.types || []).includes(f.type)) return false;
@@ -366,7 +363,7 @@ function deletedRow(item, { onChanged }) {
   return el('article', { class: 'row deleted' }, [
     el('div', { class: 'row-head static' }, [
       el('div', { class: 'row-main' }, [el('div', { class: 'row-date', text: formatDate(item.incidentDate) }), chipRow(item)]),
-      el('button', { class: 'btn tiny', text: 'Restore', onclick: async () => { await putIncident(restoreIncident(item)); toast('Restored'); onChanged?.(); } }),
+      el('button', { class: 'btn tiny', text: 'Restore', onclick: async () => { await putIncident(restoreIncident(item)); toast('Record restored', { tone: 'success' }); onChanged?.(); } }),
     ]),
   ]);
 }

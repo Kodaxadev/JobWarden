@@ -49,7 +49,10 @@ export async function reportSaveFailure(err, draft, write) {
 
   try {
     await write({ ...draft, attachments: [] });
-    toast(`Saved without ${photos === 1 ? 'the photo' : 'the photos'} — the facts are kept ✓`, 5000);
+    toast(`Saved without ${photos === 1 ? 'the photo' : 'the photos'} — the facts are kept`, {
+      duration: 5000,
+      tone: 'warning',
+    });
     return { saved: true, droppedPhotos: photos };
   } catch (again) {
     logError(`save retry failed: ${again?.name || ''} ${again?.message || again}`, 'save');
@@ -71,7 +74,7 @@ export async function reportSaveFailure(err, draft, write) {
 function copyDiagnostics(problem, err) {
   const text = `JobWarden save failure\nkind: ${problem.kind}\nerror: ${err?.name || ''} ${err?.message || err}\nwhen: ${new Date().toISOString()}`;
   navigator.clipboard?.writeText(text).then(
-    () => toast('Error details copied'),
-    () => toast('Could not copy — the details are in Settings → diagnostics'),
+    () => toast('Error details copied', { tone: 'success' }),
+    () => toast('Could not copy — the details are in Settings → App health', { tone: 'error' }),
   );
 }

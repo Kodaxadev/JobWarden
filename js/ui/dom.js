@@ -1,4 +1,5 @@
 // dom.js — tiny DOM helpers. One concern: element creation/selection/notification.
+import { icon } from './icons.js';
 export const qs = (sel, root = document) => root.querySelector(sel);
 export const qsa = (sel, root = document) => [...root.querySelectorAll(sel)];
 
@@ -24,13 +25,33 @@ export function el(tag, attrs = {}, children = []) {
 export function clear(node) { while (node && node.firstChild) node.removeChild(node.firstChild); }
 
 let _toastTimer = null;
-export function toast(msg, ms = 2600) {
+export function toast(msg, durationOrOptions = 2600) {
+  const options = typeof durationOrOptions === 'number'
+    ? { duration: durationOrOptions }
+    : (durationOrOptions || {});
+  const { duration = 2600, tone = 'neutral' } = options;
+  const iconName = {
+    success: 'circle-check',
+    warning: 'triangle-alert',
+    error: 'circle-alert',
+    neutral: 'message-square',
+  }[tone] || 'message-square';
   let t = qs('.toast');
-  if (!t) { t = el('div', { class: 'toast', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true' }); document.body.appendChild(t); }
-  t.textContent = msg;
+  if (!t) {
+    t = el('div', { class: 'toast', 'aria-atomic': 'true' }, [
+      el('span', { class: 'toast-icon', 'aria-hidden': 'true' }),
+      el('span', { class: 'toast-copy' }),
+    ]);
+    document.body.appendChild(t);
+  }
+  t.className = `toast tone-${tone}`;
+  t.setAttribute('role', tone === 'error' ? 'alert' : 'status');
+  t.setAttribute('aria-live', tone === 'error' ? 'assertive' : 'polite');
+  t.querySelector('.toast-icon').innerHTML = icon(iconName);
+  t.querySelector('.toast-copy').textContent = msg;
   requestAnimationFrame(() => t.classList.add('show'));
   clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => t.classList.remove('show'), ms);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), duration);
 }
 
 // Run an async action with the button showing it. One vocabulary for every slow thing in the
