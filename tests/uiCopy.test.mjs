@@ -14,7 +14,7 @@ test('trail steps use approved order', () => {
     'Add work times',
     'Add lunch breaks',
     'Add unpaid work',
-    'Add proof',
+    'Add photos',
     'Tell what happened',
   ]);
 });

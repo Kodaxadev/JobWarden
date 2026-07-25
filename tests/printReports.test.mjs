@@ -66,5 +66,8 @@ test('a non-image attachment data URL is dropped, not inlined', async () => {
 test('the report still says what it is and is not', async () => {
   const html = await buildReportHtml([hostileRecord()], {});
   assert.ok(html.includes('Not legal advice'));
-  assert.ok(html.includes('not a third-party timestamp'));
+  // The seal's limits travel with the seal. tests/disclaimers.test.mjs owns the exact
+  // wording; this only checks the report did not drop it.
+  assert.ok(html.includes('not a timestamp from any outside service'));
+  assert.ok(html.includes('have not been verified'), 'whose account this is must be stated');
 });

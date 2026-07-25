@@ -6,6 +6,7 @@ import { manifestHash, HASH_ALGO } from '../domain/integrity.js';
 import { jurisdictionLabel } from '../config/jurisdictions.js';
 import { formatDate } from '../domain/timeUtils.js';
 import { PAPER_CSS, BRAND_CSS, REPORT_CSP, docHead } from './reportBrand.js';
+import { DOCUMENT_PREAMBLE, DOCUMENT_FOOTER, WHAT_THE_SEAL_MEANS } from '../config/disclaimers.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -50,7 +51,11 @@ export async function buildSummaryHtml(incidents, settings = {}) {
       <td class="f">${esc(t.findings.join('; '))}</td>
     </tr>`).join('');
 
-  const integrity = mh ? `<div class="integrity"><strong>Integrity:</strong> ${HASH_ALGO} · Set fingerprint <code>${esc(mh)}</code> — detects any change to the underlying records. A self-kept log, not a third-party timestamp.</div>` : '';
+  const integrity = mh ? `<div class="integrity"><strong>Integrity:</strong> ${HASH_ALGO} · Set fingerprint <code>${esc(mh)}</code> — detects any change to the underlying records. ${esc(WHAT_THE_SEAL_MEANS)}</div>` : '';
+  const preamble = `<div class="preamble">
+      <h2>${esc(DOCUMENT_PREAMBLE.title)}</h2>
+      ${DOCUMENT_PREAMBLE.paras.map(p => `<p>${esc(p)}</p>`).join('')}
+    </div>`;
 
   return `<!doctype html><html><head><meta charset="utf-8">
     <meta http-equiv="Content-Security-Policy" content="${REPORT_CSP}"><title>${esc(title)}</title>
@@ -58,8 +63,9 @@ export async function buildSummaryHtml(incidents, settings = {}) {
     ${docHead()}
     <h1>${esc(title)}</h1>
     <p class="sub">${who}${who ? ' · ' : ''}${range ? range + ' · ' : ''}Generated ${esc(new Date().toLocaleString())}</p>
+    ${preamble}
     ${integrity}
-    <p class="meta">${s.count} shift(s) logged · ${s.issueRecords} with a possible issue · ${s.reportedCount} reported · ${s.withProofCount} with photo proof.</p>
+    <p class="meta">${s.count} shift(s) logged · ${s.issueRecords} with a possible issue · ${s.reportedCount} reported · ${s.withProofCount} with photos attached.</p>
     ${places}
     ${interrupters}
     <h2>Totals (counts only — no dollar amounts)</h2>
@@ -70,10 +76,10 @@ export async function buildSummaryHtml(incidents, settings = {}) {
       <tbody>${rows}</tbody>
     </table>
     <div class="sign">
-      <p>These are my own records, made at or near the time of each event to the best of my knowledge.</p>
+      <p>These are my own records of my own working conditions, written by me at or near the time of each event, to the best of my knowledge and recollection.</p>
       <div class="line">Signature / Date</div>
     </div>
-    <div class="foot">Self-kept contemporaneous log. Not legal advice. Counts and timing only; premium-pay dollar amounts are intentionally not computed. Confirm any classification and strategy with an employment attorney or the California Labor Commissioner.</div>
+    <div class="foot">${esc(DOCUMENT_FOOTER)}</div>
     </body></html>`;
 }
 

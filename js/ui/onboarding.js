@@ -72,6 +72,6 @@ export async function renderOnboarding(container, { onDone } = {}) {
       field('Where you work', places, 'These fill in the place box when you log.'),
     ]),
     el('div', { class: 'savewrap' }, [start]),
-    el('p', { class: 'onboard-foot', text: 'General information, not legal advice. Your records stay on this phone. Change anything later in Settings.' }),
+    el('p', { class: 'onboard-foot', text: 'This keeps your own account of what happened, in your own words. It is general information, not legal advice, and it cannot tell you whether you have a claim. Your records stay on this phone.' }),
   ]));
 }

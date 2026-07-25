@@ -5,6 +5,7 @@ import { getAllIncidents, getDeletedIncidents, putIncident } from '../data/incid
 import { softDelete, restoreIncident } from '../domain/incidentModel.js';
 import { verifyIntegrity } from '../domain/integrity.js';
 import { getRules } from '../rules/index.js';
+import { WHAT_FINDINGS_MEAN } from '../config/disclaimers.js';
 import { summarizePatterns } from '../domain/patterns.js';
 import { labelFor } from '../config/infractionTypes.js';
 import { formatDate } from '../domain/timeUtils.js';
@@ -165,7 +166,13 @@ function glanceCard(items) {
     interruptLine,
     otLine,
     solLine,
-    el('p', { class: 'glance-foot hint', text: `${s.reportedCount} reported · ${s.withProofCount} with photo proof. Make a one-page summary in Export.` }),
+    el('p', { class: 'glance-foot hint', text: `${s.reportedCount} reported · ${s.withProofCount} with photos. Make a one-page summary in Export.` }),
+    // The counts above are the most misreadable thing in the app — "3 No lunch" can look
+    // like a verdict. Say what a possible issue is, next to the number, not in a policy page.
+    el('details', { class: 'glance-means' }, [
+      el('summary', { text: 'What does “possible issue” mean?' }),
+      ...WHAT_FINDINGS_MEAN.map(t => el('p', { class: 'hint', text: t })),
+    ]),
   ]);
 }
 
@@ -173,7 +180,7 @@ function row(item, { onEdit, onChanged, onRepeat }) {
   const flagText = getRules(item.jurisdiction).summarize(item.flags || []).join(' · ');
   const meta = [];
   if (item.workplace) meta.push(item.workplace);
-  if ((item.attachments || []).length) meta.push(`${item.attachments.length} proof`);
+  if ((item.attachments || []).length) meta.push(`${item.attachments.length} photo${item.attachments.length === 1 ? '' : 's'}`);
   if (item.location) meta.push('GPS');
 
   const detailId = 'rec-' + item.id;
@@ -220,7 +227,7 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
   if (item.finalPay?.datePaid) add('Final pay arrived', formatDate(item.finalPay.datePaid));
   if (item.finalPay && item.finalPay.fullyPaid != null) add('Paid everything owed', item.finalPay.fullyPaid ? 'Yes' : 'No');
   if (item.witnesses) add('Who saw it', item.witnesses);
-  if ((item.attachments || []).length) add('Proof saved', `${item.attachments.length} photo(s)`);
+  if ((item.attachments || []).length) add('Photos saved', `${item.attachments.length} photo(s)`);
   add('Saved at', new Date(item.createdAt).toLocaleString());
   host.appendChild(facts);
 

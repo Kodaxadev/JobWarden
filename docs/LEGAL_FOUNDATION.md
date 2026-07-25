@@ -109,7 +109,37 @@ UPL posture, (d) the app correctly scopes findings to the user's selected state.
 - [ ] **[ATTORNEY]** Formal Terms of Service — review/replace the in-app "as is" summary; linked.
 - [x] "Information last updated <date>" stamp surfaced (per jurisdiction, via `jurisdictions.rulesAsOf`).
 - [ ] **[ATTORNEY]** CA employment-attorney review of findings language + UPL posture.
-- [ ] Final copy sweep for banned UPL phrasing.
+- [x] Final copy sweep for banned UPL phrasing — now **automated**, not a one-time sweep. `tests/disclaimers.test.mjs` fails the build on "proof", "your case", "guarantee", "will hold up" and the rest of `BANNED_CLAIM_WORDS` anywhere a user can read them, unless the sentence is disclaiming them. The §1 list above is the source of that list.
+
+### The framing surface (added 2026-07-25)
+
+Everything the app says about what it *is* now lives in one file: `js/config/disclaimers.js`.
+That is deliberate — this text used to be retyped at every surface, and duplicated
+disclaimers drift until the weakest wording is the one that gets quoted back at you. It is
+also the shortest possible review: **edit that one file and every screen, both printable
+documents, and the landing page change with it.**
+
+The four positions it holds, which the attorney should confirm are the right ones and are
+worded strongly enough:
+
+1. **The records are the user's own account.** Nobody verified them; the operator never sees
+   them; the app does not assert they are true.
+2. **A "possible issue" is a pointer, not a determination.** It points at a rule that may
+   relate to what was entered. Whether a rule was broken turns on facts the app does not have.
+3. **Nothing states or implies the user has a claim**, and nothing predicts what an employer,
+   agency, or court will do.
+4. **The fingerprint shows only that a record has not changed since it was saved on that
+   device.** Not that the contents are true, and not a third-party timestamp.
+
+`tests/disclaimers.test.mjs` enforces these mechanically: it scans every user-facing string
+(not identifiers, not comments) for words that assert something the app cannot know —
+"proof", "your case", "guarantee", "will hold up" — and fails on any that is not part of a
+disclaiming sentence. It also asserts both printable documents carry the preamble *before*
+the first record, that no finding note states a conclusion or a dollar figure, and that the
+rights guide describes rules rather than telling the reader what they personally are owed.
+
+Terms of Service §§6–8 (`terms.html`) are the contractual version of the same four positions,
+plus indemnity. Those sections are new and unreviewed.
 
 ### Findings surface awaiting that review
 

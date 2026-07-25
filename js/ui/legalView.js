@@ -4,6 +4,7 @@
 // formal privacy policy + terms still need an attorney before public launch (see docs/LEGAL_FOUNDATION.md).
 import { el, clear } from './dom.js';
 import { jurisdictionLabel, rulesAsOf } from '../config/jurisdictions.js';
+import { NOT_A_VERDICT, WHAT_FINDINGS_MEAN, WHAT_THE_SEAL_MEANS } from '../config/disclaimers.js';
 
 const link = (text, href) => el('a', { class: 'rights-link', href, target: '_blank', rel: 'noopener noreferrer', text });
 const card = (title, paras, extra) => el('section', { class: 'card' }, [
@@ -20,9 +21,16 @@ export function renderLegal(container, { settings = {}, onBack } = {}) {
   ]));
 
   container.appendChild(el('section', { class: 'card legal-disclaim' }, [
+    el('p', { class: 'legal-lead', text: NOT_A_VERDICT }),
     el('p', { text: `JobWarden gives you general information about ${region} labor law and helps you keep your own records. It is not legal advice, not a law firm, and not a substitute for a lawyer or the Labor Commissioner.` }),
     el('p', { text: `These cover ${region} only — rules in other states differ.` }),
     el('p', { text: 'Rules have exceptions and deadlines. For advice about your situation, talk to a licensed employment attorney or your state Labor Commissioner.' }),
+  ]));
+
+  container.appendChild(card('What your records are — and are not', [
+    'What you enter is your own account of your own working conditions, in your own words. Nobody has checked it, and the app does not claim it is true — it records what you said, and when you said it.',
+    ...WHAT_FINDINGS_MEAN,
+    WHAT_THE_SEAL_MEANS,
   ]));
 
   container.appendChild(card('Full policies', [
@@ -42,7 +50,7 @@ export function renderLegal(container, { settings = {}, onBack } = {}) {
   ]));
 
   container.appendChild(card('Facts, not a calculator', [
-    'JobWarden records facts and counts — times, dates, and what happened. It does not calculate what you are owed or predict the outcome of a claim. Those are for the Labor Commissioner or an attorney.',
+    'JobWarden records facts and counts — times, dates, and what happened. It does not calculate what you are owed, does not decide whether a rule was broken, and does not predict what any employer, agency, or court will do. Those are for the Labor Commissioner or an attorney.',
   ]));
 
   container.appendChild(card('Provided “as is”', [

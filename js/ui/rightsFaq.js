@@ -11,7 +11,7 @@ export const TOPICS = [
   {
     q: 'Meal breaks — the “5th hour” rule',
     paras: [
-      'Work more than 5 hours and you are owed a 30-minute meal break. It is unpaid, and it must be free of all duty. It also has to start before the end of your 5th hour of work.',
+      'California law requires a 30-minute meal break once a worker passes 5 hours. It is unpaid, and it must be free of all duty. It also has to start before the end of your 5th hour of work.',
       'Work more than 10 hours and a second 30-minute meal is owed.',
       'A meal only counts if you are truly relieved: free to leave, doing nothing for the employer, and uninterrupted. A short shift (6 hours or less) can waive the first meal by mutual agreement.',
     ],
@@ -30,7 +30,7 @@ export const TOPICS = [
   {
     q: 'Rest breaks',
     paras: [
-      'You are owed a paid 10-minute rest break for every 4 hours worked, or major fraction of 4 hours. Roughly: one break for 3.5–6 hours, two for 6–10 hours, three for 10–14 hours.',
+      'California law requires a paid 10-minute rest break for every 4 hours worked, or major fraction of 4 hours. Roughly: one break for 3.5–6 hours, two for 6–10 hours, three for 10–14 hours.',
       'A rest break must also be duty-free: you cannot be kept on call during it.',
     ],
     cite: 'Labor Code §226.7; Augustus v. ABM (2016)',
@@ -48,7 +48,7 @@ export const TOPICS = [
   {
     q: 'Sent home early after you showed up',
     paras: [
-      'Show up for a scheduled shift, get sent home before working half of it, and you are owed “reporting-time pay.” That is half the scheduled shift — at least 2 hours of pay, and at most 4.',
+      'When a worker reports for a scheduled shift and is sent home before working half of it, California law calls for “reporting-time pay.” That is half the scheduled shift — at least 2 hours of pay, and at most 4.',
       'It is about the shift you were scheduled for, not the hours you ended up working. So the scheduled start and end are the numbers to write down.',
       'There are exceptions. If the cause was outside the employer’s control — a power failure, a threat to safety, an official shutdown — reporting-time pay may not be owed. Write down the reason you were given, in their words.',
     ],
@@ -58,7 +58,7 @@ export const TOPICS = [
   {
     q: 'Paying for things the job needs',
     paras: [
-      'Your employer must pay you back for what you have to spend to do the job. That covers required uniforms, tools and equipment, mileage in your own car, and a phone or data plan you are expected to use for work.',
+      'California law requires an employer to pay a worker back for what they have to spend to do the job. That covers required uniforms, tools and equipment, mileage in your own car, and a phone or data plan you are expected to use for work.',
       'This holds even if you agreed to pay. You cannot sign away the right to be reimbursed.',
       'Keep the receipt, and keep the message where you asked to be paid back. The asking is evidence too.',
     ],
@@ -85,7 +85,7 @@ export const TOPICS = [
   {
     q: 'Pay stubs and your records',
     paras: [
-      'You are entitled to an accurate, itemized wage statement each pay period, and to inspect or copy your own time and pay records.',
+      'California law requires an accurate, itemized wage statement each pay period, and gives workers the right to inspect or copy their own time and pay records.',
       'Keeping your own contemporaneous log — like this one — protects you if the employer’s records are wrong or missing.',
     ],
     cite: 'Labor Code §§226, 1174',

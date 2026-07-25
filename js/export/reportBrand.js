@@ -40,6 +40,13 @@ export const PAPER_CSS = `
   code{font:10px/1.3 ui-monospace,Menlo,Consolas,monospace;word-break:break-all}
   .integrity{margin:0 0 18px;padding:10px 12px;background:var(--paper-gold-tint);border:1px solid var(--paper-gold-line);border-radius:6px;font-size:11px;color:var(--paper-ink-2)}
   .integrity p{margin:6px 0 0;color:var(--paper-muted)}
+  /* "About this document" — deliberately BEFORE the records and in body size, not fine print.
+     Whoever picks this up should learn whose account it is, and what has not been established,
+     before they read a single entry. */
+  .preamble{margin:0 0 18px;padding:12px 14px;border:1px solid var(--paper-navy-line);border-radius:6px;background:var(--paper-navy-tint)}
+  .preamble h2{font-size:13px;margin:0 0 6px;padding-bottom:5px;border-bottom:1px solid var(--paper-navy-line);color:var(--paper-navy);text-transform:uppercase;letter-spacing:.06em}
+  .preamble p{margin:0 0 7px;font-size:11.5px;line-height:1.55;color:var(--paper-ink-2)}
+  .preamble p:last-child{margin-bottom:0}
   .foot{margin-top:24px;font-size:11px;color:var(--paper-muted);border-top:1px solid var(--paper-gold-2);padding-top:10px}
   .sign{margin-top:30px}
   .sign p{font-size:11px;color:var(--paper-ink-2)}

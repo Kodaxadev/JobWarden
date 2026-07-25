@@ -50,7 +50,7 @@ export const INFRACTION_TYPES = [
     legal: 'Notice undercuts an employer "good-faith" defense. Naranjo (2024).' },
   { id: 'retaliation', label: 'Treated worse after I spoke up', group: 'notice',
     fields: [FIELD.NOTICE],
-    legal: 'Adverse action after a protected wage complaint may be unlawful retaliation. Lab. Code §1102.5 / §98.6. Keep proof and the dates.' },
+    legal: 'Adverse action after a protected wage complaint may be unlawful retaliation. Lab. Code §1102.5 / §98.6. Keep whatever you have, and the dates.' },
   { id: 'final_pay', label: 'Final pay problem', group: 'final',
     fields: [FIELD.FINALPAY],
     legal: 'Final wages are due immediately if fired, within 72h if you quit without notice; late pay can trigger waiting-time penalties. Lab. Code §§201–203.' },

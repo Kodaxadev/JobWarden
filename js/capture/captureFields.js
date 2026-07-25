@@ -293,8 +293,8 @@ export function proofSection(state) {
     onchange: async e => { for (const f of [...e.target.files]) state.attachments.push(await fileToAttachment(f)); e.target.value = ''; renderThumbs(); } });
   renderThumbs();
 
-  return section('proof', 'notebook-pen', 'Proof & your words',
-    'A photo of the clock, pay stub, or a message makes your record far stronger. Optional.',
+  return section('proof', 'notebook-pen', 'Photos & your words',
+    'A photo of the clock, pay stub, or a message backs up what you wrote. Optional.',
     [field('Tell what happened', narrative)],
     [
       field('Photos of time clock, pay stub, or messages', fileInput, 'Your own records only. No secret audio — illegal in CA.'),

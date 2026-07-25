@@ -26,6 +26,13 @@
 .kpi-num { font-family: var(--mono); font-size: 23px; font-weight: 500; color: var(--text); line-height: 1.05; }
 .kpi-label { font-size: 12.5px; color: var(--muted); line-height: 1.3; overflow-wrap: anywhere; }
 .glance-foot { margin: 14px 0 0; }
+/* Sits right under the counts, because "3 · No lunch" is what gets misread as a verdict. */
+.glance-means { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); }
+.glance-means > summary { cursor: pointer; font-size: 13px; color: var(--primary-strong); list-style: none; }
+.glance-means > summary::-webkit-details-marker { display: none; }
+.glance-means > summary::after { content: ' ›'; }
+.glance-means[open] > summary::after { content: ' ⌄'; }
+.glance-means .hint { margin: 10px 0 0; }
 .glance-interrupt { margin: 14px 0 0; padding: 9px 12px; font-size: 13px; color: var(--incident); background: rgba(230,177,90,.08); border: 1px solid rgba(230,177,90,.28); border-radius: var(--radius-sm); }
 .glance-sol { margin: 10px 0 0; padding: 9px 12px; font-size: 12.5px; color: var(--muted); background: rgba(234,238,246,.03); border: 1px solid var(--line-2); border-radius: var(--radius-sm); line-height: 1.45; }
 
@@ -51,6 +58,9 @@
 /* Legal & privacy */
 .card h3 { margin: 0 0 8px; font-size: 15px; font-weight: 600; }
 .legal-disclaim { border-color: rgba(205,171,69,.3); }
+/* The plainest sentence in the app leads the Legal screen at full weight. If the limit of
+   what this tool can tell you is set in small grey type, it reads as boilerplate to scroll. */
+.legal-lead { font-size: 15.5px !important; font-weight: 500; line-height: 1.55 !important; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .legal-disclaim p { color: var(--text); font-size: 14px; line-height: 1.6; margin: 0 0 10px; }
 .legal-disclaim p:last-child { margin: 0; color: var(--muted); }
 .legal-p { color: var(--muted); font-size: 14px; line-height: 1.6; margin: 0 0 10px; }

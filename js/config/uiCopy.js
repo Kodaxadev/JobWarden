@@ -8,7 +8,7 @@ export const TRAIL_STEPS = [
   { id: 'time', icon: 'clock', title: 'Add work times', helper: 'Add when you started and ended work.', btn: 'Add times' },
   { id: 'meal', icon: 'sandwich', title: 'Add lunch breaks', helper: 'Add your lunch start and end times.', btn: 'Add lunch' },
   { id: 'offClock', icon: 'footprints', title: 'Add unpaid work', helper: 'Add any work you did off the clock.', btn: 'Add unpaid' },
-  { id: 'proof', icon: 'camera', title: 'Add proof', helper: 'Add photos or notes that back you up.', btn: 'Add proof' },
+  { id: 'proof', icon: 'camera', title: 'Add photos', helper: 'A photo of the clock, a pay stub, or a text backs up what you wrote.', btn: 'Add photos' },
   { id: 'story', icon: 'notebook-pen', title: 'Tell what happened', helper: 'Write a few short sentences.', btn: 'Add notes' },
 ];
 

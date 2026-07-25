@@ -46,6 +46,11 @@ h1,h2,h3{ letter-spacing:-.01em; }
 .overline{ font-size:11.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin:0 0 14px; }
 .hero h1{ font-size:40px; line-height:1.08; font-weight:600; margin:0 0 16px; }
 .lede{ font-size:17.5px; color:var(--muted); max-width:44ch; margin:0 0 24px; }
+/* The straight answer about what this is and isn't. Sits in the hero, at readable size, in
+   the same voice as the pitch above it — a claim and its limit should not be different
+   typographic classes, or the limit reads as something to skip. */
+.lede.plain{ font-size:15px; line-height:1.6; max-width:46ch; padding:13px 15px; border:1px solid var(--line); border-radius:var(--r); background:rgba(255,255,255,.022); }
+.lede.plain strong{ color:var(--text); font-weight:600; }
 .cta{ display:flex; flex-wrap:wrap; gap:12px; }
 .btn{ display:inline-flex; align-items:center; justify-content:center; gap:9px; min-height:54px; padding:15px 24px; border-radius:13px; font:600 16.5px var(--sans); cursor:pointer; text-decoration:none; border:1px solid transparent; transition:transform .12s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease; }
 /* Machined gold, same material as the app: bright catch, body, deep base, seated bevel. */

@@ -6,6 +6,7 @@ import { formatDate } from '../domain/timeUtils.js';
 import { formatLoc } from '../capture/geo.js';
 import { verifyIntegrity, manifestHash, HASH_ALGO } from '../domain/integrity.js';
 import { PAPER_CSS, BRAND_CSS, REPORT_CSP, docHead } from './reportBrand.js';
+import { DOCUMENT_PREAMBLE, DOCUMENT_FOOTER, WHAT_THE_SEAL_MEANS } from '../config/disclaimers.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const when = iso => { try { return new Date(iso).toLocaleString(); } catch { return iso || '—'; } };
@@ -131,21 +132,28 @@ export async function buildReportHtml(incidents, settings = {}) {
   const integrity = mh ? `<div class="integrity">
       <div><strong>Report integrity</strong> — Algorithm: ${HASH_ALGO} · Records: ${incidents.length} · Generated: ${esc(new Date().toLocaleString())}</div>
       <div><strong>Set fingerprint:</strong> <code>${esc(mh)}</code></div>
-      <p>Each record below carries a fingerprint of its contents and edit history, and each photo carries a fingerprint of its file. These let anyone detect whether a record was changed after it was saved. This is a self-kept log, not a third-party timestamp — the fingerprints do not prove the times entered are true.</p>
+      <p>Each record below carries a fingerprint of its contents and edit history, and each photo carries a fingerprint of its file. ${esc(WHAT_THE_SEAL_MEANS)}</p>
     </div>` : '';
+  // Leads the document, above the records: whoever picks this up learns whose account it is
+  // and what has NOT been established before they read a single entry.
+  const preamble = `<div class="preamble">
+      <h2>${esc(DOCUMENT_PREAMBLE.title)}</h2>
+      ${DOCUMENT_PREAMBLE.paras.map(p => `<p>${esc(p)}</p>`).join('')}
+    </div>`;
   return `<!doctype html><html><head><meta charset="utf-8">
     <meta http-equiv="Content-Security-Policy" content="${REPORT_CSP}"><title>${esc(title)}</title>
     <style>${PAPER_CSS}${BRAND_CSS}${STYLE}</style></head><body>
     ${docHead()}
     <h1>${esc(title)}</h1>
     <p class="sub">${who}${who ? ' · ' : ''}Generated ${new Date().toLocaleString()} · ${incidents.length} record(s)</p>
+    ${preamble}
     ${integrity}
     ${blocks.join('')}
     <div class="sign">
-      <p>These are my own records, made at or near the time of each event to the best of my knowledge.</p>
+      <p>These are my own records of my own working conditions, written by me at or near the time of each event, to the best of my knowledge and recollection.</p>
       <div class="line">Signature / Date</div>
     </div>
-    <div class="foot">Self-kept contemporaneous log. Not legal advice. Premium-pay dollar amounts are intentionally not computed here.</div>
+    <div class="foot">${esc(DOCUMENT_FOOTER)}</div>
     </body></html>`;
 }
 
