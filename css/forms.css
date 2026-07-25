@@ -29,21 +29,105 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .time-row { display: flex; gap: 12px; align-items: center; min-width: 0; }
 .time-row input { flex: 1 1 0; min-width: 0; }
 .time-row .btn { flex: none; min-height: 50px; }
-.check { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; font-size: var(--fs-ui); min-height: 46px; line-height: 1.35; }
+.check {
+  display: flex; align-items: flex-start; gap: 12px; padding: 11px 12px;
+  font-size: var(--fs-ui); min-height: 46px; line-height: 1.35;
+  border: 1px solid transparent; border-radius: var(--radius-sm);
+  transition: background var(--dur-state) var(--ease-out), border-color var(--dur-state) var(--ease-out);
+}
+.check:hover { background: rgba(255,255,255,.025); border-color: var(--line); }
+.check:has(input:checked) { color: var(--text); background: var(--gfill); border-color: var(--gline); }
 .check input { width: 22px; height: 22px; flex: none; margin-top: 1px; accent-color: var(--primary); }
 .check span { min-width: 0; overflow-wrap: anywhere; }
 .sub-head { font-family: var(--mono); font-size: var(--fs-micro); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); font-weight: 500; margin: 16px 0 12px; padding-top: 16px; border-top: 1px solid var(--line); }
 
-.issue-group { margin: 16px 0 0; }
-/* Uppercase mono reads a size smaller than its px; these are the labels a stressed user
-   scans to find their issue, so they get real size rather than the 11px they had. */
-.issue-group-label { font-family: var(--mono); font-size: var(--fs-micro); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin: 0 0 8px; }
-.issue-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+.issue-picker { display: flex; flex-direction: column; gap: var(--space-2); }
+.issue-group {
+  margin: 0; overflow: hidden; border: 1px solid var(--line);
+  border-radius: var(--radius); background: rgba(255,255,255,.018);
+  transition: border-color var(--dur-state) var(--ease-out), background var(--dur-state) var(--ease-out);
+}
+.issue-group[open] { border-color: var(--line-2); background: rgba(255,255,255,.025); }
+.issue-group.has-selection { border-color: rgba(205,171,69,.32); }
+.issue-group-head {
+  display: grid; grid-template-columns: 38px minmax(0,1fr) auto 18px; gap: 12px;
+  align-items: center; min-height: 66px; padding: 10px 12px; cursor: pointer;
+  list-style: none; transition: background var(--dur-state) var(--ease-out);
+}
+.issue-group-head::-webkit-details-marker { display: none; }
+.issue-group-head:focus-visible, .issue-choice:focus-visible { outline-offset: -3px; }
+.issue-group-head:hover { background: rgba(255,255,255,.025); }
+.issue-group-head:active { background: rgba(255,255,255,.045); }
+.issue-group-icon {
+  width: 38px; height: 38px; display: grid; place-items: center; color: var(--primary-strong);
+  border: 1px solid rgba(205,171,69,.22); border-radius: 10px;
+  background: linear-gradient(160deg, rgba(34,58,97,.88), rgba(14,27,46,.92));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+}
+.issue-group-icon svg { width: 19px; height: 19px; }
+.issue-group-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.issue-group-label {
+  color: var(--text); font-size: var(--fs-ui); font-weight: 600;
+  line-height: var(--lh-snug); letter-spacing: -.006em;
+}
+.issue-group-help {
+  color: var(--muted); font-size: var(--fs-micro); line-height: 1.35;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.issue-group-state {
+  color: var(--faint); font-family: var(--mono); font-size: var(--fs-micro);
+  white-space: nowrap;
+}
+.issue-group-state:empty { display: none; }
+.issue-group.has-selection .issue-group-state { color: var(--primary-strong); }
+.issue-group-chevron { display: grid; place-items: center; color: var(--faint); }
+.issue-group-chevron svg {
+  width: 17px; height: 17px;
+  transition: transform var(--dur-state) var(--ease-out), color var(--dur-state) var(--ease-out);
+}
+.issue-group[open] .issue-group-chevron svg { transform: rotate(180deg); color: var(--primary); }
+.issue-grid {
+  display: grid; grid-template-columns: 1fr; gap: 6px; padding: 8px;
+  border-top: 1px solid var(--line);
+}
 .chip { background: var(--sheen), var(--surface-3); color: var(--text); border: 1px solid var(--line-2); border-radius: var(--radius-sm); padding: 16px 16px; font-size: var(--fs-ui); min-height: 52px; cursor: pointer; text-align: left; display: inline-flex; align-items: center; gap: 12px; line-height: 1.35; overflow-wrap: anywhere; box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(0,0,0,.28); transition: border-color var(--dur-state) var(--ease-out), background var(--dur-state) var(--ease-out), box-shadow var(--dur-state) var(--ease-out), transform var(--dur-press) var(--ease-out); }
 .chip:hover { border-color: var(--node); box-shadow: inset 0 1px 0 var(--edge-top), 0 2px 5px rgba(0,0,0,.32); }
 .chip:active { transform: translateY(1px); box-shadow: inset 0 1px 2px rgba(0,0,0,.36); }
 .chip.on { background: var(--sheen), linear-gradient(180deg, var(--navy-2), var(--navy)); border-color: var(--primary); font-weight: 500; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.3); }
 .chip.on:hover { border-color: var(--primary-strong); }
+.issue-choice {
+  width: 100%; min-height: 50px; padding: 8px 10px; gap: 10px;
+  background: transparent; border-color: transparent; border-radius: 10px;
+  box-shadow: none; font-weight: 500;
+}
+.issue-choice:hover {
+  background: rgba(255,255,255,.035); border-color: var(--line);
+  box-shadow: none;
+}
+.issue-choice:active { background: rgba(255,255,255,.055); box-shadow: inset 0 1px 2px rgba(0,0,0,.25); }
+.issue-choice-icon {
+  width: 32px; height: 32px; flex: none; display: grid; place-items: center;
+  color: var(--muted); background: var(--surface-2); border: 1px solid var(--line);
+  border-radius: 9px; transition: color var(--dur-state) var(--ease-out), border-color var(--dur-state) var(--ease-out);
+}
+.issue-choice-icon svg { width: 17px; height: 17px; }
+.issue-choice-label { flex: 1; min-width: 0; }
+.issue-choice-check {
+  display: grid; place-items: center; flex: none; color: var(--primary-strong);
+  opacity: 0; transform: scale(.82);
+  transition: opacity var(--dur-state) var(--ease-out), transform var(--dur-state) var(--ease-out);
+}
+.issue-choice-check svg { width: 21px; height: 21px; }
+.issue-choice.on {
+  background: linear-gradient(180deg, rgba(34,58,97,.9), rgba(22,38,63,.92));
+  border-color: rgba(205,171,69,.52); color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.09);
+}
+.issue-choice.on .issue-choice-icon { color: var(--primary-strong); border-color: rgba(205,171,69,.3); }
+.issue-choice.on .issue-choice-check { opacity: 1; transform: scale(1); }
+@media (min-width: 480px) {
+  .issue-grid { grid-template-columns: 1fr 1fr; }
+}
 
 /* A file input driven by a real button. display:none rather than a clip-rect, because a
    keyboard user reaches the picker through the button — a second, invisible tab stop for
@@ -78,12 +162,14 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .logsec-why { color: var(--muted); font-size: var(--fs-sm); line-height: 1.45; margin: 8px 0 16px; }
 .logsec .field:last-of-type { margin-bottom: 0; }
 .logsec-more { margin-top: 8px; border-top: 1px solid var(--line); }
-.logsec-more > summary { display: flex; align-items: center; gap: 8px; cursor: pointer; list-style: none; padding: 12px 0 4px; font-size: var(--fs-ui); color: var(--primary-strong); min-height: 44px; }
+.logsec-more > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; list-style: none; padding: 12px 0 4px; font-size: var(--fs-ui); color: var(--primary-strong); min-height: 44px; }
 .logsec-more > summary:hover { color: var(--primary); }
 .logsec-more > summary:active { opacity: .7; }
 .logsec-more > summary::-webkit-details-marker { display: none; }
-.logsec-more > summary::before { content: "+"; font-size: var(--fs-h); line-height: 1; color: var(--primary); width: 14px; text-align: center; }
-.logsec-more[open] > summary::before { content: "\2013"; }
+.logsec-more-copy { display: inline-flex; align-items: baseline; gap: 8px; }
+.logsec-more-chevron { display: grid; place-items: center; color: var(--primary); }
+.logsec-more-chevron svg { width: 18px; height: 18px; transition: transform var(--dur-state) var(--ease-out); }
+.logsec-more[open] .logsec-more-chevron svg { transform: rotate(180deg); }
 .logsec-more > summary .opt { font-family: var(--mono); font-size: var(--fs-micro); letter-spacing: .04em; text-transform: uppercase; color: var(--faint); }
 .logsec-more-body { padding: 8px 0 4px; }
 .what-when { margin: var(--space-3) 0 0; }

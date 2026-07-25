@@ -78,12 +78,12 @@ export async function renderOnboarding(container, { onDone } = {}) {
     el('div', { class: 'onboard-head' }, [
       iconEl('shield-check'),
       el('h1', { text: 'Welcome to JobWarden' }),
-      el('p', { class: 'onboard-tag', text: 'Keep a private record of meal breaks, rest breaks, and unpaid work — the moment it happens. It stays on this phone; only you can see it.' }),
-      el('p', { class: 'onboard-scope', text: 'Currently built for California rules. More states are coming.' }),
+      el('p', { class: 'onboard-tag', text: 'Keep a private work log on this phone. Record breaks, unpaid work, and pay problems when they happen.' }),
+      el('p', { class: 'onboard-scope', text: 'Built for California · More states coming' }),
     ]),
     el('details', { class: 'card onboard-setup', open: !!(s.employeeName || s.employer || s.role || s.workplaces?.length) }, [
       el('summary', { class: 'onboard-setup-summary' }, [
-        el('span', { class: 'onboard-setup-title', text: 'Add optional profile details' }),
+        el('span', { class: 'onboard-setup-title', text: 'Optional profile' }),
         el('span', { class: 'onboard-setup-action', text: 'Add' }),
       ]),
       el('div', { class: 'onboard-setup-body' }, [

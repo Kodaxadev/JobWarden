@@ -10,14 +10,7 @@ import { choosePassphrase, askPassphrase } from './passphraseDialog.js';
 import { exportCsv } from '../export/exportCsv.js';
 import { openPrintReport } from '../export/exportReport.js';
 import { openPrintSummary } from '../export/exportSummary.js';
-
-// The label sits in its own span so the busy state can swap it and put it back. The handler
-// receives its own button, which is what lets every action here report that it is working.
-const action = (label, desc, cls, onclick) => {
-  const btn = el('button', { type: 'button', class: cls }, [el('span', { class: 'btn-label', text: label })]);
-  btn.addEventListener('click', () => onclick(btn));
-  return el('div', { class: 'action' }, [btn, el('p', { class: 'hint', text: desc })]);
-};
+import { actionRow } from './actionRow.js';
 
 export async function renderExportView(container, { onChanged } = {}) {
   clear(container);
@@ -36,23 +29,37 @@ export async function renderExportView(container, { onChanged } = {}) {
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Export & back up' }),
     el('p', { class: 'hint', text: `${items.length} record${items.length === 1 ? '' : 's'}, saved on this phone only.` }),
-    el('div', { class: 'btn-col' }, [
-      action('Share unencrypted backup', 'Uses your phone’s share sheet when available. The file includes records and photos; anyone with it can read them.', 'btn primary',
+    el('div', { class: 'action-list' }, [
+      actionRow({
+        label: 'Share unencrypted backup',
+        description: 'Send a complete readable copy through your phone’s share sheet.',
+        iconName: 'message-square', variant: 'recommended',
+        onClick:
         guard('Preparing…', async () => {
           if (!await confirmPlainBackup()) return;
           const r = await emailRecords(items, settings);
           if (r !== 'cancelled') { await markBackedUp(); onChanged?.(); }
           toast(r === 'shared' ? 'Shared ✓' : r === 'fallback' ? 'Backup saved — attach it in the email that opened' : 'Share canceled');
-        })),
-      action('Save unencrypted backup', 'Downloads a complete copy with photos. Anyone who opens the file can read it.', 'btn',
+        }),
+      }),
+      actionRow({
+        label: 'Save unencrypted backup',
+        description: 'Download every record and photo in a readable file.',
+        iconName: 'download',
+        onClick:
         guard('Building backup…', async () => {
           if (!await confirmPlainBackup()) return;
           const n = await exportJson(items, settings);
           await markBackedUp();
           toast(`Backed up ${n} record(s)`);
           onChanged?.();
-        })),
-      action('Save locked backup', 'The same backup, locked with a passphrase — so a copy sitting in your email is unreadable to anyone else. Lose the passphrase and the file is gone for good.', 'btn',
+        }),
+      }),
+      actionRow({
+        label: 'Save locked backup',
+        description: 'Encrypt the full backup with a passphrase only you know.',
+        iconName: 'lock', variant: 'secure',
+        onClick:
         guard(null, async (btn) => {
           const pass = await choosePassphrase();
           if (!pass) return;
@@ -66,13 +73,32 @@ export async function renderExportView(container, { onChanged } = {}) {
               onChanged?.();
             } catch (e) { toast(e?.message || 'Could not lock the backup'); }
           });
-        })),
-      action('Make spreadsheet', 'A table you can open in Excel or Google Sheets.', 'btn',
-        guard('Building…', async () => { exportCsv(items); toast('Spreadsheet saved'); })),
-      action('Make printable report', 'A report to print or save as PDF for the Labor Commissioner, a lawyer, or HR.', 'btn',
-        guard('Building report…', async () => { const ok = await openPrintReport(items, settings); if (!ok) toast('Allow pop-ups to print'); })),
-      action('Make summary report', 'A one-page overview of reported patterns and the timeline.', 'btn',
-        guard('Building summary…', async () => { const ok = await openPrintSummary(items, settings); if (!ok) toast('Allow pop-ups to print'); })),
+        }),
+      }),
+      actionRow({
+        label: 'Make spreadsheet',
+        description: 'Open a table in Excel, Numbers, or Google Sheets.',
+        iconName: 'list',
+        onClick: guard('Building…', async () => { exportCsv(items); toast('Spreadsheet saved'); }),
+      }),
+      actionRow({
+        label: 'Make printable report',
+        description: 'Print or save a detailed PDF for an agency, lawyer, or HR.',
+        iconName: 'clipboard-pen',
+        onClick: guard('Building report…', async () => {
+          const ok = await openPrintReport(items, settings);
+          if (!ok) toast('Allow pop-ups to print');
+        }),
+      }),
+      actionRow({
+        label: 'Make summary report',
+        description: 'Create a one-page pattern and timeline overview.',
+        iconName: 'notebook-pen',
+        onClick: guard('Building summary…', async () => {
+          const ok = await openPrintSummary(items, settings);
+          if (!ok) toast('Allow pop-ups to print');
+        }),
+      }),
     ]),
   ]));
 
@@ -119,7 +145,14 @@ export async function renderExportView(container, { onChanged } = {}) {
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Restore from a backup' }),
     el('p', { class: 'hint', text: 'Bring records back from a backup file — after reinstalling or on a new phone. Plain or locked files both work; a locked one will ask for its passphrase. Adds to what is here; duplicates are skipped.' }),
-    el('div', { class: 'actions' }, [el('button', { class: 'btn', text: 'Choose a backup file', onclick: () => fileInput.click() })]),
+    el('div', { class: 'action-list compact' }, [
+      actionRow({
+        label: 'Choose a backup file',
+        description: 'Plain and passphrase-locked JobWarden files are supported.',
+        iconName: 'rotate-ccw',
+        onClick: () => fileInput.click(),
+      }),
+    ]),
     fileInput,
   ]));
 }

@@ -20,7 +20,7 @@ export const SHORT = 'Your own log, in your own words. General information, not 
 
 // The standing headline. Shown wherever the user is about to treat this as more than a log.
 export const NOT_A_VERDICT =
-  'JobWarden records what you say happened. It does not decide whether anything was actually done wrong, and it cannot tell you whether you have a claim.';
+  'JobWarden records your account. It does not verify what happened, decide whether a rule was broken, or tell you whether you have a claim.';
 
 // The sentence the user ticks a box against on first run. Deliberately ONE sentence, in the
 // same plain voice as everything else — a wall of legalese behind a checkbox is a thing
@@ -28,7 +28,7 @@ export const NOT_A_VERDICT =
 // stored with the profile at the moment it is accepted, so a later reword does not rewrite
 // what someone actually agreed to.
 export const ONBOARD_ACK =
-  'I understand this keeps my own account of what happened, and that it does not decide whether anything was done wrong or tell me whether I have a claim.';
+  'I understand this is my own account, not a legal decision or claim assessment.';
 
 // What a “possible issue” on a record actually means. Shown on the Records screen and in
 // every printable document, because this is the single most misreadable thing in the app.

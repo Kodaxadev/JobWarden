@@ -105,7 +105,7 @@ The suite (**244 tests** at last run) covers:
 Lint (`npm run lint`) and type-check (`npm run typecheck`, JSDoc + `tsc --checkJs` over the domain layer) run alongside tests in CI. After changing any cached asset, bump `CACHE` in `service-worker.js` so installed clients update — and note it in [`CHANGELOG.md`](CHANGELOG.md), which is keyed on that same string.
 
 ## Design
-The "Field Log" UI: plain-language, navy-and-gold "legal authority" branding on a dark canvas, self-hosted fonts (Geist / Geist Mono / Cinzel), offline-safe icons from `lucide-static`, and WCAG 2.1 AA contrast/structure. `icons/logo-mark.svg` is the canonical brand mark; `scripts/build-app-icons.mjs` renders every installable PWA icon from it.
+The "Field Log" UI: plain-language, navy-and-gold "legal authority" branding on a dark canvas, self-hosted fonts (Geist / Geist Mono / Cinzel), offline-safe icons from `lucide-static`, and WCAG 2.1 AA contrast/structure. The mobile interaction system uses grouped, icon-led issue disclosures and shared action cells rather than undifferentiated button stacks. `icons/logo-mark.svg` is the canonical brand mark; `scripts/build-app-icons.mjs` renders every installable PWA icon from it.
 
 ## Disclaimer
 Not legal advice. A self-kept log is structured testimony, not automatic proof — its strength comes from being contemporaneous, factual, and corroborated (timeclock/paystub photos, manager texts). Confirm classification and strategy with an employment attorney or the California Labor Commissioner.

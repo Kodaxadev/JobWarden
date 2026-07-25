@@ -3,6 +3,14 @@
 // advice about anyone's situation (kept deliberately educational to stay clear of UPL). Bundled
 // so it works with no network. Mirrors the rules the app already encodes in breakRules.
 import { el, clear } from './dom.js';
+import { backButton } from './actionRow.js';
+import { icon } from './icons.js';
+
+const iconEl = (name) => {
+  const span = el('span');
+  span.innerHTML = icon(name);
+  return span.firstElementChild || span;
+};
 
 // Exported so tests/uiCopy.test.mjs can hold the line on sentence length: this is the
 // longest prose in the app, read on a phone by someone who is upset, and a 35-word
@@ -146,14 +154,17 @@ const link = (text, href) => el('a', { class: 'rights-link', href, target: '_bla
 export function renderRightsFaq(container, { onBack } = {}) {
   clear(container);
   container.appendChild(el('div', { class: 'rights-head' }, [
-    onBack ? el('button', { type: 'button', class: 'btn tiny', text: '← Back', onclick: onBack }) : null,
-    el('h2', { text: 'Know your rights — California' }),
+    onBack ? backButton(onBack) : null,
+    el('h2', { text: 'California rights guide' }),
   ]));
   container.appendChild(el('p', { class: 'hint', text: 'Plain-language basics of California wage-and-hour law, so the facts you log make sense. This is general information, not legal advice about your situation.' }));
 
   TOPICS.forEach(t => {
     container.appendChild(el('details', { class: 'rights-item' }, [
-      el('summary', {}, [el('span', { text: t.q })]),
+      el('summary', {}, [
+        el('span', { text: t.q }),
+        el('span', { class: 'rights-chevron' }, [iconEl('chevron-down')]),
+      ]),
       el('div', { class: 'rights-body' }, [
         ...t.paras.map(p => el('p', { text: p })),
         t.app ? el('p', { class: 'rights-app' }, [el('strong', { text: 'In this app: ' }), document.createTextNode(t.app)]) : null,

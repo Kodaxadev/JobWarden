@@ -1,0 +1,67 @@
+/* actions.css — shared mobile action cells for exports, guides, and utilities. */
+.action-list {
+  display: flex; flex-direction: column; margin-top: var(--space-4);
+  overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius);
+  background: rgba(255,255,255,.018);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+}
+.action-list.compact { margin-top: var(--space-3); }
+.action-row {
+  position: relative; width: 100%; min-height: 76px; padding: 12px;
+  display: grid; grid-template-columns: 40px minmax(0,1fr) 18px; gap: 12px;
+  align-items: center; text-align: left; color: var(--text); cursor: pointer;
+  background: transparent; border: 0; border-bottom: 1px solid var(--line);
+  font-family: var(--font);
+  transition: background var(--dur-state) var(--ease-out), transform var(--dur-press) var(--ease-out);
+}
+.action-row:last-child { border-bottom: 0; }
+.action-row:hover { background: rgba(255,255,255,.032); }
+.action-row:active { background: rgba(255,255,255,.055); transform: translateY(1px); }
+.action-row:focus-visible { outline-offset: -3px; }
+.action-row-icon {
+  width: 40px; height: 40px; display: grid; place-items: center;
+  color: var(--primary-strong); border: 1px solid rgba(205,171,69,.22);
+  border-radius: 11px; background: linear-gradient(160deg, rgba(34,58,97,.88), rgba(14,27,46,.92));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+}
+.action-row-icon svg { width: 20px; height: 20px; }
+.action-row-copy { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
+.action-row-title { font-size: var(--fs-ui); font-weight: 600; line-height: var(--lh-snug); }
+.action-row-description {
+  color: var(--muted); font-size: var(--fs-sm); line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.action-row-chevron { display: grid; place-items: center; color: var(--faint); }
+.action-row-chevron svg { width: 17px; height: 17px; }
+.action-row.recommended {
+  background: linear-gradient(90deg, rgba(205,171,69,.1), rgba(205,171,69,.025) 72%);
+}
+.action-row.recommended .action-row-icon {
+  color: var(--on-gold); background: var(--gold-face); border-color: var(--primary-strong);
+  box-shadow: var(--gold-bevel);
+}
+.action-row.secure .action-row-icon {
+  color: var(--gtext); border-color: var(--gline); background: var(--gfill);
+}
+.action-row:disabled { cursor: default; opacity: .65; transform: none; }
+.action-row[aria-busy="true"] { overflow: hidden; cursor: progress; }
+.action-row[aria-busy="true"]::after {
+  content: ""; position: absolute; left: 0; bottom: 0; width: 40%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  animation: btn-busy 1.1s var(--ease-out) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .action-row[aria-busy="true"]::after { width: 100%; opacity: .5; animation: none; }
+}
+.back-button {
+  min-height: 44px; padding: 8px 10px 8px 8px; display: inline-flex;
+  align-items: center; gap: 3px; color: var(--primary-strong); cursor: pointer;
+  background: transparent; border: 1px solid transparent; border-radius: var(--radius-sm);
+  font: 600 var(--fs-sm)/var(--lh-snug) var(--font);
+  transition: background var(--dur-state) var(--ease-out), border-color var(--dur-state) var(--ease-out);
+}
+.back-button:hover { background: rgba(255,255,255,.03); border-color: var(--line); }
+.back-button:active { background: rgba(255,255,255,.06); }
+.back-button-icon { display: grid; place-items: center; }
+.back-button-icon svg { width: 19px; height: 19px; }
+.settings-save { width: 100%; }

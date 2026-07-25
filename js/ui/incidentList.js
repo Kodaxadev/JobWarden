@@ -171,7 +171,12 @@ function glanceCard(items) {
     // The counts above are the most misreadable thing in the app — "3 No lunch" can look
     // like a verdict. Say what a possible issue is, next to the number, not in a policy page.
     el('details', { class: 'glance-means' }, [
-      el('summary', { text: 'What does “possible issue” mean?' }),
+      el('summary', {}, [
+        el('span', { text: 'What does “possible issue” mean?' }),
+        el('span', { class: 'glance-means-chevron', 'aria-hidden': 'true' }, [
+          iconEl('chevron-down'),
+        ]),
+      ]),
       ...WHAT_FINDINGS_MEAN.map(t => el('p', { class: 'hint', text: t })),
     ]),
   ]);

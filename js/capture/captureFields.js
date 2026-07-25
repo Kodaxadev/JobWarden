@@ -50,22 +50,55 @@ export function buildInitialState(existing, settings) {
 
 // ---- "What happened?" (always first) --------------------------------------
 function issueChips(state, onChange) {
-  const wrap = el('div', {});
+  const wrap = el('div', { class: 'issue-picker' });
   ISSUE_GROUPS.forEach(group => {
     const grid = el('div', { class: 'issue-grid' });
+    const selected = () => group.items.filter(item => state.types.includes(item.id)).length;
+    const stateText = el('span', { class: 'issue-group-state' });
+    const panel = el('details', {
+      class: 'issue-group' + (selected() ? ' has-selection' : ''),
+      open: selected() > 0,
+      dataset: { group: group.id },
+    });
+    const updateState = () => {
+      const count = selected();
+      stateText.textContent = count ? `${count} selected` : '';
+      panel.classList.toggle('has-selection', count > 0);
+    };
     group.items.forEach(item => {
       const on = state.types.includes(item.id);
-      const btn = el('button', { type: 'button', class: 'chip' + (on ? ' on' : ''), 'aria-pressed': on ? 'true' : 'false', text: item.label });
+      const btn = el('button', {
+        type: 'button', class: 'chip issue-choice' + (on ? ' on' : ''),
+        'aria-pressed': on ? 'true' : 'false',
+      }, [
+        el('span', { class: 'issue-choice-icon' }, [iconEl(item.icon)]),
+        el('span', { class: 'issue-choice-label', text: item.label }),
+        el('span', { class: 'issue-choice-check' }, [iconEl('circle-check')]),
+      ]);
       btn.addEventListener('click', () => {
         const i = state.types.indexOf(item.id);
         if (i >= 0) state.types.splice(i, 1); else state.types.push(item.id);
         const nowOn = state.types.includes(item.id);
         btn.classList.toggle('on', nowOn); btn.setAttribute('aria-pressed', nowOn ? 'true' : 'false');
+        updateState();
         onChange?.();
       });
       grid.appendChild(btn);
     });
-    wrap.appendChild(el('div', { class: 'issue-group' }, [el('div', { class: 'issue-group-label', text: group.label }), grid]));
+    updateState();
+    panel.append(
+      el('summary', { class: 'issue-group-head' }, [
+        el('span', { class: 'issue-group-icon' }, [iconEl(group.icon)]),
+        el('span', { class: 'issue-group-copy' }, [
+          el('span', { class: 'issue-group-label', text: group.label }),
+          el('span', { class: 'issue-group-help', text: group.helper }),
+        ]),
+        stateText,
+        el('span', { class: 'issue-group-chevron' }, [iconEl('chevron-down')]),
+      ]),
+      grid,
+    );
+    wrap.appendChild(panel);
   });
   return wrap;
 }
@@ -77,7 +110,7 @@ export function whatHappenedSection(state, { onChange } = {}) {
       dateField('Date', state.incidentDate, v => state.incidentDate = v),
       field('Place', place),
     ]),
-    el('p', { class: 'logsec-why', text: 'Tap everything that applies — this decides what we ask next.' }),
+    el('p', { class: 'logsec-why', text: 'Open a category, then choose everything that happened.' }),
     issueChips(state, onChange),
   ]);
 }

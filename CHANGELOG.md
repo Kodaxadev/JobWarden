@@ -7,6 +7,23 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v85 — 2026-07-25
+
+**The mobile interface now behaves like one designed system.** The Log screen replaces
+the oversized wall of issue buttons with compact, icon-led categories that disclose only
+the choices a worker needs. Selected choices have a clear checked state, advanced form
+sections use real chevrons, and both dark and light themes keep the same hierarchy.
+
+Export and Settings now use shared action cells with leading icons, concise supporting
+copy, and consistent recommended, secure, and navigation states. First-run setup fits its
+required disclosure and start action on a phone, while the backup reminder is calmer and
+more specific about where the data lives. Back controls, rights-guide disclosures,
+checkbox rows, focus treatments, and narrow-screen spacing received the same pass.
+
+The public landing page now shows the refined interface in its app preview. The formal
+policy and findings language still require review by a licensed California employment
+attorney before public launch.
+
 ## v84 — 2026-07-25
 
 **The remaining California pay-event gaps are now real records, not free-form notes.**

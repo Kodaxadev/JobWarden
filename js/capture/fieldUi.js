@@ -79,8 +79,13 @@ export function section(id, titleIcon, title, why, essentials, advanced) {
   if (optional.length) {
     children.push(el('details', { class: 'logsec-more' }, [
       el('summary', { 'aria-label': `More details for ${title}` }, [
-        document.createTextNode('More details '),
-        el('span', { class: 'opt', text: 'optional' }),
+        el('span', { class: 'logsec-more-copy' }, [
+          document.createTextNode('More details '),
+          el('span', { class: 'opt', text: 'optional' }),
+        ]),
+        el('span', { class: 'logsec-more-chevron', 'aria-hidden': 'true' }, [
+          iconEl('chevron-down'),
+        ]),
       ]),
       el('div', { class: 'logsec-more-body' }, optional),
     ]));

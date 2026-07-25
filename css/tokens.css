@@ -10,6 +10,7 @@
 @font-face { font-family:"Cinzel"; font-style:normal; font-weight:700; font-display:swap; src:url("../fonts/cinzel-latin-700-normal.woff2") format("woff2"); }
 
 :root {
+  color-scheme: dark;
   /* canvas + layered surfaces — neutral-cool dark, to host the navy + gold brand */
   --bg:#0a0b0e; --surface:#14161c; --surface-2:#1c1f27; --surface-3:#262a33;
   --line:rgba(234,238,246,.09); --line-2:rgba(234,238,246,.16); --node:rgba(234,238,246,.18);

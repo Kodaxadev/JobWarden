@@ -5,6 +5,7 @@
 import { el, clear } from './dom.js';
 import { jurisdictionLabel, rulesAsOf } from '../config/jurisdictions.js';
 import { NOT_A_VERDICT, WHAT_FINDINGS_MEAN, WHAT_THE_SEAL_MEANS } from '../config/disclaimers.js';
+import { backButton } from './actionRow.js';
 
 const link = (text, href) => el('a', { class: 'rights-link', href, target: '_blank', rel: 'noopener noreferrer', text });
 const card = (title, paras, extra) => el('section', { class: 'card' }, [
@@ -16,7 +17,7 @@ export function renderLegal(container, { settings = {}, onBack } = {}) {
   const region = jurisdictionLabel(settings.jurisdiction);
 
   container.appendChild(el('div', { class: 'rights-head' }, [
-    onBack ? el('button', { type: 'button', class: 'btn tiny', text: '← Back', onclick: onBack }) : null,
+    onBack ? backButton(onBack) : null,
     el('h2', { text: 'Legal & privacy' }),
   ]));
 

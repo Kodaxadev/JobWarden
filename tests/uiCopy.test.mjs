@@ -25,6 +25,22 @@ test('primary copy avoids jargon', () => {
   for (const word of BANNED_PRIMARY_WORDS) assert.equal(text.includes(word), false, word);
 });
 
+test('every issue choice has complete, unique visual metadata', () => {
+  const groupIds = new Set();
+  const itemIds = new Set();
+  for (const group of ISSUE_GROUPS) {
+    assert.ok(group.id && group.label && group.helper && group.icon, `incomplete group: ${group.id}`);
+    assert.equal(groupIds.has(group.id), false, `duplicate group id: ${group.id}`);
+    groupIds.add(group.id);
+    assert.ok(group.items.length, `${group.id} needs at least one choice`);
+    for (const item of group.items) {
+      assert.ok(item.id && item.label && item.icon, `incomplete item in ${group.id}`);
+      assert.equal(itemIds.has(item.id), false, `duplicate item id: ${item.id}`);
+      itemIds.add(item.id);
+    }
+  }
+});
+
 test('the interrupted-lunch shortcut says exactly what it opens', () => {
   const app = readFileSync('js/capture/captureForm.js', 'utf8');
   const landing = readFileSync('landing.html', 'utf8');

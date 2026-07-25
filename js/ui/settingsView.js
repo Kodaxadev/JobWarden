@@ -7,6 +7,7 @@ import { swVersion } from '../version.js';
 import { readErrors, clearErrors, errorLogText } from '../data/errorLog.js';
 import { setTheme } from './theme.js';
 import { PAY_STATUS_OPTIONS, PAY_STATUS_HINT, EXEMPT_STATUS_WARNING } from '../config/payStatus.js';
+import { actionRow } from './actionRow.js';
 
 // Bytes → a short human string that also handles GB (humanSize in media.js stops at MB).
 function fmtBytes(n) {
@@ -48,7 +49,7 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
   const places = el('textarea', { rows: '3', placeholder: 'One place per line' });
   places.value = (s.workplaces || []).join('\n');
 
-  const save = el('button', { class: 'btn primary', text: 'Save settings', onclick: async () => {
+  const save = el('button', { class: 'btn primary settings-save', text: 'Save settings', onclick: async () => {
     await saveSettings({
       employeeName: name.value.trim(), role: role.value.trim(), employer: employer.value.trim(),
       payType: pay.value, awsElection: aws.value, cbaCovered: cba.value,
@@ -56,10 +57,16 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
     });
     toast('Settings saved');
   } });
-  const persistBtn = el('button', { class: 'btn', text: 'Protect records from being deleted', onclick: async () => {
-    const ok = await requestPersistence();
-    toast(ok ? 'Protected — your browser won’t auto-delete these records' : 'Your browser declined — back up often');
-  } });
+  const persistBtn = actionRow({
+    label: 'Protect records on this device',
+    description: 'Ask the browser not to clear JobWarden automatically.',
+    iconName: 'shield-check',
+    variant: 'secure',
+    onClick: async () => {
+      const ok = await requestPersistence();
+      toast(ok ? 'Protected — your browser won’t auto-delete these records' : 'Your browser declined — back up often');
+    },
+  });
 
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'About you' }),
@@ -89,15 +96,25 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
     el('h2', { text: 'Know your rights' }),
     el('p', { class: 'hint', text: 'Plain-language California wage-and-hour basics — general information, not legal advice.' }),
     el('p', { class: 'hint', text: `Rules region: ${jurisdictionLabel(s.jurisdiction)} — more states are coming.` }),
-    el('div', { class: 'actions' }, [
-      el('button', { type: 'button', class: 'btn', text: 'Open the rights guide', onclick: () => onShowRights?.() }),
+    el('div', { class: 'action-list compact' }, [
+      actionRow({
+        label: 'Open the rights guide',
+        description: 'Read the California guide offline.',
+        iconName: 'shield',
+        onClick: () => onShowRights?.(),
+      }),
     ]),
   ]));
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Legal & privacy' }),
     el('p', { class: 'hint', text: 'What JobWarden is and isn’t, and how your data is kept. Not legal advice.' }),
-    el('div', { class: 'actions' }, [
-      el('button', { type: 'button', class: 'btn', text: 'Legal, privacy & terms', onclick: () => onShowLegal?.() }),
+    el('div', { class: 'action-list compact' }, [
+      actionRow({
+        label: 'Legal, privacy & terms',
+        description: 'See what the app can and cannot do.',
+        iconName: 'lock',
+        onClick: () => onShowLegal?.(),
+      }),
     ]),
   ]));
   // Storage + build facts, filled in after the async probes resolve.
@@ -125,7 +142,7 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
     storageLine,
     persistLine,
     el('p', { class: 'hint', text: 'Not legal advice. JobWarden does not record audio; California generally requires every party’s consent to record a confidential conversation.' }),
-    el('div', { class: 'actions' }, [persistBtn]),
+    el('div', { class: 'action-list compact' }, [persistBtn]),
     versionLine,
   ]));
 
@@ -136,12 +153,26 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
     el('p', { class: 'hint', text: errs.length
       ? `${errs.length} recent error${errs.length === 1 ? '' : 's'} recorded on this device. Nothing is sent anywhere — copy the log if you report a problem.`
       : 'No recent errors recorded on this device.' }),
-    el('div', { class: 'actions' }, [
-      el('button', { class: 'btn', text: 'Copy error log', onclick: async () => {
-        try { await navigator.clipboard.writeText(errorLogText()); toast('Error log copied'); }
-        catch { toast('Copy not available on this browser'); }
-      } }),
-      errs.length ? el('button', { class: 'btn', text: 'Clear log', onclick: () => { clearErrors(); toast('Cleared'); renderSettingsView(container, { onShowRights, onShowLegal }); } }) : null,
+    el('div', { class: 'action-list compact' }, [
+      actionRow({
+        label: 'Copy error log',
+        description: 'Copy local diagnostics to share with support.',
+        iconName: 'clipboard-pen',
+        onClick: async () => {
+          try { await navigator.clipboard.writeText(errorLogText()); toast('Error log copied'); }
+          catch { toast('Copy not available on this browser'); }
+        },
+      }),
+      errs.length ? actionRow({
+        label: 'Clear error log',
+        description: 'Remove the diagnostics stored on this device.',
+        iconName: 'trash-2',
+        onClick: () => {
+          clearErrors();
+          toast('Cleared');
+          renderSettingsView(container, { onShowRights, onShowLegal });
+        },
+      }) : null,
     ]),
   ]));
 }

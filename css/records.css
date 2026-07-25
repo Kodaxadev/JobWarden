@@ -28,26 +28,32 @@
 .glance-foot { margin: 16px 0 0; }
 /* Sits right under the counts, because "3 · No lunch" is what gets misread as a verdict. */
 .glance-means { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); }
-.glance-means > summary { display: flex; align-items: center; min-height: var(--tap); padding: var(--space-2) 0; cursor: pointer; font-size: var(--fs-sm); color: var(--primary-strong); list-style: none; transition: color var(--dur-state) var(--ease-out); }
+.glance-means > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: var(--tap); padding: var(--space-2) 0; cursor: pointer; font-size: var(--fs-sm); color: var(--primary-strong); list-style: none; transition: color var(--dur-state) var(--ease-out); }
 .glance-means > summary:hover { color: var(--primary); }
 .glance-means > summary:active { opacity: .7; }
 .glance-means > summary::-webkit-details-marker { display: none; }
-.glance-means > summary::after { content: ' ›'; }
-.glance-means[open] > summary::after { content: ' ⌄'; }
+.glance-means-chevron { display: grid; place-items: center; color: var(--primary); }
+.glance-means-chevron svg { width: 18px; height: 18px; transition: transform var(--dur-state) var(--ease-out); }
+.glance-means[open] .glance-means-chevron svg { transform: rotate(180deg); }
 .glance-means .hint { margin: 12px 0 0; }
 .glance-interrupt { margin: 16px 0 0; padding: 8px 12px; font-size: var(--fs-sm); color: var(--incident); background: rgba(230,177,90,.08); border: 1px solid rgba(230,177,90,.28); border-radius: var(--radius-sm); }
 .glance-sol { margin: 12px 0 0; padding: 8px 12px; font-size: var(--fs-sm); color: var(--muted); background: rgba(234,238,246,.03); border: 1px solid var(--line-2); border-radius: var(--radius-sm); line-height: 1.45; }
 
 /* Know your rights (offline FAQ) */
-.rights-head { display: flex; align-items: center; gap: 12px; margin: 0 0 8px; }
-.rights-head h2 { margin: 0; }
+.rights-head { display: grid; grid-template-columns: auto minmax(0,1fr); align-items: center; gap: 8px; margin: 0 0 8px; }
+.rights-head h2 { margin: 0; font-size: var(--fs-h); letter-spacing: -.015em; }
 .rights-item { background: var(--sheen), var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin: 12px 0 0; box-shadow: var(--shadow-1); overflow: hidden; }
 .rights-item summary { cursor: pointer; padding: 16px 16px; font-weight: 600; font-size: var(--fs-ui); list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; transition: background var(--dur-state) var(--ease-out); }
 .rights-item summary:hover { background: rgba(255,255,255,.025); }
 .rights-item summary:active { background: rgba(255,255,255,.045); }
 .rights-item summary::-webkit-details-marker { display: none; }
-.rights-item summary::after { content: "+"; color: var(--primary); font-size: var(--fs-h); line-height: 1; flex: none; }
-.rights-item[open] summary::after { content: "\2013"; }
+.rights-item summary:focus-visible { outline-offset: -3px; }
+.rights-chevron { display: grid; place-items: center; color: var(--primary); flex: none; }
+.rights-chevron svg {
+  width: 18px; height: 18px;
+  transition: transform var(--dur-state) var(--ease-out);
+}
+.rights-item[open] .rights-chevron svg { transform: rotate(180deg); }
 .rights-body { padding: 0 16px 16px; }
 .rights-body p { margin: 0 0 12px; color: var(--muted); font-size: var(--fs-ui); line-height: 1.55; }
 .rights-app { color: var(--text); background: rgba(205,171,69,.08); border: 1px solid rgba(205,171,69,.22); border-radius: var(--radius-sm); padding: 8px 12px; }
