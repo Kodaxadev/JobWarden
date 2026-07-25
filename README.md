@@ -6,7 +6,9 @@ A private, offline-first PWA for documenting California wage-and-hour problems *
 
 It records **facts, not legal conclusions** — meal/rest-break timing (§512, §226.7), off-the-clock work, on-duty meals, reporting-time pay when you're sent home early (IWC §5), work expenses you paid for yourself (§2802), final-pay timing (§§201–203), and adverse action after speaking up. It is **not legal advice**.
 
-Preview: <https://jobwarden.kodaxa.dev> (not cleared for public production launch until operator identity, contact email, and attorney review are complete)
+Preview: <https://jobwarden.kodaxa.dev> — made by **Kodaxa Innovations** ([kodaxa.dev](https://kodaxa.dev)), an independent developer, not a company and not a law firm. Contact: <Justin@Kodaxa.dev>.
+
+> **Not cleared for public launch.** One blocker remains: review of the findings language and UPL posture by a licensed California employment attorney. See [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md).
 
 ## Privacy model (read this)
 - **All data stays in the browser on the device** (IndexedDB). Nothing is sent to any server. No account, no tracking, no analytics, no network calls.
@@ -64,7 +66,7 @@ js/
            passphraseDialog (locked backups)
   export/  download · exportJson (Blob backups) · backupCrypto (AES-GCM passphrase lock) · exportCsv ·
            exportReport · exportSummary · reportBrand (paper mode) · emailExport · importBackup · backup
-tests/     Node built-in runner — 217 tests
+tests/     Node built-in runner — 220 tests
 docs/      LEGAL_FOUNDATION.md · IMPROVEMENT_AUDIT.md · superpowers/plans/ (design + Phase 3 plan)
 scripts/   build-app-icons.mjs (SVG → PNG app icons) · build-icons.mjs (Lucide → js/ui/icons.js)
 CHANGELOG.md   keyed on the service-worker cache id shown in Settings → About
@@ -77,7 +79,7 @@ Committed tests under `tests/`, using Node's built-in runner. The app ships **ze
 npm test          # alias for: node --test
 ```
 
-The suite (**217 tests** at last run) covers:
+The suite (**220 tests** at last run) covers:
 
 - **Rules** — meal timing and waivers (measured in hours *worked*), the >10h second-meal rule, reporting-time pay (the less-than-half-the-scheduled-shift trigger, with the unpaid meal netted out first), §2802 work expenses, picked-issue assertions (a chip alone produces its finding, and a chip with no times produces a *reported* finding rather than silence), daily + weekly overtime roll-ups, on-duty-meal agreements, final-pay/waiting-time timing, off-the-clock minutes, the exempt/AWS/CBA caveats, non-blocking time-sanity warnings, and the New York draft set (noon/evening/night §162 windows, overnight shifts).
 - **Time** — DST-correct overnight spans (a 10pm–6am shift is 7h on spring-forward, 9h on fall-back), and the null-in/null-out edges.

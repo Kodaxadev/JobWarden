@@ -60,8 +60,9 @@ require one regardless. Must state plainly and truthfully:
 **Drafted 2026-06-22:** [`privacy.html`](../privacy.html) — full policy covering all of the
 above, written to match how the app actually behaves (no collection, no servers, local-only).
 Linked from the in-app Legal screen (`legalView.js` "Full policies" card) and the landing
-footer. Public release is blocked until the operating entity name and contact email are
-filled in. Still needs **[ATTORNEY]** review of the final wording.
+footer. Operator and contact email filled in 2026-07-25. Still needs **[ATTORNEY]** review of
+the final wording; the page says so itself, at the end, with the contact address for
+corrections.
 
 ## 4. Terms of Service **[ATTORNEY]**
 
@@ -74,8 +75,9 @@ filled in. Still needs **[ATTORNEY]** review of the final wording.
 **Drafted 2026-06-22:** [`terms.html`](../terms.html) — full ToS with the not-legal-advice /
 no-attorney-client clause, "as is" / no-warranty, limitation of liability, acceptable use
 (incl. the no-audio-recording rule), IP/license, governing law (California), and severability.
-Public release is blocked until the operating entity name and contact email are filled in.
-Still needs **[ATTORNEY]** review.
+Operator and contact email filled in 2026-07-25, along with §§6–8 (your records are your own
+statements; no reliance; limitation of liability + indemnity). Still needs **[ATTORNEY]**
+review — §§6–8 in particular are new and unreviewed.
 
 ## 5. Accuracy & currency of the law **[ATTORNEY]**
 
@@ -100,9 +102,21 @@ UPL posture, (d) the app correctly scopes findings to the user's selected state.
 
 ## Launch checklist (California, v1 public)
 
-> **Attorney status (2026-06-21): not yet engaged.** The `[ATTORNEY]` items below need a
-> California employment-attorney referral; none is retained yet. Public production launch is also
-> blocked on the operating entity name and contact email for the policy pages.
+> **Operator (settled 2026-07-25):** **Kodaxa Innovations** (kodaxa.dev), contact
+> **Justin@Kodaxa.dev**. Filled into `privacy.html` and `terms.html`, surfaced on the in-app
+> Legal screen, and named in the README.
+>
+> **Kodaxa Innovations is not incorporated** — no LLC, no corporation. That is a deliberate
+> choice for now, and it has one consequence worth stating plainly rather than discovering
+> later: **there is no entity between a claim and the individual.** The Terms' limitation of
+> liability, the "as is" warranty disclaimer, and the indemnity clause are still worth having
+> and still operate contractually, but they are contract terms, not a liability shield. Ask
+> the attorney what forming an entity would and would not change here, and weigh it against
+> California's $800 minimum annual franchise tax — that trade-off is a business decision, not
+> a code one, and it belongs in the same conversation as the review below.
+>
+> **Attorney status: not yet engaged.** The `[ATTORNEY]` items below need a California
+> employment-attorney referral; none is retained yet. **This is now the only launch blocker.**
 
 - [x] Disclaimer line on onboarding + a Settings "Legal & privacy" screen (`js/ui/legalView.js`, SW v38): disclaimer, plain-language privacy summary, facts-not-a-calculator, "as is," and "information last updated" stamp.
 - [ ] **[ATTORNEY]** Formal privacy policy — review/replace the in-app plain-language summary; linked in-app + in the store listing.

@@ -67,4 +67,13 @@ export function renderLegal(container, { settings = {}, onBack } = {}) {
     ]),
     el('p', { class: 'hint', text: 'Not affiliated with any employer or government agency.' }),
   ]));
+
+  // A reachable human. Someone who thinks the app got the law wrong, or wants their name
+  // out of something, should have somewhere to write before they escalate.
+  container.appendChild(card('Who makes this', [
+    'JobWarden is made by Kodaxa Innovations (kodaxa.dev) — an independent developer, not a company and not a law firm.',
+    'Something wrong, unclear, or out of date? Write and it gets fixed.',
+  ], [
+    el('div', { class: 'rights-links' }, [link('Justin@Kodaxa.dev', 'mailto:Justin@Kodaxa.dev')]),
+  ]));
 }

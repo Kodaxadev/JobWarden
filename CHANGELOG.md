@@ -7,6 +7,25 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v71 — 2026-07-25
+
+**The operator is named.** JobWarden is made by **Kodaxa Innovations** ([kodaxa.dev](https://kodaxa.dev)),
+an independent developer — not a company, not a law firm. Contact: **Justin@Kodaxa.dev**.
+
+That fills the `[Operator: your legal name]` and `[contact email]` placeholders that both
+policy pages had been carrying, and it closes one of the two launch blockers. The pages now
+say who stands behind the app, that it is **not an incorporated company**, and — at the end
+of each — that they have not yet been reviewed by a licensed attorney, with the address to
+write to if something in them is wrong. The in-app Legal screen carries the same, because
+someone who thinks the app got the law wrong should have somewhere to write before they
+escalate.
+
+A test now asserts both pages name the operator, give a working `mailto:`, carry no
+placeholder, and never imply an LLC or corporation that does not exist.
+
+**Still blocking public launch:** review of the findings language and UPL posture by a
+licensed California employment attorney.
+
 ## v68–v70 — 2026-07-25
 
 **Saying plainly what this is.** The policies said the app records a worker's own account

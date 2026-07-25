@@ -182,6 +182,35 @@ test('the signature line claims only personal knowledge, not truth', async () =>
   assert.match(html, /to the best of my knowledge and recollection/);
 });
 
+// --- the operator is named, and reachable -----------------------------------
+
+// A policy that names no operator is not a policy, and an unreachable one invites a
+// complaint to go somewhere worse than an inbox. Both pages shipped with `[Operator: your
+// legal name]` placeholders for a month; this is so that cannot recur quietly.
+const OPERATOR = 'Kodaxa Innovations';
+const CONTACT = 'Justin@Kodaxa.dev';
+
+for (const page of ['privacy.html', 'terms.html']) {
+  test(`${page} names the operator and a working contact`, () => {
+    const src = readFileSync(page, 'utf8');
+    assert.ok(src.includes(OPERATOR), `${page} must name the operator`);
+    assert.ok(src.includes(`mailto:${CONTACT}`), `${page} must give a reachable address`);
+    assert.equal(/\[Operator|\[contact email|placeholder/i.test(src), false,
+      `${page} still has a placeholder`);
+    // Not incorporated — the pages must not imply a company that does not exist.
+    assert.match(src, /not an incorporated company/i);
+    assert.equal(/\b(LLC|Inc\.|Corporation)\b/.test(src), false,
+      `${page} implies an entity that does not exist`);
+  });
+}
+
+test('the app itself surfaces who made it and how to reach them', () => {
+  const src = readFileSync('js/ui/legalView.js', 'utf8');
+  assert.ok(src.includes(OPERATOR));
+  assert.ok(src.includes(`mailto:${CONTACT}`));
+  assert.match(src, /not a company and not a law firm/i);
+});
+
 // --- the in-app copy stays in the same voice --------------------------------
 
 test('no issue chip or capture step asserts a conclusion', () => {

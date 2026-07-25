@@ -38,6 +38,5 @@ p{ margin:0 0 12px; }
 strong{ color:var(--text); font-weight:600; }
 ul{ margin:0 0 12px; padding-left:22px; } li{ margin:6px 0; }
 .note{ font-size:14.5px; color:var(--faint); background:rgba(214,224,240,.04); border:1px solid var(--line); border-radius:14px; padding:13px 15px; margin:16px 0; }
-.placeholder{ color:var(--gold-bright); font-weight:500; }
 footer{ border-top:1px solid var(--line); margin-top:40px; padding-top:20px; color:var(--faint); font-size:13px; }
 footer a{ color:var(--faint); }
