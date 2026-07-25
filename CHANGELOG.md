@@ -7,6 +7,13 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v81 — 2026-07-25
+
+**The same mark, properly resolved.** The shield-and-check identity now uses smoother shield
+curvature, a centered check, balanced negative space, and a restrained navy-to-gold finish
+that stays clear at favicon and home-screen sizes. The canonical SVG is now the source for
+all generated PWA icons, so the header mark and installed app icon cannot drift apart.
+
 ## v80 — 2026-07-25
 
 **A real front door.** The root now opens a focused marketing page built around the actual

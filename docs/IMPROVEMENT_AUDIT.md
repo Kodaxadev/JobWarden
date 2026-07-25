@@ -81,7 +81,8 @@ project, not an auto-translate; the *remaining* catalog additions in §2 (split-
 deliberate cut); Playwright in CI (the loop is verified by hand each pass, but automating it
 needs a browser runner); trusted timestamping (OpenTimestamps); per-record *checkbox*
 selection (the filter-scoped export covers the main use case); a real screen-reader pass on a
-budget Android; the logo rework (needs a direction call).
+budget Android. The shield-and-check logo rework was completed in `jobwarden-v81`, with
+one canonical vector source now driving the header and generated PWA icons.
 
 ---
 

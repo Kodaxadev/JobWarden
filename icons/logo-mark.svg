@@ -1,5 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110" role="img" aria-label="JobWarden">
-  <path d="M50 6 L88 21 V55 C88 82 70 99 50 106 C30 99 12 82 12 55 V21 Z" fill="#16263f"/>
-  <path d="M50 6 L88 21 V55 C88 82 70 99 50 106 C30 99 12 82 12 55 V21 Z" fill="none" stroke="#c8a23a" stroke-width="2.5"/>
-  <path d="M31 56 L45 70 L80 28" fill="none" stroke="#d8b54e" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <defs>
+    <linearGradient id="shield" x1="50" y1="5" x2="50" y2="105" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#29446f"/>
+      <stop offset="1" stop-color="#0e1a2c"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="24" y1="26" x2="78" y2="82" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f0d37b"/>
+      <stop offset="1" stop-color="#b98726"/>
+    </linearGradient>
+  </defs>
+  <path
+    d="M50 5C61 10 73 14 87 20V52C87 77 72 96 50 105C28 96 13 77 13 52V20C27 14 39 10 50 5Z"
+    fill="url(#shield)"
+    stroke="url(#gold)"
+    stroke-width="3.2"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M29 56L43 70L73 38"
+    fill="none"
+    stroke="url(#gold)"
+    stroke-width="8.2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
 </svg>

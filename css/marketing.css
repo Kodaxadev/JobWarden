@@ -22,7 +22,7 @@ a:focus-visible{outline:2px solid var(--gold);outline-offset:5px}
 .site-header{height:92px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
 .site-header{padding-left:max(2.6vw,24px);padding-right:max(2.6vw,24px)}
 .brand{display:inline-flex;align-items:center;gap:12px;text-decoration:none}
-.brand img{width:42px;height:46px}.brand span{display:grid}
+.brand img{width:44px;height:48px}.brand span{display:grid}
 .brand strong{font-family:var(--serif);font-size:1.03rem;letter-spacing:.035em}
 .brand small{color:var(--gold);font-family:var(--mono);font-size:.63rem;letter-spacing:.26em;text-transform:uppercase}
 nav{display:flex;align-items:center;gap:34px}nav a{font-size:.88rem;text-decoration:none}
@@ -94,7 +94,7 @@ footer>div{display:flex;justify-content:flex-end;gap:18px}footer a:hover{color:v
   footer{grid-template-columns:1fr;gap:28px}footer>div{justify-content:flex-start}
 }
 @media (max-width:600px){
-  .site-header{height:76px}.brand img{width:35px;height:39px}nav{gap:14px}
+  .site-header{height:76px}.brand img{width:37px;height:41px}nav{gap:14px}
   nav a:first-child{display:none}.nav-install{padding:8px 13px}.hero{min-height:0}
   .hero-copy{padding:62px 0 28px}h1{font-size:clamp(2.9rem,13vw,3.75rem)}
   h1::after{width:130px;margin-top:22px}

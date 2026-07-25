@@ -79,3 +79,14 @@ Fix:
 - P0 remaining: none.
 - P1 remaining: none.
 - P2 remaining: none.
+
+## v81 logo refinement addendum
+
+- Before/after comparison:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\logo-refinement-comparison.png`
+- Final landing context:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\logo-refinement-landing.png`
+- The shield-and-check concept remains intact. The refined mark improves curve continuity,
+  check centering, negative space, stroke consistency, and 192 px reproduction.
+- Header, app shell, favicon, standard PWA tile, and maskable PWA tile now resolve from the
+  same canonical SVG geometry. The maskable mark remains inside the platform-safe center area.

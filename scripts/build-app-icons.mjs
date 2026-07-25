@@ -1,28 +1,34 @@
-// build-app-icons.mjs — dev-time generator for the PWA PNG icons from the navy+gold
-// brand mark. Run: node scripts/build-app-icons.mjs   (requires @resvg/resvg-js devDep)
+// build-app-icons.mjs — render PWA tiles from the canonical vector brand mark.
 import { Resvg } from '@resvg/resvg-js';
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 
-// Shield bounding box is vertically centered in the 512 canvas (top 96, bottom 416 -> center 256).
-const mark = (sw, cw) => `
-  <path d="M256 96 L388 144 V250 C388 336 332 390 256 416 C180 390 124 336 124 250 V144 Z" fill="none" stroke="url(#gd)" stroke-width="${sw}"/>
-  <path d="M204 250 L244 290 L344 178" fill="none" stroke="url(#gd)" stroke-width="${cw}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const markData = Buffer.from(readFileSync('icons/logo-mark.svg', 'utf8')).toString('base64');
 
-const svg = (rx, scale) => `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <defs>
-    <linearGradient id="nv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#243c63"/><stop offset="1" stop-color="#0d1a2d"/></linearGradient>
-    <linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e7cd7e"/><stop offset="1" stop-color="#b78f2c"/></linearGradient>
-  </defs>
-  <rect width="512" height="512" rx="${rx}" fill="url(#nv)"/>
-  <g transform="translate(256 256) scale(${scale}) translate(-256 -256)">${mark(13, 30)}</g>
-</svg>`;
+const tile = ({ radius, markScale }) => {
+  const markWidth = 310 * markScale;
+  const markHeight = 341 * markScale;
+  const x = (512 - markWidth) / 2;
+  const y = (512 - markHeight) / 2;
 
-const render = (svgStr, width, out) => {
-  const png = new Resvg(svgStr, { fitTo: { mode: 'width', value: width } }).render().asPng();
-  writeFileSync(out, png);
-  console.log(`wrote ${out} (${png.length} bytes)`);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+    <defs>
+      <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+        <stop stop-color="#263f68"/>
+        <stop offset="1" stop-color="#0b1728"/>
+      </linearGradient>
+    </defs>
+    <rect width="512" height="512" rx="${radius}" fill="url(#tile)"/>
+    <image href="data:image/svg+xml;base64,${markData}" x="${x}" y="${y}" width="${markWidth}" height="${markHeight}"/>
+  </svg>`;
 };
 
-render(svg(115, 1), 512, 'icons/icon-512.png');
-render(svg(115, 1), 192, 'icons/icon-192.png');
-render(svg(0, 0.78), 512, 'icons/icon-maskable-512.png');
+const render = (source, width, output) => {
+  const png = new Resvg(source, { fitTo: { mode: 'width', value: width } }).render().asPng();
+  writeFileSync(output, png);
+  console.log(`wrote ${output} (${png.length} bytes)`);
+};
+
+const standard = tile({ radius: 115, markScale: 1 });
+render(standard, 512, 'icons/icon-512.png');
+render(standard, 192, 'icons/icon-192.png');
+render(tile({ radius: 0, markScale: 0.78 }), 512, 'icons/icon-maskable-512.png');
