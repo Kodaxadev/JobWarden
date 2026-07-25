@@ -85,10 +85,42 @@ export const TOPICS = [
   {
     q: 'Pay stubs and your records',
     paras: [
-      'California law requires an accurate, itemized wage statement each pay period, and gives workers the right to inspect or copy their own time and pay records.',
+      'California law generally requires an accurate, itemized wage statement each pay period.',
+      'It lists gross and net wages, hours, rates, deductions, pay-period dates, employee identification, and the employer’s legal name and address.',
+      'Current and former workers can request copies of employment records. The employer generally has up to 21 calendar days to respond.',
       'A contemporaneous log can help preserve your account when employer records are incomplete or disputed, but it is not automatic proof.',
     ],
     cite: 'Labor Code §§226, 1174',
+    app: 'Pick “Pay stub missing or looks wrong” to record the pay period, the specific missing items, and any request for a copy.',
+  },
+  {
+    q: 'Split shifts',
+    paras: [
+      'A split shift is an employer-set unpaid gap between work periods, other than a genuine meal or rest break.',
+      'Many Wage Orders call for one extra hour of pay at minimum wage. A live-at-work exception can apply, and not every Wage Order is identical.',
+    ],
+    cite: 'IWC Wage Orders §§2, 4',
+    app: 'Pick “Unpaid gap between work periods” to record both work periods, who set the gap, and whether extra pay appeared.',
+  },
+  {
+    q: 'Tips and gratuities',
+    paras: [
+      'Customer tips generally belong to the workers they were left for. California does not allow an employer to use tips as a credit toward minimum wage.',
+      'Credit-card tips generally must be paid in full by the next regular payday, without deducting card-processing fees.',
+      'Some tip pools are allowed. Owner, manager, or supervisor participation can raise a problem, and the person’s actual role matters.',
+    ],
+    cite: 'Labor Code §351',
+    app: 'Pick “Tips were kept, reduced, or delayed” to record what happened, when, the amount, and who handled the tips.',
+  },
+  {
+    q: 'Paid sick leave and discipline',
+    paras: [
+      'California generally protects the use of accrued and available paid sick leave for covered reasons.',
+      'An employer cannot require a worker to find a replacement as a condition of using paid sick leave.',
+      'Denial, discipline, reduced hours, or firing after protected sick-leave activity can raise a retaliation issue. The dates and written response matter.',
+    ],
+    cite: 'Labor Code §246.5',
+    app: 'Pick “Sick leave request or discipline” to record the request and employer action without entering private medical details.',
   },
   {
     q: 'Speaking up and retaliation',
@@ -137,6 +169,8 @@ export function renderRightsFaq(container, { onBack } = {}) {
       link('California Labor Commissioner (DLSE)', 'https://www.dir.ca.gov/dlse/'),
       link('How to file a wage claim', 'https://www.dir.ca.gov/dlse/HowToFileWageClaim.htm'),
       link('Meal & rest period FAQ', 'https://www.dir.ca.gov/dlse/faq_mealperiods.htm'),
+      link('Paid sick leave FAQ', 'https://www.dir.ca.gov/dlse/paid_sick_leave.htm'),
+      link('Tips and gratuities FAQ', 'https://www.dir.ca.gov/dlse/faq_tipsandgratuities.html'),
     ]),
   ]));
 }

@@ -61,6 +61,12 @@ test('hydrateIncident upgrades legacy records and recomputes current flags', () 
   assert.equal(hydrated.createdAt, legacy.createdAt);
   assert.equal(hydrated.schemaVersion, SCHEMA_VERSION);
   assert.deepEqual(hydrated.meal2, { start: '', end: '', taken: null, waived: false });
+  assert.deepEqual(hydrated.payStub, {
+    periodStart: '', periodEnd: '', issues: [], detail: '', requestedOn: '', receivedOn: '',
+  });
+  assert.deepEqual(hydrated.sickLeave, {
+    requestDate: '', actionDate: '', action: '', available: null, told: '', channel: '', response: '',
+  });
   assert.ok(hydrated.flags.find(f => f.key === 'secondMealMissed'));
 });
 

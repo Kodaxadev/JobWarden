@@ -11,6 +11,10 @@ export const FIELD = {
   FINALPAY: 'finalpay',// separation type, last day, date paid, paid-in-full
   SCHEDULE: 'schedule',// scheduled start/end vs. actual — reporting-time pay (IWC §5)
   EXPENSE: 'expense',  // what was bought for the job, cost, whether reimbursed (§2802)
+  SPLIT: 'split',      // two work periods separated by an employer-set unpaid gap
+  PAYSTUB: 'paystub',  // itemized wage-statement facts (§226)
+  TIPS: 'tips',        // gratuities kept, reduced, delayed, or credited (§351)
+  SICK: 'sick',        // paid-sick-leave request and action afterward (§246.5)
 };
 
 // Each type carries a ONE-LINE legal reference. These are plain-language pointers,
@@ -32,7 +36,7 @@ export const INFRACTION_TYPES = [
     legal: 'No meal provided on a 5h+ shift. §512 → §226.7 premium.' },
   { id: 'interrupted_meal', label: 'Bothered on lunch', group: 'meal',
     fields: [FIELD.CLOCK, FIELD.MEAL],
-    legal: 'Interrupted / on-duty meal is non-compliant. §512.' },
+    legal: 'An interrupted or on-duty meal can raise a §512 / Wage Order issue.' },
   { id: 'second_meal_missed', label: 'No 2nd meal (>10h)', group: 'meal',
     fields: [FIELD.CLOCK, FIELD.MEAL, FIELD.MEAL2],
     legal: 'A second 30-min meal is owed on shifts over 10 hours; waivable only if ≤12h and first meal not waived. §512.' },
@@ -60,6 +64,18 @@ export const INFRACTION_TYPES = [
   { id: 'expense_unpaid', label: 'Paid for something the job needed', group: 'pay',
     fields: [FIELD.EXPENSE],
     legal: 'An employer must reimburse necessary work expenses — uniforms, tools, required phone or mileage. Lab. Code §2802.' },
+  { id: 'split_shift', label: 'Unpaid gap between work periods', group: 'pay',
+    fields: [FIELD.SPLIT],
+    legal: 'Many Wage Orders require split-shift premium pay for an employer-set unpaid gap other than a meal or rest period.' },
+  { id: 'pay_stub_problem', label: 'Pay stub missing or looks wrong', group: 'pay',
+    fields: [FIELD.PAYSTUB],
+    legal: 'Labor Code §226 generally requires an accurate itemized wage statement with specified information.' },
+  { id: 'tips_problem', label: 'Tips were kept, reduced, or delayed', group: 'pay',
+    fields: [FIELD.TIPS],
+    legal: 'Labor Code §351 protects gratuities from employer retention, deductions, or use as a wage credit.' },
+  { id: 'sick_leave_problem', label: 'Sick leave request or discipline', group: 'notice',
+    fields: [FIELD.SICK],
+    legal: 'Labor Code §246.5 protects use of accrued sick days and specified related activity from denial or retaliation.' },
 ];
 
 export const TYPES_BY_ID = Object.fromEntries(INFRACTION_TYPES.map(t => [t.id, t]));

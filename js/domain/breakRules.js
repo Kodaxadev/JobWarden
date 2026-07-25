@@ -3,6 +3,7 @@
 // Flags are framed as "potential" issues: waivers/classification can change the result,
 // so the app records facts and flags possibilities; it does not render a verdict.
 import { combine, minutesBetween, hoursWorked, formatDate, todayDateStr } from './timeUtils.js';
+import { analyzePayIssues } from './payIssueRules.js';
 
 export const FIFTH_HOUR_MIN = 300;   // first meal must begin before 300 min in (§512)
 export const TENTH_HOUR_MIN = 600;   // second meal must begin before 600 min in (§512)
@@ -277,6 +278,7 @@ export function analyze(i, { asOfDate = todayDateStr() } = {}) {
   flags.push(...finalPayFlags(i, asOfDate));
   flags.push(...reportingTimeFlags(i, hrs));
   flags.push(...expenseFlags(i));
+  flags.push(...analyzePayIssues(i, { asOfDate }));
   return flags;
 }
 
@@ -312,5 +314,14 @@ export function summarize(flags = []) {
   if (m.reportingTimeReported) p.push('Sent home early (reported)');
   if (m.expenseUnreimbursed) p.push('Work expense not paid back');
   if (m.expenseReported) p.push('Work expense (reported)');
+  if (m.splitShiftPremiumMissing) p.push('Split-shift pay not shown');
+  if (m.splitShiftReported) p.push('Split shift (reported)');
+  if (m.payStubProblemReported) p.push('Pay-stub problem');
+  if (m.payStubReported) p.push('Pay-stub problem (reported)');
+  if (m.payStubCopyOverdue) p.push('Pay-stub copy overdue');
+  if (m.tipsProblemReported) p.push('Tip problem');
+  if (m.tipsReported) p.push('Tip problem (reported)');
+  if (m.sickLeaveActionReported) p.push('Sick-leave action');
+  if (m.sickLeaveReported) p.push('Sick-leave problem (reported)');
   return p;
 }

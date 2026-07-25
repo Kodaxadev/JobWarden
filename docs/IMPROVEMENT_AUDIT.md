@@ -2,8 +2,8 @@
 
 Written 2026-07-02 against `986e6c9` (SW v51, 93 tests). The two **Progress** sections below
 record what has shipped since; the numbered sections keep the original wording so the
-tradeoffs stay visible even where they were later taken. Last reviewed 2026-07-24 (SW v67,
-198 tests).
+tradeoffs stay visible even where they were later taken. Last reviewed 2026-07-25 (SW v84,
+244 tests).
 
 This is the honest document: every place the project is bad, fragile, missing, or
 deliberately traded away — from product strategy to the tech stack — with what it would
@@ -73,13 +73,14 @@ vulnerabilities in the dependency tree, dev included):
   10px wordmark stays, being a brand lockup rather than reading text. §6.
 - **✅ House rules are CI checks**: the 400-line cap, no debug markers, zero runtime deps. §9.
 
-**Still open**: 🔴 attorney review (external) and the operator-identity/contact-email fill-in —
-together the only launch blockers; 🔴/🟠 **Spanish/i18n** — the string layer is a clean
+**Still open after SW v84**: 🔴 attorney review (external), now the only public-launch
+blocker; 🔴/🟠 **Spanish/i18n** — the string layer is a clean
 refactor but the *legal-adjacent content must be human-translated*, so it's a dedicated
-project, not an auto-translate; the *remaining* catalog additions in §2 (split-shift premium,
-§226 paystubs as a structured type, tip theft, sick-leave retaliation); E2EE sync (a
-deliberate cut); Playwright in CI (the loop is verified by hand each pass, but automating it
-needs a browser runner); trusted timestamping (OpenTimestamps); per-record *checkbox*
+project, not an auto-translate. SW v84 closed the remaining structured California catalog
+gaps in §2: split shifts, §226 pay stubs, tip problems, and paid-sick-leave action. Still
+open are E2EE sync (a deliberate cut); Playwright in CI (the loop is verified by hand each
+pass, but automating it needs a browser runner); trusted timestamping (OpenTimestamps);
+per-record *checkbox*
 selection (the filter-scoped export covers the main use case); a real screen-reader pass on a
 budget Android. The shield-and-check logo rework was completed in `jobwarden-v81`, with
 one canonical vector source now driving the header and generated PWA icons.

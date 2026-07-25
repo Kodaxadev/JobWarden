@@ -4,7 +4,11 @@
 
 A private, offline-first PWA for documenting California wage-and-hour problems **the moment they happen** — fast capture on a phone, review and export on any device. Built for hourly workers; it currently covers **California** rules, with more states planned.
 
-It records **facts, not legal conclusions** — meal/rest-break timing (§512, §226.7), off-the-clock work, on-duty meals, reporting-time pay when you're sent home early (IWC §5), work expenses you paid for yourself (§2802), final-pay timing (§§201–203), and adverse action after speaking up. It is **not legal advice**.
+It records **facts, not legal conclusions** — meal/rest-break timing (§512, §226.7),
+off-the-clock work, on-duty meals, reporting-time pay (IWC §5), work expenses (§2802),
+split workdays, pay-stub defects (§226), tip problems (§351), paid-sick-leave action
+(§246.5), final-pay timing (§§201–203), and adverse action after speaking up. It is
+**not legal advice**.
 
 Preview: <https://jobwarden.kodaxa.dev> — made by **Kodaxa Innovations** ([kodaxa.dev](https://kodaxa.dev)), an independent developer, not a company and not a law firm. Contact: <Justin@Kodaxa.dev>.
 
@@ -55,18 +59,20 @@ js/
            disclaimers (the one place that says what this is and is not)
   rules/   index (getRules dispatch + finding labels) · california · newYork (draft)
   domain/  types (JSDoc typedefs) · timeUtils · breakRules (meal/rest/2nd-meal/waiver/off-clock/on-duty/
-           final-pay/daily-OT/reporting-time/expenses) · incidentModel (schema, edit-diff,
+           final-pay/daily-OT/reporting-time/expenses) · payIssueRules (split shift/pay stub/tips/
+           sick leave) · incidentModel (schema, edit-diff,
            soft-delete, sanity warnings) · integrity (versioned SHA-256 content+record seals) ·
            patterns (roll-ups + weekly OT) · shiftClock
   data/    db (IndexedDB + append-only migration ladder) · incidentRepo · settingsRepo · shiftRepo ·
            errorLog (local ring buffer)
-  capture/ captureForm · captureFields · quickCapture (interrupted-lunch) · geo · media (downscale on ingest)
+  capture/ captureForm · captureFields · fieldUi · payIssueFields · quickCapture (interrupted-lunch) ·
+           geo · media (downscale on ingest)
   ui/      dom (el + shared focus trap) · icons · theme (dark/light/system) · onboarding · incidentList
            (filter/group/scoped-export) · exportView · settingsView · shiftPanel · rightsFaq · legalView ·
            passphraseDialog (locked backups)
   export/  download · exportJson (Blob backups) · backupCrypto (AES-GCM passphrase lock) · exportCsv ·
            exportReport · exportSummary · reportBrand (paper mode) · emailExport · importBackup · backup
-tests/     Node built-in runner — 234 tests
+tests/     Node built-in runner — 244 tests
 docs/      LEGAL_FOUNDATION.md · IMPROVEMENT_AUDIT.md · superpowers/plans/ (design + Phase 3 plan)
 scripts/   build-app-icons.mjs (SVG → PNG app icons) · build-icons.mjs (Lucide → js/ui/icons.js)
 CHANGELOG.md   keyed on the service-worker cache id shown in Settings → About
@@ -79,9 +85,13 @@ Committed tests under `tests/`, using Node's built-in runner. The app ships **ze
 npm test          # alias for: node --test
 ```
 
-The suite (**234 tests** at last run) covers:
+The suite (**244 tests** at last run) covers:
 
-- **Rules** — meal timing and waivers (measured in hours *worked*), the >10h second-meal rule, reporting-time pay (the less-than-half-the-scheduled-shift trigger, with the unpaid meal netted out first), §2802 work expenses, picked-issue assertions (a chip alone produces its finding, and a chip with no times produces a *reported* finding rather than silence), daily + weekly overtime roll-ups, on-duty-meal agreements, final-pay/waiting-time timing, off-the-clock minutes, the exempt/AWS/CBA caveats, non-blocking time-sanity warnings, and the New York draft set (noon/evening/night §162 windows, overnight shifts).
+- **Rules** — meal timing and waivers (measured in hours *worked*), the >10h second-meal rule,
+  reporting-time pay, §2802 work expenses, structured split-shift/pay-stub/tip/sick-leave
+  capture, picked-issue assertions, daily + weekly overtime roll-ups, on-duty-meal
+  agreements, final-pay timing, off-the-clock minutes, the exempt/AWS/CBA caveats,
+  non-blocking time-sanity warnings, and the New York draft set.
 - **Time** — DST-correct overnight spans (a 10pm–6am shift is 7h on spring-forward, 9h on fall-back), and the null-in/null-out edges.
 - **Integrity** — versioned content + record sealing, legacy-seal survival across schema growth, finalPay tamper detection, and a **seal contract** gate: the blank record's sealed view and a golden content hash are pinned, so the view cannot change without a deliberate `SEAL_VERSION` bump.
 - **Storage** — the incident and settings repos against `fake-indexeddb`: sealing on write, soft delete and restore, restore-without-resealing, tamper detection on read, legacy hydration, and the migration ladder (steps are re-run-safe; the version is the ladder length).

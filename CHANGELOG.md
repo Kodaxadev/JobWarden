@@ -7,6 +7,24 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v84 — 2026-07-25
+
+**The remaining California pay-event gaps are now real records, not free-form notes.**
+Workers can capture split workdays, specific pay-stub defects and copy requests, tip
+problems, and employer action after a paid-sick-leave request. Each flow asks only for
+decision-useful facts, keeps medical diagnoses out of sick-leave entries, and carries those
+facts through editing, fingerprints, Records, CSV, and printable reports.
+
+The offline rights guide and cautious rule pointers now cover the same four areas. The app
+does not calculate a split-shift amount, decide whether tip-pool participation was lawful,
+or label sick-leave action retaliation. Capture sections now have unique control names and
+section-specific disclosure labels for screen readers.
+
+The canonical logo remains the single source for the header, SVG favicon, Apple touch icon,
+standard and maskable PWA icons, notification icon, landing lockups, and marketing app
+capture. The formal policy and findings language still require review by a licensed
+California employment attorney before public launch.
+
 ## v83 — 2026-07-25
 
 **Safer defaults and sharper California wording.** First-run setup now leaves pay and

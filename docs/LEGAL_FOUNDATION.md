@@ -51,7 +51,9 @@ require one regardless. Must state plainly and truthfully:
   server, no account, no cloud sync, no analytics, no tracking, no third-party sharing**.
 - Data leaves the device **only when the user themselves exports/shares** (file, email,
   print). After that it is in the user's control / their chosen app.
-- Photos are stored locally; no audio is recorded (CA all-party-consent law).
+- Photos are stored locally; no audio is recorded. California generally requires every
+  party's consent before recording a confidential communication, subject to statutory
+  context and exceptions (Penal Code §632).
 - Durability is the user's responsibility (local data can be lost if the device is lost or
   the browser clears storage) — hence backup/restore. State this honestly.
 - Children: not directed at users under 13.
@@ -157,10 +159,11 @@ plus indemnity. Those sections are new and unreviewed.
 
 ### Findings surface awaiting that review
 
-Everything the app tells a user about the law is in one of two places: the finding notes in
-`js/domain/breakRules.js` (California) and the topic text in `js/ui/rightsFaq.js`. Reviewing
-those two files covers the whole surface. The list below exists so nothing is reviewed twice
-or missed, not as a claim that any of it is correct today.
+Everything the app tells a user about the law is concentrated in the finding notes in
+`js/domain/breakRules.js` and `js/domain/payIssueRules.js`, plus the topic text in
+`js/ui/rightsFaq.js`. Reviewing those three files covers the whole surface. The list below
+exists so nothing is reviewed twice or missed, not as a claim that any of it is correct
+today.
 
 | Area | Authority the app cites | Added |
 | --- | --- | --- |
@@ -173,6 +176,10 @@ or missed, not as a claim that any of it is correct today.
 | Daily/weekly overtime notes, AWS caveat | Lab. Code §§510, 511 | SW v53 |
 | **Reporting-time pay** (sent home before half the scheduled shift) | **IWC Wage Orders §5** | **SW v65** |
 | **Necessary work expenses** (uniform, tools, phone, mileage) | **Lab. Code §2802** | **SW v65** |
+| **Split shifts** (employer-set unpaid gap; applicable order required) | **IWC Wage Orders §§2, 4** | **SW v84** |
+| **Itemized wage statements and copy requests** | **Lab. Code §226** | **SW v84** |
+| **Tips and gratuities** | **Lab. Code §351** | **SW v84** |
+| **Paid sick leave and employer action** | **Lab. Code §246.5** | **SW v84** |
 
 The two additions marked **SW v65** are the newest and least-settled. Specific questions for
 review: whether the half-the-scheduled-shift trigger should also fire on the second-reporting
@@ -180,3 +187,8 @@ rule (§5(B), two hours' pay for a second daily report of under two hours, which
 not model); whether naming the §5(C) exceptions in a finding note edges toward advice; and
 whether the §2802 findings should distinguish a *necessary* expense from any work-related
 purchase, which the app deliberately does not attempt to judge.
+
+The **SW v84** additions deliberately stop at factual pointers. Review should confirm the
+split-shift wording across Wage Orders, the 21-calendar-day pay-record-copy statement, the
+manager/supervisor tip-pool caveat, and whether paid-sick-leave action is framed cautiously
+enough without importing a retaliation presumption the app does not compute.

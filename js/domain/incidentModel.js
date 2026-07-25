@@ -4,7 +4,7 @@
 import { nowIso, localTimezone } from './timeUtils.js';
 import { getRules } from '../rules/index.js';
 
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
 function uuid() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
@@ -50,6 +50,34 @@ function normSchedule(s = {}) {
 function normExpense(e = {}) {
   return { item: e.item || '', amount: e.amount || '', paidOn: e.paidOn || '', askedOn: e.askedOn || '', reimbursed: e.reimbursed ?? null, response: e.response || '' };
 }
+function normSplitShift(s = {}) {
+  return {
+    firstStart: s.firstStart || '', firstEnd: s.firstEnd || '',
+    secondStart: s.secondStart || '', secondEnd: s.secondEnd || '',
+    employerSet: s.employerSet ?? null, livesAtWork: s.livesAtWork ?? null,
+    premiumPaid: s.premiumPaid ?? null,
+  };
+}
+function normPayStub(s = {}) {
+  return {
+    periodStart: s.periodStart || '', periodEnd: s.periodEnd || '',
+    issues: Array.isArray(s.issues) ? [...new Set(s.issues)].sort() : [],
+    detail: s.detail || '', requestedOn: s.requestedOn || '', receivedOn: s.receivedOn || '',
+  };
+}
+function normTips(t = {}) {
+  return {
+    problem: t.problem || '', date: t.date || '', amount: t.amount || '',
+    by: t.by || '', askedOn: t.askedOn || '', response: t.response || '',
+  };
+}
+function normSickLeave(s = {}) {
+  return {
+    requestDate: s.requestDate || '', actionDate: s.actionDate || '', action: s.action || '',
+    available: s.available ?? null, told: s.told || '', channel: s.channel || '',
+    response: s.response || '',
+  };
+}
 function normFinalPay(p = {}) {
   // separation: '' | 'fired' | 'quit_notice' | 'quit_no_notice'; dates 'YYYY-MM-DD'; fullyPaid tri.
   return { separation: p.separation || '', lastDay: p.lastDay || '', datePaid: p.datePaid || '', fullyPaid: p.fullyPaid ?? null };
@@ -77,6 +105,10 @@ export function createIncident(input = {}) {
     finalPay: normFinalPay(input.finalPay),
     schedule: normSchedule(input.schedule),
     expense: normExpense(input.expense),
+    splitShift: normSplitShift(input.splitShift),
+    payStub: normPayStub(input.payStub),
+    tips: normTips(input.tips),
+    sickLeave: normSickLeave(input.sickLeave),
     witnesses: input.witnesses || '',
     narrative: input.narrative || '',
     attachments: input.attachments || [],
@@ -110,6 +142,10 @@ export function hydrateIncident(stored = {}) {
     finalPay: normFinalPay(stored.finalPay),
     schedule: normSchedule(stored.schedule),
     expense: normExpense(stored.expense),
+    splitShift: normSplitShift(stored.splitShift),
+    payStub: normPayStub(stored.payStub),
+    tips: normTips(stored.tips),
+    sickLeave: normSickLeave(stored.sickLeave),
     witnesses: stored.witnesses || '',
     narrative: stored.narrative || '',
     attachments: stored.attachments || [],
@@ -134,6 +170,12 @@ const TRACKED = [
   'finalPay.separation', 'finalPay.lastDay', 'finalPay.datePaid', 'finalPay.fullyPaid',
   'schedule.scheduledStart', 'schedule.scheduledEnd', 'schedule.sentHomeBy', 'schedule.reason',
   'expense.item', 'expense.amount', 'expense.paidOn', 'expense.askedOn', 'expense.reimbursed', 'expense.response',
+  'splitShift.firstStart', 'splitShift.firstEnd', 'splitShift.secondStart', 'splitShift.secondEnd',
+  'splitShift.employerSet', 'splitShift.livesAtWork', 'splitShift.premiumPaid',
+  'payStub.periodStart', 'payStub.periodEnd', 'payStub.issues', 'payStub.detail', 'payStub.requestedOn', 'payStub.receivedOn',
+  'tips.problem', 'tips.date', 'tips.amount', 'tips.by', 'tips.askedOn', 'tips.response',
+  'sickLeave.requestDate', 'sickLeave.actionDate', 'sickLeave.action', 'sickLeave.available',
+  'sickLeave.told', 'sickLeave.channel', 'sickLeave.response',
   'witnesses', 'narrative',
 ];
 const getPath = (o, p) => p.split('.').reduce((acc, k) => (acc == null ? undefined : acc[k]), o);
@@ -170,6 +212,10 @@ export function reviseIncident(existing, changes = {}) {
     finalPay: normFinalPay({ ...existing.finalPay, ...(changes.finalPay || {}) }),
     schedule: normSchedule({ ...existing.schedule, ...(changes.schedule || {}) }),
     expense: normExpense({ ...existing.expense, ...(changes.expense || {}) }),
+    splitShift: normSplitShift({ ...existing.splitShift, ...(changes.splitShift || {}) }),
+    payStub: normPayStub({ ...existing.payStub, ...(changes.payStub || {}) }),
+    tips: normTips({ ...existing.tips, ...(changes.tips || {}) }),
+    sickLeave: normSickLeave({ ...existing.sickLeave, ...(changes.sickLeave || {}) }),
   };
   merged.id = existing.id;
   merged.createdAt = existing.createdAt;

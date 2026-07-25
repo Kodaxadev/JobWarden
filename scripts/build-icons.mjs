@@ -6,6 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 export const ICON_NAMES = Object.freeze([
   'calendar',
+  'calendar-heart',
+  'badge-dollar-sign',
   'camera',
   'check',
   'chevron-right',
@@ -21,6 +23,7 @@ export const ICON_NAMES = Object.freeze([
   'message-square',
   'notebook-pen',
   'rotate-ccw',
+  'receipt-text',
   'sandwich',
   'save',
   'settings',

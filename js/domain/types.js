@@ -90,6 +90,48 @@
  */
 
 /**
+ * @typedef {Object} SplitShift
+ * @property {string} [firstStart]
+ * @property {string} [firstEnd]
+ * @property {string} [secondStart]
+ * @property {string} [secondEnd]
+ * @property {boolean|null} [employerSet]
+ * @property {boolean|null} [livesAtWork]
+ * @property {boolean|null} [premiumPaid]
+ */
+
+/**
+ * @typedef {Object} PayStub
+ * @property {string} [periodStart]
+ * @property {string} [periodEnd]
+ * @property {string[]} [issues]
+ * @property {string} [detail]
+ * @property {string} [requestedOn]
+ * @property {string} [receivedOn]
+ */
+
+/**
+ * @typedef {Object} Tips
+ * @property {string} [problem]
+ * @property {string} [date]
+ * @property {string} [amount]
+ * @property {string} [by]
+ * @property {string} [askedOn]
+ * @property {string} [response]
+ */
+
+/**
+ * @typedef {Object} SickLeave
+ * @property {string} [requestDate]
+ * @property {string} [actionDate]
+ * @property {string} [action]
+ * @property {boolean|null} [available]
+ * @property {string} [told]
+ * @property {string} [channel]
+ * @property {string} [response]
+ */
+
+/**
  * @typedef {Object} GeoLoc
  * @property {number} lat
  * @property {number} lng
@@ -154,6 +196,10 @@
  * @property {FinalPay} finalPay
  * @property {Schedule} schedule
  * @property {Expense} expense
+ * @property {SplitShift} splitShift
+ * @property {PayStub} payStub
+ * @property {Tips} tips
+ * @property {SickLeave} sickLeave
  * @property {string} witnesses
  * @property {string} narrative
  * @property {Attachment[]} attachments

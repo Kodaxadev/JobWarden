@@ -5,10 +5,13 @@
 import { el } from '../ui/dom.js';
 import { ISSUE_GROUPS } from '../config/uiCopy.js';
 import { fieldsForTypes, FIELD } from '../config/infractionTypes.js';
-import { icon } from '../ui/icons.js';
 import { getCurrentPosition, formatLoc } from './geo.js';
 import { fileToAttachment, attachmentUrl, humanSize } from './media.js';
-import { todayDateStr, nowTimeStr } from '../domain/timeUtils.js';
+import { todayDateStr } from '../domain/timeUtils.js';
+import {
+  iconEl, field, textInput, checkbox, triSelect, timeRow, dateField, section,
+} from './fieldUi.js';
+import { payIssueSections } from './payIssueFields.js';
 
 export function buildInitialState(existing, settings) {
   const base = {
@@ -22,6 +25,10 @@ export function buildInitialState(existing, settings) {
     finalPay: { separation: '', lastDay: '', datePaid: '', fullyPaid: null },
     schedule: { scheduledStart: '', scheduledEnd: '', sentHomeBy: '', reason: '' },
     expense: { item: '', amount: '', paidOn: '', askedOn: '', reimbursed: null, response: '' },
+    splitShift: { firstStart: '', firstEnd: '', secondStart: '', secondEnd: '', employerSet: null, livesAtWork: null, premiumPaid: null },
+    payStub: { periodStart: '', periodEnd: '', issues: [], detail: '', requestedOn: '', receivedOn: '' },
+    tips: { problem: '', date: '', amount: '', by: '', askedOn: '', response: '' },
+    sickLeave: { requestDate: '', actionDate: '', action: '', available: null, told: '', channel: '', response: '' },
     witnesses: '', narrative: '', location: null, attachments: [],
   };
   if (!existing) return base;
@@ -33,48 +40,12 @@ export function buildInitialState(existing, settings) {
     rest: { ...base.rest, ...(existing.rest || {}) }, offClock: { ...base.offClock, ...(existing.offClock || {}) },
     notice: { ...base.notice, ...(existing.notice || {}) }, finalPay: { ...base.finalPay, ...(existing.finalPay || {}) },
     schedule: { ...base.schedule, ...(existing.schedule || {}) }, expense: { ...base.expense, ...(existing.expense || {}) },
+    splitShift: { ...base.splitShift, ...(existing.splitShift || {}) },
+    payStub: { ...base.payStub, ...(existing.payStub || {}), issues: [...(existing.payStub?.issues || [])] },
+    tips: { ...base.tips, ...(existing.tips || {}) }, sickLeave: { ...base.sickLeave, ...(existing.sickLeave || {}) },
     witnesses: existing.witnesses || '', narrative: existing.narrative || '',
     location: existing.location || null, attachments: [...(existing.attachments || [])],
   };
-}
-
-// ---- primitives -----------------------------------------------------------
-const iconEl = (n) => { const s = el('span'); s.innerHTML = icon(n); return s.firstElementChild || s; };
-const field = (label, input, hint) => el('label', { class: 'field' }, [
-  el('span', { class: 'field-label', text: label }), input, hint ? el('span', { class: 'hint', text: hint }) : null,
-]);
-const textInput = (v, oninput, attrs = {}) => el('input', { type: 'text', value: v || '', oninput: e => oninput(e.target.value), ...attrs });
-const checkbox = (label, checked, onchange) => el('label', { class: 'check' }, [
-  el('input', { type: 'checkbox', checked: !!checked, onchange: e => onchange(e.target.checked) }), el('span', { text: label }),
-]);
-function triSelect(value, onchange) {
-  const sel = el('select', { onchange: e => { const v = e.target.value; onchange(v === '' ? null : v === 'yes'); } });
-  [['', 'Not sure / not entered'], ['yes', 'Yes'], ['no', 'No']].forEach(([v, t]) =>
-    sel.appendChild(el('option', { value: v, text: t, selected: (value === true && v === 'yes') || (value === false && v === 'no') })));
-  return sel;
-}
-function timeRow(label, value, setter) {
-  const input = el('input', { type: 'time', value: value || '', oninput: e => setter(e.target.value) });
-  const now = el('button', { type: 'button', class: 'btn tiny', text: 'Now', onclick: () => { const t = nowTimeStr(); input.value = t; setter(t); } });
-  return el('label', { class: 'field' }, [el('span', { class: 'field-label', text: label }), el('div', { class: 'time-row' }, [input, now])]);
-}
-const dateField = (label, val, setter, hint) => field(label, el('input', { type: 'date', value: val || '', oninput: e => setter(e.target.value) }), hint);
-
-// A detail section: title + one-line "why", essentials, then optional "more details".
-function section(id, titleIcon, title, why, essentials, advanced) {
-  const kids = [
-    el('div', { class: 'logsec-head' }, [iconEl(titleIcon), el('h3', { class: 'logsec-title', text: title })]),
-    why ? el('p', { class: 'logsec-why', text: why }) : null,
-    ...essentials.filter(Boolean),
-  ];
-  const adv = (advanced || []).filter(Boolean);
-  if (adv.length) {
-    kids.push(el('details', { class: 'logsec-more' }, [
-      el('summary', {}, [document.createTextNode('More details '), el('span', { class: 'opt', text: 'optional' })]),
-      el('div', { class: 'logsec-more-body' }, adv),
-    ]));
-  }
-  return el('section', { class: 'logsec', 'data-sec': id }, kids.filter(Boolean));
 }
 
 // ---- "What happened?" (always first) --------------------------------------
@@ -273,7 +244,10 @@ const SECTION_DEFS = [
 // The detail sections relevant to what the user picked, in a sensible order.
 export function activeSections(state) {
   const f = fieldsForTypes(state.types);
-  return SECTION_DEFS.filter(d => d.needs(f)).map(d => d.render(state));
+  return [
+    ...SECTION_DEFS.filter(d => d.needs(f)).map(d => d.render(state)),
+    ...payIssueSections(state, f),
+  ];
 }
 
 // ---- Proof & your words (always available, optional) ----------------------

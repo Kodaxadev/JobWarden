@@ -37,4 +37,13 @@ export const FINDING_LABELS = {
   finalPayLate: 'Final pay late',
   finalPayUnpaid: 'Final pay not received',
   finalPayShort: 'Final pay incomplete',
+  splitShiftPremiumMissing: 'Split-shift pay not shown',
+  splitShiftReported: 'Split shift reported',
+  payStubProblemReported: 'Pay-stub problem reported',
+  payStubReported: 'Pay-stub problem reported',
+  payStubCopyOverdue: 'Pay-stub copy not received within 21 days',
+  tipsProblemReported: 'Tip problem reported',
+  tipsReported: 'Tip problem reported',
+  sickLeaveActionReported: 'Action after sick-leave request',
+  sickLeaveReported: 'Sick-leave problem reported',
 };

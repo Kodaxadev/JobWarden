@@ -26,14 +26,18 @@ export const ISSUE_GROUPS = [
     { id: 'rest_missed', label: 'Missed rest break' },
     { id: 'rest_interrupted', label: 'Rest break was interrupted' },
   ] },
-  { id: 'pay', label: 'Unpaid work', items: [
+  { id: 'pay', label: 'Pay or schedule problem', items: [
     { id: 'off_clock_work', label: 'Worked but was not paid' },
     { id: 'sent_home_early', label: 'Sent home early after showing up' },
     { id: 'expense_unpaid', label: 'Paid for something the job needed' },
+    { id: 'split_shift', label: 'Unpaid gap between work periods' },
+    { id: 'pay_stub_problem', label: 'Pay stub missing or looks wrong' },
+    { id: 'tips_problem', label: 'Tips were kept, reduced, or delayed' },
   ] },
-  { id: 'notice', label: 'Speaking up', items: [
+  { id: 'notice', label: 'Speaking up or paid sick leave', items: [
     { id: 'complaint_raised', label: 'I reported the problem' },
     { id: 'retaliation', label: 'Treated worse after I reported it' },
+    { id: 'sick_leave_problem', label: 'Sick leave request or discipline' },
   ] },
   { id: 'final', label: 'Leaving the job', items: [
     { id: 'final_pay', label: 'Final paycheck was wrong or late' },
