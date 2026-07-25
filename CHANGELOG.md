@@ -7,6 +7,55 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v68–v70 — 2026-07-25
+
+**Saying plainly what this is.** The policies said the app records a worker's own account
+and decides nothing. The product did not. The landing headline was "Keep the proof." Step
+two was "It builds your case file." The tamper-evident feature claimed the report "can
+prove it." The capture flow called photos "Add proof." The rights guide told the reader
+"you are owed" a break. Each of those asserts something the app cannot know — and they are
+what people actually read; nobody forms their expectations from §6 of the Terms.
+
+All of it now traces to one file, `js/config/disclaimers.js`, holding four positions:
+
+- your records are **your own account**, unverified by anyone, never asserted to be true;
+- a **"possible issue" is a pointer at a rule, not a determination** that it was broken;
+- nothing says you have a claim, and nothing predicts what anyone will do about it;
+- the fingerprint shows a record **has not changed since it was saved on that device** —
+  not that its contents are true, and not a third-party timestamp.
+
+Where you'll see them: an **"About this document"** block leading both printable reports,
+above the first record, at body size rather than fine print, because a stranger reads that
+page before anything the worker wrote. A **"What does 'possible issue' mean?"** explainer
+right under the Records counts. The plainest sentence in the app leading the Legal screen.
+A straight-talking paragraph in the landing hero, above the fold. The same framing now
+follows the records off the device, in the **email body** and in the **spreadsheet** (which
+leads with three note rows before the header, and whose "Findings" column is now "Possible
+issues (pointers, not determinations)").
+
+**First run acknowledges it.** The disclaimer used to sit at the bottom of the setup screen.
+It now leads that screen, links the Privacy Policy and Terms, and setup will not continue
+until you tick one plain sentence — stored verbatim with its timestamp, so a later reword
+cannot rewrite what someone agreed to.
+
+**Terms** gains §6 (your records are your own statements), §7 (no reliance; a log does not
+toll a deadline and is not notice to an employer), and an indemnity paragraph.
+
+**The part that lasts** is `tests/disclaimers.test.mjs`. It scans every user-facing string —
+literals and HTML text, not identifiers, not comments — for words that assert what the app
+cannot know, and fails unless the sentence is disclaiming them. It also checks the preamble
+precedes the first record, that no finding note states a conclusion or a dollar figure, and
+that the rights guide describes rules rather than telling a reader what they are owed. It
+caught a real miss while being written, and it has a test asserting the guard still fires.
+
+*Brand note:* the tagline "Document · Protect · Empower" became "Document · Preserve ·
+Understand" — both old verbs promise an outcome. Easy to revert; it appears in the report
+letterhead, the landing footer, and the page title.
+
+*Also:* a UI module importing a symbol nobody exported shipped green, because no test
+imports the view layer. Every named import across the app is now checked against the target
+module's actual exports.
+
 ## v65–v67 — 2026-07-24
 
 **Two claims a California hourly worker meets constantly, that the app had nowhere to log.**
