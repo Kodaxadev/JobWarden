@@ -37,12 +37,18 @@ const systemStatus = bindSystemStatus(systemHost, {
 });
 
 async function refreshBanner() {
-  const [settings, count] = await Promise.all([getSettings(), countIncidents()]);
+  const [settings, count] = await Promise.all([
+    getSettings(),
+    countIncidents({ includeDeleted: true }),
+  ]);
   renderBackupBanner(bannerHost, { settings, count, onBackupNow: quickBackup });
 }
 
 async function quickBackup() {
-  const [items, settings] = await Promise.all([getAllIncidents(), getSettings()]);
+  const [items, settings] = await Promise.all([
+    getAllIncidents({ includeDeleted: true }),
+    getSettings(),
+  ]);
   if (!items.length) return toast('Nothing to back up yet', { tone: 'warning' });
   await exportJson(items, settings);
   await markBackedUp();

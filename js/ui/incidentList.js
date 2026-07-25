@@ -34,47 +34,62 @@ export async function renderIncidentList(container, { onCreate, onEdit, onChange
     return;
   }
 
-  if (items.length) container.appendChild(glanceCard(items));
+  if (items.length) {
+    container.appendChild(glanceCard(items));
 
-  // Filter + month-grouped list — the Records screen has to stay usable at hundreds of records,
-  // and "show me the missed meals at location X" is how a record actually gets used.
-  const filter = { q: '', type: '', workplace: '' };
-  const countEl = el('p', { class: 'count' });
-  const scopedBar = el('div', { class: 'scoped-export' });
-  const listHost = el('div', { class: 'rec-list' });
-  if (items.length > 6) container.appendChild(filterBar(items, filter, apply));
-  container.append(countEl, scopedBar, listHost);
-  apply();
+    // Filter + month-grouped list — the Records screen has to stay usable at hundreds of
+    // records, and "show me missed meals at location X" is how a record actually gets used.
+    const filter = { q: '', type: '', workplace: '' };
+    const countEl = el('p', { class: 'count' });
+    const scopedBar = el('div', { class: 'scoped-export' });
+    const listHost = el('div', { class: 'rec-list' });
+    if (items.length > 6) container.appendChild(filterBar(items, filter, apply));
+    container.append(countEl, scopedBar, listHost);
+    apply();
 
-  function apply() {
-    const list = items.filter(i => matchesFilter(i, filter));
-    const filtered = list.length !== items.length;
-    countEl.textContent = filtered
-      ? `${list.length} of ${items.length} records`
-      : `${items.length} record${items.length === 1 ? '' : 's'}`;
+    function apply() {
+      const list = items.filter(i => matchesFilter(i, filter));
+      const filtered = list.length !== items.length;
+      countEl.textContent = filtered
+        ? `${list.length} of ${items.length} records`
+        : `${items.length} record${items.length === 1 ? '' : 's'}`;
 
-    // Filtered view → export exactly this subset (e.g. "just employer A, for a lawyer").
-    clear(scopedBar);
-    if (filtered && list.length) {
-      scopedBar.appendChild(el('button', { type: 'button', class: 'btn tiny', onclick: async () => {
-        const ok = await openPrintSummary(list, await getSettings());
-        if (!ok) toast('Allow pop-ups to make the report', { tone: 'warning' });
-      } }, [document.createTextNode(`Make a report of these ${list.length}`)]));
+      // Filtered view → export exactly this subset (e.g. "just employer A, for a lawyer").
+      clear(scopedBar);
+      if (filtered && list.length) {
+        scopedBar.appendChild(el('button', { type: 'button', class: 'btn tiny', onclick: async () => {
+          const ok = await openPrintSummary(list, await getSettings());
+          if (!ok) toast('Allow pop-ups to make the report', { tone: 'warning' });
+        } }, [document.createTextNode(`Make a report of these ${list.length}`)]));
+      }
+
+      clear(listHost);
+      if (!list.length) {
+        listHost.appendChild(el('p', { class: 'hint filter-empty', text: 'No records match. Clear the filters to see everything.' }));
+        return;
+      }
+      for (const [label, group] of groupByMonth(list)) {
+        listHost.appendChild(el('h3', { class: 'month-head', text: label }));
+        group.forEach(item => listHost.appendChild(row(item, { onEdit, onChanged, onRepeat })));
+      }
     }
-
-    clear(listHost);
-    if (!list.length) {
-      listHost.appendChild(el('p', { class: 'hint filter-empty', text: 'No records match. Clear the filters to see everything.' }));
-      return;
-    }
-    for (const [label, group] of groupByMonth(list)) {
-      listHost.appendChild(el('h3', { class: 'month-head', text: label }));
-      group.forEach(item => listHost.appendChild(row(item, { onEdit, onChanged, onRepeat })));
-    }
+  } else {
+    container.appendChild(el('section', { class: 'card records-recovery-empty' }, [
+      emptyState({
+        title: 'No active records',
+        description: `${deleted.length} record${deleted.length === 1 ? ' is' : 's are'} still saved in Deleted and can be restored below.`,
+        iconName: 'rotate-ccw',
+        compact: true,
+        headingLevel: 2,
+      }),
+    ]));
   }
 
   if (deleted.length) {
-    const wrap = el('details', { class: 'deleted-wrap' }, [el('summary', { text: `Deleted (${deleted.length}) — recoverable` })]);
+    const wrap = el('details', {
+      class: 'deleted-wrap',
+      open: !items.length,
+    }, [el('summary', { text: `Deleted (${deleted.length}) — recoverable` })]);
     deleted.forEach(d => wrap.appendChild(deletedRow(d, { onChanged })));
     container.appendChild(wrap);
   }
@@ -353,7 +368,7 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
           danger: true,
         },
       )) {
-        await putIncident(softDelete(item)); toast('Moved to Deleted'); onChanged?.();
+        await putIncident(softDelete(item)); toast('Moved to Deleted · still recoverable'); onChanged?.();
       }
     } }, [iconEl('trash-2'), document.createTextNode(' Move to Deleted')]),
   ]));
@@ -363,7 +378,14 @@ function deletedRow(item, { onChanged }) {
   return el('article', { class: 'row deleted' }, [
     el('div', { class: 'row-head static' }, [
       el('div', { class: 'row-main' }, [el('div', { class: 'row-date', text: formatDate(item.incidentDate) }), chipRow(item)]),
-      el('button', { class: 'btn tiny', text: 'Restore', onclick: async () => { await putIncident(restoreIncident(item)); toast('Record restored', { tone: 'success' }); onChanged?.(); } }),
+      el('button', {
+        class: 'btn tiny deleted-restore',
+        onclick: async () => {
+          await putIncident(restoreIncident(item));
+          toast('Record restored to Records', { tone: 'success' });
+          onChanged?.();
+        },
+      }, [iconEl('rotate-ccw'), document.createTextNode(' Restore record')]),
     ]),
   ]);
 }

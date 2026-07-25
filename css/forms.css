@@ -134,11 +134,18 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
    the same action is noise, not access. */
 .visually-hidden { display: none; }
 .loc-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.capture-access-status {
+  min-height: 22px; display: inline-flex; align-items: center; color: var(--muted);
+  font-size: var(--fs-sm); line-height: 1.45;
+}
+.capture-access-status.success { color: var(--gtext); }
+.capture-access-status.warning { color: var(--incident); }
 .thumbs { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 0; }
 .thumb { position: relative; }
 .thumb img, .thumb-img { width: 84px; height: 84px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--line-2); box-shadow: 0 2px 6px rgba(0,0,0,.35); }
 .thumb-meta { display: block; font-family: var(--mono); font-size: var(--fs-micro); color: var(--faint); text-align: center; margin-top: 3px; }
-.thumb-x { position: absolute; top: -8px; right: -8px; width: 32px; height: 32px; border-radius: 50%; background: var(--danger); color: #fff; border: 2px solid var(--bg); font-size: var(--fs-title); cursor: pointer; line-height: 1; }
+.thumb-x { position: absolute; top: -8px; right: -8px; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: var(--danger); color: #fff; border: 2px solid var(--bg); cursor: pointer; }
+.thumb-x .icon svg { width: 16px; height: 16px; }
 .savewrap { padding: 24px 0 4px; }
 
 /* "Right now" bar: quick log + shift tracker share a row; the live panel takes the full width */

@@ -103,6 +103,7 @@ test('a soft delete hides the record from the list but keeps it recoverable', as
 
   assert.equal((await getAllIncidents()).length, 0);
   assert.equal(await countIncidents(), 0);
+  assert.equal(await countIncidents({ includeDeleted: true }), 1);
   const deleted = await getDeletedIncidents();
   assert.equal(deleted.length, 1);
   assert.equal(deleted[0].deleteReason, 'logged twice by mistake');

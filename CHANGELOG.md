@@ -7,6 +7,22 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v91 — 2026-07-25
+
+**Evidence access, backup restore, and deleted-record recovery now protect the user’s work.**
+Denied or unavailable location access gets a persistent explanation instead of failing
+silently, photo attachment status names partial failures, and clean permission attempts no
+longer trigger a false unsaved-work warning. The location control also has an accurate
+accessible name, and photo removal uses the app’s icon system.
+
+Every full backup path now includes recoverable Deleted records. Export separates complete
+phone backups from active-record reports, keeps backup actions available when only Deleted
+records remain, and makes restore progress and outcomes persistent. Records opens a direct
+recovery state when Deleted is the only remaining content.
+
+The formal policy and findings language still require review by a licensed California
+employment attorney before public launch.
+
 ## v90 — 2026-07-25
 
 **First run, shift-alert access, offline use, and app updates now explain themselves.**

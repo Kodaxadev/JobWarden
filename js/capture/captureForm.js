@@ -11,7 +11,8 @@ import { todayDateStr } from '../domain/timeUtils.js';
 import { renderShiftPanel } from '../ui/shiftPanel.js';
 import { reportSaveFailure } from '../ui/saveFailure.js';
 import { openInterruptedLunch } from './quickCapture.js';
-import { buildInitialState, whatHappenedSection, activeSections, proofSection } from './captureFields.js';
+import { buildInitialState, whatHappenedSection, activeSections } from './captureFields.js';
+import { proofSection } from './evidenceFields.js';
 import { backButton } from '../ui/actionRow.js';
 import { createNavigationGuard } from '../ui/navigationGuard.js';
 
@@ -83,9 +84,6 @@ export async function renderCaptureForm(container, {
   const markDirty = () => guard.markDirty();
   form.addEventListener('input', markDirty);
   form.addEventListener('change', markDirty);
-  form.addEventListener('click', e => {
-    if (e.target.closest('button') && !e.target.closest('.save')) markDirty();
-  });
   setNavigationGuard?.(() => guard.canLeave());
   const body = el('div', { class: 'capture-body' });
   const adaptiveHost = el('div', { class: 'adaptive' });
@@ -122,7 +120,7 @@ export async function renderCaptureForm(container, {
   const whatHappened = whatHappenedSection(state, {
     onChange: () => { markDirty(); clearValidation(); renderAdaptive(); },
   });
-  const proof = proofSection(state);
+  const proof = proofSection(state, { onChange: markDirty });
   whatHappened.insertBefore(validationMessage, whatHappened.querySelector('.issue-picker'));
   body.append(whatHappened, adaptiveHost, proof);
   renderAdaptive();

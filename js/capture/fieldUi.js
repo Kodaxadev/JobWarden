@@ -57,6 +57,7 @@ export function timeRow(label, value, setter) {
       const next = nowTimeStr();
       input.value = next;
       setter(next);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
     },
   });
   return field(label, el('div', { class: 'time-row' }, [input, now]));

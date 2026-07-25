@@ -12,18 +12,26 @@ import { exportCsv } from '../export/exportCsv.js';
 import { openPrintReport } from '../export/exportReport.js';
 import { openPrintSummary } from '../export/exportSummary.js';
 import { actionRow } from './actionRow.js';
-import { emptyState } from './statusUi.js';
+import { emptyState, statusRow, updateStatusRow } from './statusUi.js';
+import {
+  restoreApplyFailureCopy, restoreReadFailureCopy, restoreResultCopy,
+} from './restoreStatus.js';
 
 export async function renderExportView(container, { onChanged, onCreate } = {}) {
   clear(container);
-  const [items, settings] = await Promise.all([getAllIncidents(), getSettings()]);
+  const [items, backupItems, settings] = await Promise.all([
+    getAllIncidents(),
+    getAllIncidents({ includeDeleted: true }),
+    getSettings(),
+  ]);
+  const deletedCount = backupItems.length - items.length;
   // Every export does real work — deriving a key, inlining photos, building a document — so
   // each one says so on its own button rather than leaving the control looking dead.
   const guard = (busyLabel, fn) => async (btn) => {
     await withBusy(btn, busyLabel, fn);
   };
   const confirmPlainBackup = () => confirmDialog(
-    'It includes your records and photos. Anyone who receives or opens the file can read them.',
+    'It includes active records, recoverable Deleted records, and photos. Anyone who receives or opens the file can read them.',
     {
       title: 'Share a readable backup?',
       confirmText: 'Continue',
@@ -31,9 +39,14 @@ export async function renderExportView(container, { onChanged, onCreate } = {}) 
     },
   );
 
-  if (items.length) container.appendChild(el('section', { class: 'card' }, [
-    el('h2', { text: 'Export & back up' }),
-    el('p', { class: 'hint', text: `${items.length} record${items.length === 1 ? '' : 's'}, saved on this phone only.` }),
+  if (backupItems.length) container.appendChild(el('section', { class: 'card' }, [
+    el('h2', { text: 'Back up this phone' }),
+    el('p', {
+      class: 'hint',
+      text: deletedCount
+        ? `${items.length} active · ${deletedCount} recoverable in Deleted. Backups include both.`
+        : `${items.length} active record${items.length === 1 ? '' : 's'}, saved on this phone only.`,
+    }),
     el('div', { class: 'action-list' }, [
       actionRow({
         label: 'Share unencrypted backup',
@@ -42,7 +55,7 @@ export async function renderExportView(container, { onChanged, onCreate } = {}) 
         onClick:
         guard('Preparing…', async () => {
           if (!await confirmPlainBackup()) return;
-          const r = await emailRecords(items, settings);
+          const r = await emailRecords(backupItems, settings);
           if (r !== 'cancelled') { await markBackedUp(); onChanged?.(); }
           toast(
             r === 'shared' ? 'Backup shared' : r === 'fallback' ? 'Backup saved — attach it in the email that opened' : 'Share canceled',
@@ -57,7 +70,7 @@ export async function renderExportView(container, { onChanged, onCreate } = {}) 
         onClick:
         guard('Building backup…', async () => {
           if (!await confirmPlainBackup()) return;
-          const n = await exportJson(items, settings);
+          const n = await exportJson(backupItems, settings);
           await markBackedUp();
           toast(`Backed up ${n} record(s)`, { tone: 'success' });
           onChanged?.();
@@ -75,7 +88,7 @@ export async function renderExportView(container, { onChanged, onCreate } = {}) 
           // actually runs, and it is the couple of seconds the user would otherwise doubt.
           await withBusy(btn, 'Locking…', async () => {
             try {
-              const n = await exportEncryptedJson(items, settings, pass);
+              const n = await exportEncryptedJson(backupItems, settings, pass);
               await markBackedUp();
               toast(`Locked backup saved · ${n} record(s)`, { tone: 'success' });
               onChanged?.();
@@ -83,6 +96,13 @@ export async function renderExportView(container, { onChanged, onCreate } = {}) 
           });
         }),
       }),
+    ]),
+  ]));
+
+  if (items.length) container.appendChild(el('section', { class: 'card' }, [
+    el('h2', { text: 'Create reports' }),
+    el('p', { class: 'hint', text: 'Reports use active records. Recoverable Deleted records stay only in backups.' }),
+    el('div', { class: 'action-list' }, [
       actionRow({
         label: 'Make spreadsheet',
         description: 'Open a table in Excel, Numbers, or Google Sheets.',
@@ -109,7 +129,7 @@ export async function renderExportView(container, { onChanged, onCreate } = {}) 
       }),
     ]),
   ]));
-  else container.appendChild(el('section', { class: 'card export-empty-card' }, [
+  else if (!backupItems.length) container.appendChild(el('section', { class: 'card export-empty-card' }, [
     el('h2', { text: 'Export & back up' }),
     emptyState({
       title: 'Nothing to export yet',
@@ -126,6 +146,20 @@ export async function renderExportView(container, { onChanged, onCreate } = {}) 
   // onto a fresh install with nothing here yet).
   const fileInput = el('input', { type: 'file', accept: 'application/json,.json,.jwbk' });
   fileInput.style.display = 'none';
+  const restoreState = statusRow({
+    label: 'No backup selected',
+    detail: 'Choose a JobWarden backup file to begin.',
+    iconName: 'rotate-ccw',
+    live: true,
+  });
+  const restoreStatusHost = el('div', {
+    class: 'status-list restore-status-list',
+    hidden: true,
+  }, [restoreState]);
+  const showRestoreStatus = copy => {
+    restoreStatusHost.hidden = false;
+    updateStatusRow(restoreState, copy);
+  };
 
   // Read either kind of backup: plain JSON, or a locked file the user unlocks here.
   // Returns the backup text, or null when the user backs out. A typo re-asks in place —
@@ -147,13 +181,36 @@ export async function renderExportView(container, { onChanged, onCreate } = {}) 
     const file = fileInput.files && fileInput.files[0];
     fileInput.value = '';
     if (!file) return;
+    showRestoreStatus({
+      label: 'Reading backup',
+      detail: file.name || 'Checking the selected file…',
+      iconName: 'rotate-ccw',
+      tone: 'loading',
+    });
     let text, parsed;
     try {
       text = await readBackupText(file);
-      if (text == null) return;
+      if (text == null) {
+        showRestoreStatus({
+          label: 'Restore canceled',
+          detail: 'Nothing on this phone was changed.',
+          iconName: 'rotate-ccw',
+          tone: 'neutral',
+        });
+        return;
+      }
       parsed = parseBackup(text);
     }
-    catch (e) { return toast(e.message || 'Could not read that file', { tone: 'error' }); }
+    catch (e) {
+      showRestoreStatus(restoreReadFailureCopy(e?.message));
+      return;
+    }
+    showRestoreStatus({
+      label: 'Backup ready to review',
+      detail: `${parsed.records.length} record${parsed.records.length === 1 ? '' : 's'} found. Nothing has changed yet.`,
+      iconName: 'rotate-ccw',
+      tone: 'neutral',
+    });
     if (!await confirmDialog(
       `This adds ${parsed.records.length} record(s). Your current records stay, and duplicates are skipped.`,
       {
@@ -161,15 +218,28 @@ export async function renderExportView(container, { onChanged, onCreate } = {}) 
         confirmText: 'Restore',
         iconName: 'rotate-ccw',
       },
-    )) return;
+    )) {
+      showRestoreStatus({
+        label: 'Restore canceled',
+        detail: 'Nothing on this phone was changed.',
+        iconName: 'rotate-ccw',
+        tone: 'neutral',
+      });
+      return;
+    }
+    showRestoreStatus({
+      label: 'Restoring backup',
+      detail: 'Keeping current records and skipping duplicates…',
+      iconName: 'rotate-ccw',
+      tone: 'loading',
+    });
     try {
       const r = await importBackup(text);
-      toast(
-        `Restored ${r.added} · skipped ${r.skipped} duplicate(s)` + (r.changed ? ` · ${r.changed} fingerprint warning(s)` : ''),
-        { tone: r.changed ? 'warning' : 'success' },
-      );
+      showRestoreStatus(restoreResultCopy(r));
       onChanged?.();
-    } catch (e) { toast('Could not restore: ' + (e?.message || e), { tone: 'error' }); }
+    } catch (e) {
+      showRestoreStatus(restoreApplyFailureCopy(e?.message));
+    }
   });
 
   container.appendChild(el('section', { class: 'card' }, [
@@ -183,6 +253,7 @@ export async function renderExportView(container, { onChanged, onCreate } = {}) 
         onClick: () => fileInput.click(),
       }),
     ]),
+    restoreStatusHost,
     fileInput,
   ]));
 }

@@ -59,8 +59,8 @@ export async function getDeletedIncidents() {
   return (all || []).map(hydrateKeepingRaw).filter(i => i.deleted).sort(byNewest);
 }
 
-// Count of ACTIVE records (used by the backup banner).
-export async function countIncidents() {
+// Active by default; backup reminders can include recoverable Deleted records.
+export async function countIncidents({ includeDeleted = false } = {}) {
   const all = await tx(STORE_INCIDENTS, 'readonly', s => reqToPromise(s.getAll()));
-  return (all || []).filter(i => !i.deleted).length;
+  return (all || []).filter(i => includeDeleted || !i.deleted).length;
 }

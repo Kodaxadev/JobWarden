@@ -243,3 +243,27 @@ service-worker update discovery, and cancellation of an update around an unsaved
 The offline state model is covered by focused tests; this browser surface did not expose a
 network-offline control for a true connectivity transition. Physical-device notification,
 VoiceOver, and TalkBack behavior remain separate release evidence.
+
+## v91 evidence access and recovery addendum
+
+Final result: passed for the captured mobile states.
+
+- Prior denied-location state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-evidence-recovery-audit-v91\02-location-denied-before.png`
+- Prior Deleted-only Records state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-evidence-recovery-audit-v91\05-deleted-recovery-before.png`
+- Final backup with recoverable Deleted content:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-evidence-recovery-audit-v91\07-deleted-backup-v91.png`
+- Final light Deleted recovery state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-evidence-recovery-audit-v91\08-deleted-recovery-v91.png`
+- Final denied-location guidance:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-evidence-recovery-audit-v91\09-location-denied-v91.png`
+- Final dark Deleted recovery state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-evidence-recovery-audit-v91\10-dark-recovery-v91.png`
+
+The run used the stateful localhost PWA at a 375 × 812 viewport. It exercised a
+browser-denied location request, clean navigation afterward, Deleted-only backup and
+recovery states, dark and daylight rendering, and restoration into the active timeline.
+The browser surface could not attach a local backup file, so invalid-file restore rendering
+is covered by focused tests rather than direct browser evidence. Physical-device camera,
+location, VoiceOver, and TalkBack behavior remain separate release evidence.

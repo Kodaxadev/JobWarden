@@ -5,8 +5,6 @@
 import { el } from '../ui/dom.js';
 import { ISSUE_GROUPS } from '../config/uiCopy.js';
 import { fieldsForTypes, FIELD } from '../config/infractionTypes.js';
-import { getCurrentPosition, formatLoc } from './geo.js';
-import { fileToAttachment, attachmentUrl, humanSize } from './media.js';
 import { todayDateStr } from '../domain/timeUtils.js';
 import {
   iconEl, field, textInput, checkbox, triSelect, timeRow, dateField, section,
@@ -281,50 +279,4 @@ export function activeSections(state) {
     ...SECTION_DEFS.filter(d => d.needs(f)).map(d => d.render(state)),
     ...payIssueSections(state, f),
   ];
-}
-
-// ---- Proof & your words (always available, optional) ----------------------
-export function proofSection(state) {
-  const narrative = el('textarea', { rows: '4', placeholder: 'Short facts. Names, times, and what was said help.', oninput: e => state.narrative = e.target.value });
-  narrative.value = state.narrative || '';
-
-  const locStatus = el('span', { class: 'hint', text: state.location ? formatLoc(state.location) : 'Location not added' });
-  const locBtn = el('button', { type: 'button', class: 'btn', onclick: async () => {
-    locBtn.disabled = true; locStatus.textContent = 'Getting GPS…';
-    const loc = await getCurrentPosition(); state.location = loc;
-    locStatus.textContent = loc ? formatLoc(loc) : 'Location not added'; locBtn.disabled = false;
-  } }, [iconEl('map-pin'), document.createTextNode(' Add location')]);
-
-  const thumbs = el('div', { class: 'thumbs' });
-  const renderThumbs = () => {
-    thumbs.replaceChildren();
-    state.attachments.forEach((a, idx) => {
-      const rm = el('button', { type: 'button', class: 'thumb-x', text: '×', 'aria-label': 'Remove photo', onclick: () => { state.attachments.splice(idx, 1); renderThumbs(); } });
-      thumbs.appendChild(el('div', { class: 'thumb' }, [el('img', { src: attachmentUrl(a), alt: a.name }), rm, el('span', { class: 'thumb-meta', text: humanSize(a.size) })]));
-    });
-  };
-  // The native control renders as a 21px browser-default "Choose File" chip — the one naked
-  // element in a form of designed wells, and too small to hit. Drive it from a real button,
-  // the same way quickCapture already does, so the affordance matches everywhere.
-  const fileInput = el('input', { type: 'file', accept: 'image/*', multiple: true, capture: 'environment', class: 'visually-hidden',
-    onchange: async e => { for (const f of [...e.target.files]) state.attachments.push(await fileToAttachment(f)); e.target.value = ''; renderThumbs(); } });
-  const photoBtn = el('button', { type: 'button', class: 'btn', onclick: () => fileInput.click() },
-    [iconEl('camera'), document.createTextNode(' Add photos')]);
-  renderThumbs();
-
-  return section('proof', 'notebook-pen', 'Photos & your words',
-    'A photo of the clock, pay stub, or a message backs up what you wrote. Optional.',
-    [field('Tell what happened', narrative)],
-    [
-      // Not field(): that wraps in a <label>, and a label around a button hijacks the
-      // button's accessible name. A group needs a plain container and a static label.
-      el('div', { class: 'field' }, [
-        el('span', { class: 'field-label', text: 'Photos of time clock, pay stub, or messages' }),
-        el('div', { class: 'loc-row' }, [photoBtn, fileInput]),
-        el('span', { class: 'hint', text: 'Your own records only. JobWarden does not record audio. California generally requires every party’s consent before recording a confidential conversation.' }),
-      ]),
-      thumbs,
-      field('Where were you?', el('div', { class: 'loc-row' }, [locBtn, locStatus])),
-      field('Who saw it?', textInput(state.witnesses, v => state.witnesses = v, { placeholder: 'Names of anyone who saw it' })),
-    ]);
 }
