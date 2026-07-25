@@ -55,7 +55,7 @@ export async function withBusy(button, busyLabel, fn) {
 }
 
 // Trap Tab focus within `container`; route Escape to onEscape. Returns a cleanup fn.
-// One implementation for every modal surface (confirm dialog, quick-capture sheet).
+// One implementation for every modal surface.
 const FOCUSABLE = 'button, input, textarea, select, a[href], [tabindex]:not([tabindex="-1"])';
 export function trapFocus(container, onEscape) {
   const onKey = (e) => {
@@ -70,31 +70,4 @@ export function trapFocus(container, onEscape) {
   };
   document.addEventListener('keydown', onKey, true);
   return () => document.removeEventListener('keydown', onKey, true);
-}
-
-// Accessible confirm dialog (returns a Promise<boolean>). role=dialog + aria-modal,
-// focus moves into the dialog and is trapped, Escape cancels, focus returns to the trigger.
-export function confirmDialog(message, { confirmText = 'Delete', cancelText = 'Cancel', danger = true } = {}) {
-  return new Promise(resolve => {
-    const prevFocus = document.activeElement;
-    let untrap = () => {};
-    const close = (val) => {
-      untrap();
-      overlay.remove();
-      if (prevFocus && typeof prevFocus.focus === 'function') prevFocus.focus();
-      resolve(val);
-    };
-    const cancelBtn = el('button', { class: 'btn', text: cancelText, onclick: () => close(false) });
-    const okBtn = el('button', { class: 'btn ' + (danger ? 'danger' : 'primary'), text: confirmText, onclick: () => close(true) });
-    const msgId = 'dlg-' + Math.random().toString(16).slice(2);
-    const box = el('div', { class: 'dialog', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': msgId }, [
-      el('p', { id: msgId, text: message }),
-      el('div', { class: 'dialog-actions' }, [cancelBtn, okBtn]),
-    ]);
-    const overlay = el('div', { class: 'overlay' }, [box]);
-    overlay.addEventListener('click', e => { if (e.target === overlay) close(false); });
-    document.body.appendChild(overlay);
-    untrap = trapFocus(box, () => close(false));
-    cancelBtn.focus();
-  });
 }

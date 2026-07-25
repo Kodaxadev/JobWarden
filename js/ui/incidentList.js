@@ -1,5 +1,6 @@
 // incidentList.js — records review. One concern: listing/expanding/soft-deleting/restoring.
-import { el, clear, toast, confirmDialog } from './dom.js';
+import { el, clear, toast } from './dom.js';
+import { confirmDialog } from './confirmDialog.js';
 import { icon } from './icons.js';
 import { getAllIncidents, getDeletedIncidents, putIncident } from '../data/incidentRepo.js';
 import { softDelete, restoreIncident } from '../domain/incidentModel.js';
@@ -346,7 +347,15 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
       iconEl('clipboard-pen'), document.createTextNode(' Edit record'),
     ]),
     el('button', { class: 'btn danger record-delete', onclick: async () => {
-      if (await confirmDialog('Move this record to Deleted? It stays recoverable under “Deleted”.')) {
+      if (await confirmDialog(
+        'You can restore it later from the Deleted section.',
+        {
+          title: 'Move this record to Deleted?',
+          confirmText: 'Move to Deleted',
+          cancelText: 'Keep record',
+          danger: true,
+        },
+      )) {
         await putIncident(softDelete(item)); toast('Moved to Deleted'); onChanged?.();
       }
     } }, [iconEl('trash-2'), document.createTextNode(' Move to Deleted')]),

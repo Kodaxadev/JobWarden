@@ -5,7 +5,8 @@
 // next act is to put the phone away believing the record is kept — which is exactly when the
 // evidence is lost. So this blocks: the user has to acknowledge it, and where the cause is
 // space, they get the trade that saves the facts (drop the photos, keep the record).
-import { confirmDialog, toast } from './dom.js';
+import { toast } from './dom.js';
+import { confirmDialog } from './confirmDialog.js';
 import { explainStorageError } from '../data/storageErrors.js';
 import { logError } from '../data/errorLog.js';
 
@@ -24,15 +25,25 @@ export async function reportSaveFailure(err, draft, write) {
   const canRetry = problem.canDropPhotos && photos > 0 && typeof write === 'function';
 
   if (!canRetry) {
-    await confirmDialog(`${problem.title}\n\n${problem.body}`,
-      { confirmText: 'OK', cancelText: 'Copy the error', danger: false })
+    await confirmDialog(problem.body,
+      {
+        title: problem.title,
+        confirmText: 'OK',
+        cancelText: 'Copy the error',
+        iconName: 'shield-alert',
+      })
       || copyDiagnostics(problem, err);
     return { saved: false, droppedPhotos: 0 };
   }
 
   const drop = await confirmDialog(
-    `${problem.title}\n\n${problem.body}`,
-    { confirmText: `Save without the ${photos === 1 ? 'photo' : `${photos} photos`}`, cancelText: 'Not now', danger: false },
+    problem.body,
+    {
+      title: problem.title,
+      confirmText: `Save without the ${photos === 1 ? 'photo' : `${photos} photos`}`,
+      cancelText: 'Not now',
+      iconName: 'shield-alert',
+    },
   );
   if (!drop) return { saved: false, droppedPhotos: 0 };
 
@@ -43,8 +54,13 @@ export async function reportSaveFailure(err, draft, write) {
   } catch (again) {
     logError(`save retry failed: ${again?.name || ''} ${again?.message || again}`, 'save');
     await confirmDialog(
-      'That did not work either.\n\nYour record is still on this screen. Write the facts down somewhere else now — a note app, a text to yourself — so they are not lost, then free up space and try again.',
-      { confirmText: 'OK', cancelText: 'Copy the error', danger: false },
+      'Your record is still on this screen. Write the facts down somewhere else now — a note app or a text to yourself — then free up space and try again.',
+      {
+        title: 'The retry did not work',
+        confirmText: 'OK',
+        cancelText: 'Copy the error',
+        iconName: 'shield-alert',
+      },
     ) || copyDiagnostics(problem, again);
     return { saved: false, droppedPhotos: 0 };
   }

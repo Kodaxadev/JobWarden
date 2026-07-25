@@ -1,8 +1,9 @@
 // captureForm.js — the Log screen. One concern: composing the adaptive capture on one screen
 // (a slim live bar, "What happened?", the detail sections that question reveals, proof, save)
 // and persisting it. The detail sections come from captureFields; only what was picked shows.
-import { el, clear, toast, confirmDialog } from '../ui/dom.js';
+import { el, clear, toast } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
+import { confirmDialog } from '../ui/confirmDialog.js';
 import { createIncident, reviseIncident, validateIncident, sanityWarnings } from '../domain/incidentModel.js';
 import { addIncident, putIncident } from '../data/incidentRepo.js';
 import { getSettings } from '../data/settingsRepo.js';
@@ -71,8 +72,13 @@ export async function renderCaptureForm(container, {
   const form = el('form', { class: 'capture', autocomplete: 'off' });
   form.addEventListener('submit', e => e.preventDefault());
   const guard = createNavigationGuard(() => confirmDialog(
-    'Leave this record? Your unsaved changes will be lost.',
-    { confirmText: 'Leave', cancelText: 'Keep editing', danger: false },
+    'Changes to this record will be lost.',
+    {
+      title: 'Leave without saving?',
+      confirmText: 'Leave',
+      cancelText: 'Keep editing',
+      iconName: 'triangle-alert',
+    },
   ));
   const markDirty = () => guard.markDirty();
   form.addEventListener('input', markDirty);
@@ -83,6 +89,25 @@ export async function renderCaptureForm(container, {
   setNavigationGuard?.(() => guard.canLeave());
   const body = el('div', { class: 'capture-body' });
   const adaptiveHost = el('div', { class: 'adaptive' });
+  const validationText = el('span');
+  const validationMessage = el('div', {
+    class: 'form-message',
+    role: 'alert',
+    tabindex: '-1',
+    hidden: true,
+  }, [iconEl('circle-alert'), validationText]);
+  const clearValidation = () => {
+    validationMessage.hidden = true;
+    validationText.textContent = '';
+  };
+  form.addEventListener('input', clearValidation);
+  form.addEventListener('change', clearValidation);
+  const showValidation = (message) => {
+    validationText.textContent = message;
+    validationMessage.hidden = false;
+    validationMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    validationMessage.focus({ preventScroll: true });
+  };
   const saveBtn = el('button', { type: 'button', class: 'btn save big', onclick: () => save() },
     [iconEl('save'), document.createTextNode(' ' + (existing ? 'Save changes' : 'Save record'))]);
   form.append(body, el('div', { class: 'savewrap' }, [saveBtn]));
@@ -94,8 +119,11 @@ export async function renderCaptureForm(container, {
   }
   container.appendChild(form);
 
-  const whatHappened = whatHappenedSection(state, { onChange: () => { markDirty(); renderAdaptive(); } });
+  const whatHappened = whatHappenedSection(state, {
+    onChange: () => { markDirty(); clearValidation(); renderAdaptive(); },
+  });
   const proof = proofSection(state);
+  whatHappened.insertBefore(validationMessage, whatHappened.querySelector('.issue-picker'));
   body.append(whatHappened, adaptiveHost, proof);
   renderAdaptive();
 
@@ -119,13 +147,20 @@ export async function renderCaptureForm(container, {
     const draft = existing ? reviseIncident(existing, input) : createIncident(input);
     const { valid, errors } = validateIncident(draft);
     if (!valid) {
-      toast(errors[0] === 'Pick at least one issue type.' ? 'Pick what happened first' : errors[0]);
-      whatHappened.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showValidation(errors[0] === 'Pick at least one issue type.'
+        ? 'Choose at least one issue before saving this record.'
+        : errors[0]);
       return;
     }
+    clearValidation();
     // Likely-typo check — never blocks; just offers a chance to fix a fat-fingered time.
     const warnings = sanityWarnings(draft);
-    if (warnings.length && !await confirmDialog(warnings[0] + ' Save anyway?', { confirmText: 'Save anyway', cancelText: 'Go back', danger: false })) {
+    if (warnings.length && !await confirmDialog(warnings[0], {
+      title: 'Check this entry',
+      confirmText: 'Save anyway',
+      cancelText: 'Fix it',
+      iconName: 'clock-alert',
+    })) {
       return;
     }
     const write = (rec) => (existing ? putIncident(rec) : addIncident(rec));

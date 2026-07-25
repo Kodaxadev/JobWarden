@@ -1,5 +1,6 @@
 // exportView.js — export & backup screen. One concern: export UI.
-import { el, clear, toast, confirmDialog, withBusy } from './dom.js';
+import { el, clear, toast, withBusy } from './dom.js';
+import { confirmDialog } from './confirmDialog.js';
 import { getAllIncidents } from '../data/incidentRepo.js';
 import { getSettings, markBackedUp } from '../data/settingsRepo.js';
 import { exportJson, exportEncryptedJson } from '../export/exportJson.js';
@@ -22,8 +23,12 @@ export async function renderExportView(container, { onChanged } = {}) {
     await withBusy(btn, busyLabel, fn);
   };
   const confirmPlainBackup = () => confirmDialog(
-    'This backup is not encrypted. It includes your records and photos, and anyone who receives or opens the file can read them. Continue?',
-    { confirmText: 'Continue', danger: false },
+    'It includes your records and photos. Anyone who receives or opens the file can read them.',
+    {
+      title: 'Share a readable backup?',
+      confirmText: 'Continue',
+      iconName: 'shield-alert',
+    },
   );
 
   container.appendChild(el('section', { class: 'card' }, [
@@ -134,7 +139,14 @@ export async function renderExportView(container, { onChanged } = {}) {
       parsed = parseBackup(text);
     }
     catch (e) { return toast(e.message || 'Could not read that file'); }
-    if (!await confirmDialog(`Restore ${parsed.records.length} record(s) from this backup? Your current records stay; duplicates are skipped.`, { confirmText: 'Restore', danger: false })) return;
+    if (!await confirmDialog(
+      `This adds ${parsed.records.length} record(s). Your current records stay, and duplicates are skipped.`,
+      {
+        title: 'Restore this backup?',
+        confirmText: 'Restore',
+        iconName: 'rotate-ccw',
+      },
+    )) return;
     try {
       const r = await importBackup(text);
       toast(`Restored ${r.added} · skipped ${r.skipped} duplicate(s)` + (r.changed ? ` · ${r.changed} fingerprint warning(s)` : ''));

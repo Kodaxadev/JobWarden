@@ -7,6 +7,26 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v88 — 2026-07-25
+
+**Live tracking and consequential decisions now use one deliberate feedback system.**
+The active-shift panel separates elapsed time from start time, turns meal timing into a
+scannable status row, gives lunch, rest, and end-shift actions an intentional hierarchy,
+and keeps the reminder limitation honest without dominating the panel. Ending a shift now
+asks before clearing the live tracker and explains that the result still needs review and
+save.
+
+Confirmations across unsaved edits, typo checks, readable backups, restores, recoverable
+deletion, and storage failures now use a shared titled dialog with a real Lucide icon,
+specific action language, trapped focus, Escape/scrim cancellation, and returned focus.
+Missing issue selections stay visible beside the picker as an announced inline error
+instead of disappearing in a toast. Dark and daylight states were rechecked on a fresh
+phone-sized browser origin; the daylight pass also fixed pale control materials leaking
+into the navy live panel.
+
+The formal policy and findings language still require review by a licensed California
+employment attorney before public launch.
+
 ## v86 — 2026-07-25
 
 **Quick capture and record review now carry the same finish as the main Log screen.**

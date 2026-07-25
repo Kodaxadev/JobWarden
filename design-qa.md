@@ -169,3 +169,26 @@ Fix:
 - P2 remaining: none.
 
 Final result: passed
+
+## v88 live feedback addendum
+
+Final result: passed for the captured mobile states.
+
+- Prior live-shift state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-shift-feedback-audit\02-shift-before-phone.png`
+- Final dark live-shift state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-shift-feedback-audit\10-shift-refined-dark-final.png`
+- Final light live-shift state:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-shift-feedback-audit\07-shift-refined-light-final.png`
+- Dark end-shift confirmation:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-shift-feedback-audit\04-end-shift-dialog-dark.png`
+- Light end-shift confirmation:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-shift-feedback-audit\08-end-shift-dialog-light.png`
+- Persistent inline validation:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\jobwarden-shift-feedback-audit\09-inline-validation-light.png`
+
+The final light captures came from a fresh localhost origin so the new service-worker
+cache could not supply stale theme CSS. This exposed and verified the fix for paper button
+materials leaking into the navy shift panel. The interaction pass exercised cancellation,
+focus return, and the missing-issue save path. No horizontal overflow or browser console
+errors were observed in the accepted states.

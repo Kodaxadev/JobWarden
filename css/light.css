@@ -47,6 +47,13 @@
   color:var(--text);
 }
 
+/* A navy live instrument needs its own control materials too. Without this boundary, the
+   light page's paper button fills wash out white labels inside the dark shift panel. */
+:root[data-theme="light"] .shift-panel {
+  --surface-2:#182238; --surface-3:#22314d;
+  --node:rgba(234,238,246,.28); --edge-top:rgba(255,255,255,.08);
+}
+
 /* Recessed controls should read as pressed paper wells, not black-shadowed plastic. */
 :root[data-theme="light"] :is(input[type=text], input[type=password], input[type=time],
   input[type=date], input[type=number], select, textarea) {
