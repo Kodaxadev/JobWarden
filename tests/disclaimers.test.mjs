@@ -159,6 +159,23 @@ for (const [name, build] of [['report', buildReportHtml], ['summary', buildSumma
   });
 }
 
+// Anything that leaves the device can be forwarded and read by someone who never saw the
+// app — an employer, an investigator, opposing counsel. Every such path carries the framing,
+// not just the two that look like documents.
+test('every export that leaves the device carries the framing', async () => {
+  const { emailSummary } = await import('../js/export/emailExport.js');
+  const { buildCsv } = await import('../js/export/exportCsv.js');
+  const items = [record()];
+
+  const email = emailSummary(items, { employeeName: 'Ana R.' });
+  assert.ok(email.includes(DOCUMENT_PREAMBLE.title), 'the email body must carry the preamble');
+  assert.match(email, /have not been verified/);
+
+  const csv = buildCsv(items);
+  assert.match(csv, /own account/i, 'the spreadsheet must say whose account it is');
+  assert.match(csv, /not a finding that any rule was broken/i);
+});
+
 test('the signature line claims only personal knowledge, not truth', async () => {
   const html = await buildReportHtml([record()], {});
   assert.match(html, /my own records of my own working conditions/);

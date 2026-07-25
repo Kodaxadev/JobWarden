@@ -50,6 +50,15 @@ export const DOCUMENT_PREAMBLE = {
 export const DOCUMENT_FOOTER =
   'A self-kept log is one person’s contemporaneous account. Its value comes from being written at or near the time, sticking to facts, and being backed up by other material such as time-clock or pay-stub photos. It is not proof on its own, and no representation is made about how any employer, agency, or court will treat it. Not legal advice. Confirm anything you intend to rely on with an employment attorney or the California Labor Commissioner.';
 
+// Lead rows for the CSV export. A spreadsheet is the export most likely to be forwarded
+// and read out of context, and it has no room for a paragraph — so: short lines, the two
+// facts that matter, before the header.
+export const CSV_PREAMBLE = [
+  'JobWarden export - a personal log kept by one worker, recording their own account.',
+  'Not verified by anyone. The "possible issues" column points at rules that may apply; it is not a finding that any rule was broken, and it does not mean a claim exists.',
+  'No dollar amounts are calculated. Not legal advice.',
+];
+
 // Words that must never appear in user-facing copy, because each one asserts something the
 // app cannot know. Guarded by tests/disclaimers.test.mjs.
 //   proof / prove — the app produces records, not proof

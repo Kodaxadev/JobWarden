@@ -8,6 +8,7 @@
 import { buildBackupBlob } from './exportJson.js';
 import { downloadBlob, dateStamp } from './download.js';
 import { summarizePatterns } from '../domain/patterns.js';
+import { DOCUMENT_PREAMBLE, SHORT } from '../config/disclaimers.js';
 
 // Hand off to the device's mail app. A real anchor click is far more reliable than
 // `window.location.href` for protocol links — the latter is routinely swallowed inside an
@@ -34,7 +35,12 @@ export function emailSummary(incidents, settings = {}) {
   if (s.offClock.records) lines.push('• ' + s.offClock.totalMinutes + ' min off-the-clock work');
   lines.push('');
   lines.push('Full records (with photos) are in the attached JobWarden backup file.');
-  lines.push('Facts and counts only — not legal advice.');
+  lines.push('');
+  // This body is the export most likely to be forwarded — to a lawyer, to HR, to a friend —
+  // so it carries the same framing as the printable documents rather than a one-line footer.
+  lines.push('--- ' + DOCUMENT_PREAMBLE.title + ' ---');
+  DOCUMENT_PREAMBLE.paras.forEach(p => lines.push(p, ''));
+  lines.push(SHORT);
   return lines.join('\n');
 }
 
