@@ -5,6 +5,7 @@ import { el, clear, toast } from './dom.js';
 import { icon } from './icons.js';
 import { getSettings, saveSettings } from '../data/settingsRepo.js';
 import { requestPersistence } from '../data/db.js';
+import { NOT_A_VERDICT, ONBOARD_ACK } from '../config/disclaimers.js';
 
 const iconEl = (n) => { const s = el('span'); s.innerHTML = icon(n); return s.firstElementChild || s; };
 const field = (label, input, hint) => el('label', { class: 'field' }, [
@@ -35,7 +36,24 @@ export async function renderOnboarding(container, { onDone } = {}) {
   const start = el('button', { type: 'button', class: 'btn primary big', onclick: finish },
     [iconEl('clipboard-pen'), document.createTextNode(' Start logging')]);
 
+  // Acknowledged, not merely displayed. One sentence, in the same plain voice as everything
+  // else, and the timestamp is stored with the profile — so what the person agreed to, and
+  // when, is part of their own record rather than something only we would know.
+  const ackBox = el('input', { type: 'checkbox', id: 'ack-understood' });
+  const ack = el('label', { class: 'check onboard-ack', for: 'ack-understood' }, [
+    ackBox,
+    el('span', { text: ONBOARD_ACK }),
+  ]);
+  const ackHint = el('p', { class: 'hint', hidden: true, text: 'Tick the box above to continue.' });
+  ackBox.addEventListener('change', () => { ackHint.hidden = true; });
+
   async function finish() {
+    if (!ackBox.checked) {
+      ackHint.hidden = false;
+      ack.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      ackBox.focus();
+      return;
+    }
     start.disabled = true;
     try { await requestPersistence(); } catch { /* best-effort; not fatal */ }
     try {
@@ -46,6 +64,8 @@ export async function renderOnboarding(container, { onDone } = {}) {
         payType: pay.value,
         workplaces: places.value.split('\n').map(x => x.trim()).filter(Boolean),
         onboardedAt: new Date().toISOString(),
+        disclaimerAckAt: new Date().toISOString(),
+        disclaimerAckText: ONBOARD_ACK,
       });
       toast('Saved on this phone ✓');
       onDone?.();
@@ -71,7 +91,17 @@ export async function renderOnboarding(container, { onDone } = {}) {
       field('Pay type', pay, 'Hourly workers get the strongest break protections.'), payWarn,
       field('Where you work', places, 'These fill in the place box when you log.'),
     ]),
+    el('section', { class: 'card onboard-legal' }, [
+      el('p', { class: 'legal-lead', text: NOT_A_VERDICT }),
+      ack, ackHint,
+      el('p', { class: 'hint' }, [
+        document.createTextNode('Read the full '),
+        el('a', { class: 'rights-link', href: './privacy.html', target: '_blank', rel: 'noopener noreferrer', text: 'Privacy Policy' }),
+        document.createTextNode(' and '),
+        el('a', { class: 'rights-link', href: './terms.html', target: '_blank', rel: 'noopener noreferrer', text: 'Terms of Service' }),
+        document.createTextNode('. Your records stay on this phone.'),
+      ]),
+    ]),
     el('div', { class: 'savewrap' }, [start]),
-    el('p', { class: 'onboard-foot', text: 'This keeps your own account of what happened, in your own words. It is general information, not legal advice, and it cannot tell you whether you have a claim. Your records stay on this phone.' }),
   ]));
 }

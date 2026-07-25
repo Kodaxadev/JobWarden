@@ -58,6 +58,33 @@ test('every stylesheet the pages link is cached', () => {
   assert.deepEqual(missing, [], `add these stylesheets to ASSETS: ${missing.join(', ')}`);
 });
 
+// A UI module that imports a symbol nobody exports is a blank screen at runtime and a
+// perfectly green test suite — no test imports the view layer, so nothing catches it. This
+// checks every named import across the app resolves to a real export in the target module.
+// (Found the real thing: onboarding.js imported ONBOARD_ACK before disclaimers.js had it.)
+test('every named import resolves to something the target module actually exports', () => {
+  const broken = [];
+  for (const file of reachableModules(ENTRIES)) {
+    const src = readFileSync(file, 'utf8');
+    const dir = dirname(file).split(/[\\/]/).join('/');
+    for (const m of src.matchAll(/import\s*\{([^}]+)\}\s*from\s*'(\.[^']+)'/g)) {
+      const target = posix.normalize(posix.join(dir, m[2]));
+      if (!existsSync(target)) { broken.push(`${file} -> missing module ${target}`); continue; }
+      const targetSrc = readFileSync(target, 'utf8');
+      for (const raw of m[1].split(',')) {
+        const name = raw.trim().split(/\s+as\s+/)[0].trim();
+        if (!name) continue;
+        const exported = new RegExp(
+          `export\\s+(const|let|var|function|async function|class)\\s+${name}\\b`
+          + `|export\\s*\\{[^}]*\\b${name}\\b[^}]*\\}`,
+        );
+        if (!exported.test(targetSrc)) broken.push(`${file} imports { ${name} } — ${target} does not export it`);
+      }
+    }
+  }
+  assert.deepEqual(broken, [], broken.join('\n'));
+});
+
 test('the cache name is bumped whenever cached assets change (it carries a version)', () => {
   const m = /const CACHE = 'jobwarden-v(\d+)'/.exec(SW);
   assert.ok(m, 'CACHE must be a versioned jobwarden-vN name');

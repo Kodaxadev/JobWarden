@@ -15,6 +15,9 @@ const DEFAULTS = {
   lastBackupAt: '',
   backupReminderDays: 7,
   onboardedAt: '',       // ISO timestamp set once the first-run setup is completed
+  disclaimerAckAt: '',   // when the user ticked "I understand" on first run
+  disclaimerAckText: '', // the exact sentence they ticked, kept verbatim so it stays true
+                         // even after the wording changes in a later build
   theme: 'dark',         // 'dark' (brand default) | 'light' | 'system'
 };
 

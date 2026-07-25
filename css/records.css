@@ -57,10 +57,14 @@
 
 /* Legal & privacy */
 .card h3 { margin: 0 0 8px; font-size: 15px; font-weight: 600; }
-.legal-disclaim { border-color: rgba(205,171,69,.3); }
-/* The plainest sentence in the app leads the Legal screen at full weight. If the limit of
-   what this tool can tell you is set in small grey type, it reads as boilerplate to scroll. */
+.legal-disclaim, .onboard-legal { border-color: rgba(205,171,69,.3); }
+/* The plainest sentence in the app leads the Legal screen and first run at full weight. If
+   the limit of what this tool can tell you is set in small grey type, it reads as
+   boilerplate to scroll past — which is worth nothing to the user and nothing to us. */
 .legal-lead { font-size: 15.5px !important; font-weight: 500; line-height: 1.55 !important; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+/* Body size, generous tap target — this is a thing to read, not a formality to clear. */
+.onboard-ack { display: flex; gap: 10px; align-items: flex-start; margin: 14px 0 0; font-size: 14px; line-height: 1.5; cursor: pointer; }
+.onboard-ack input { flex: none; width: 20px; height: 20px; margin-top: 2px; }
 .legal-disclaim p { color: var(--text); font-size: 14px; line-height: 1.6; margin: 0 0 10px; }
 .legal-disclaim p:last-child { margin: 0; color: var(--muted); }
 .legal-p { color: var(--muted); font-size: 14px; line-height: 1.6; margin: 0 0 10px; }
@@ -77,7 +81,7 @@
 .row-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip.mini { display: inline-block; background: var(--surface-3); border: 1px solid var(--line-2); border-radius: var(--radius-pill); padding: 4px 11px; font-size: 12px; min-height: 0; color: var(--muted); }
 .row-flags { color: var(--incident); font-size: 13px; line-height: 1.45; margin-top: 9px; }
-/* This is record CONTENT (the workplace, the proof count), not chrome — it was 11.5px mono,
+/* This is record CONTENT (the workplace, the photo count), not chrome — it was 11.5px mono,
    which is legible on a good screen and hostile on a cheap one in a parking lot. */
 .row-meta { font-family: var(--mono); color: var(--faint); font-size: 12.5px; white-space: nowrap; text-align: right; }
 .row-detail { padding: 0 16px 16px; border-top: 1px solid var(--line); }
