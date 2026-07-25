@@ -26,6 +26,9 @@ body{ font:400 var(--lg-body)/1.7 var(--sans); color:var(--text);
   -webkit-font-smoothing:antialiased; }
 .wrap{ max-width:720px; margin: 0 auto; padding: 0 20px 64px; }
 a{ color:var(--gold-bright); }
+/* These pages are navigated almost entirely by link; without this a keyboard user gets no
+   indication of where they are. Same ring as the app and the landing. */
+:focus-visible{ outline:2px solid var(--gold-bright); outline-offset:2px; border-radius:4px; }
 .top{ display:flex; align-items:center; gap: 12px; padding: 20px 0 0; }
 .top .chip{ width:36px;height:36px;flex:none;border-radius:11px;display:grid;place-items:center;background:linear-gradient(160deg,var(--navy-2),var(--navy-deep));border:1px solid rgba(205,171,69,.32); }
 .top .chip svg{ width:20px;height:20px;color:var(--gold-bright); }
