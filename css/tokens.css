@@ -29,19 +29,24 @@
   --radius-xs:4px; --radius:14px; --radius-sm:11px; --radius-lg:18px; --radius-pill:999px; --tap:48px;
   --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px;
 
+  /* Type is in rem, not px, so browser text-size preferences can enlarge it. This is the web
+     counterpart to Dynamic Type: custom type must follow the user's chosen reading size.
+     Before this, changing the browser's default text size left the app's authored type scale
+     unchanged. Spacing and tap geometry remain in CSS px so text can grow independently; the
+     48px control floor is already larger than WCAG 2.2's 24px minimum target. */
   /* Type scale. There was none, so every file invented its own number and the app rendered
      fourteen sizes — eleven of them between 10 and 15px, including half-pixel steps nobody
      can perceive as hierarchy. Eight steps, each with one job. Nothing below 12; nothing
-     between 13 and 15. If a new element needs a size, it takes the nearest role, not a new
-     number. (Product register: tight ratio, fixed px — this UI is read at one DPI.) */
-  --fs-micro:12px;    /* mono small-caps categorization: group labels, month heads, counts   */
-  --fs-sm:13px;       /* secondary text: labels, hints, meta, machine data, findings         */
-  --fs-ui:15px;       /* interactive labels: buttons, chips, checkboxes, dense prose         */
-  --fs-body:16px;     /* read prose and text inputs (16 also stops iOS zoom-on-focus)        */
-  --fs-title:18px;    /* card and section titles                                             */
-  --fs-h:20px;        /* screen headings, glyph affordances (+/− and disclosure carets)      */
-  --fs-num:23px;      /* KPI numerals — the one place a number is the content                */
-  --fs-display:27px;  /* the single welcome headline                                         */
+     between 13 and 15 at the default root size. If a new element needs a size, it takes the
+     nearest role rather than inventing another step. */
+  --fs-micro:0.75rem;    /* mono small-caps categorization: group labels, month heads, counts   */
+  --fs-sm:0.8125rem;       /* secondary text: labels, hints, meta, machine data, findings         */
+  --fs-ui:0.9375rem;       /* interactive labels: buttons, chips, checkboxes, dense prose         */
+  --fs-body:1rem;     /* read prose and text inputs (16 also stops iOS zoom-on-focus)        */
+  --fs-title:1.125rem;    /* card and section titles                                             */
+  --fs-h:1.25rem;        /* screen headings, glyph affordances (+/− and disclosure carets)      */
+  --fs-num:1.4375rem;      /* KPI numerals — the one place a number is the content                */
+  --fs-display:1.6875rem;  /* the single welcome headline                                         */
 
   /* Motion. One curve — an ease-out quint, already proven on the toast — because UI feedback
      should decelerate into place, not the browser's default `ease`, which is symmetrical and
@@ -160,7 +165,7 @@ body {
      foot of the page — the canvas has air, not just a hex value. Cool only (Cool-Canvas Rule).
      Both gradients are tokens so the light theme can soften them. */
   background: var(--page-glow) no-repeat, var(--page-vignette) no-repeat, var(--bg);
-  font: 400 16px/1.55 var(--font);
+  font: 400 var(--fs-body)/var(--lh-body) var(--font); font-variant-numeric: tabular-nums;
   letter-spacing: -.005em;
   -webkit-text-size-adjust: 100%; padding-bottom: env(safe-area-inset-bottom);
   /* Installed to the home screen, this is an app, not a document. Overscroll should stop at

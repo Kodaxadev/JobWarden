@@ -17,24 +17,28 @@
   --r:16px; --r-sm:11px; --r-lg:20px; --r-btn:14px;  /* --r-btn matches the app's --radius */
   --ease-out:cubic-bezier(.22, 1, .36, 1); --dur-press:.12s; --dur-state:.16s;
 
+  /* Type is in rem, not px, so browser text-size preferences can enlarge it. This is the web
+     counterpart to Dynamic Type: custom type must follow the user's chosen reading size.
+     Before this, changing the browser's default text size left the page's authored scale
+     unchanged. The miniature phone illustrations below deliberately keep fixed geometry. */
   /* Type scale. The page rendered seventeen sizes in its own chrome — 11.5, 12.5, 13.5, 14.5,
      16.5, 17.5 — and three different H2s (23, 25, 26) doing one job. Seven steps, modular,
      with >=1.25 between heading tiers so the hierarchy is a decision rather than a drift.
      (The device mockups keep their own miniature scale; they are drawings of a phone.) */
-  --ls-micro:12px;   /* overline, badges, footer            */
-  --ls-sm:14px;      /* feature copy, ticks, status, caveat */
-  --ls-body:16px;    /* body and the plain-spoken statement */
-  --ls-lg:18px;      /* lede, wordmark                      */
-  --ls-h3:20px;      /* feature and card headings           */
-  --ls-h2:25px;      /* section headings                    */
-  --ls-h1:clamp(31px, 7vw, 40px);  /* one fluid hero, replacing the media-query override */
+  --ls-micro:0.75rem;   /* overline, badges, footer            */
+  --ls-sm:0.875rem;      /* feature copy, ticks, status, caveat */
+  --ls-body:1rem;    /* body and the plain-spoken statement */
+  --ls-lg:1.125rem;      /* lede, wordmark                      */
+  --ls-h3:1.25rem;      /* feature and card headings           */
+  --ls-h2:1.5625rem;      /* section headings                    */
+  --ls-h1:clamp(1.9375rem, 7vw, 2.5rem);  /* one fluid hero, replacing the media-query override */
   --lh-tight:1.08; --lh-snug:1.35; --lh-body:1.6;
 }
 *{box-sizing:border-box} html,body{margin: 0}
 ::selection{ background:rgba(205,171,69,.28); color:var(--text); }
 a,button{ -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
 .btn,.badges li,.top .name{ -webkit-user-select:none; user-select:none; }
-body{ font:400 16px/1.6 var(--sans); color:var(--text);
+body{ font:400 var(--ls-body)/var(--lh-body) var(--sans); color:var(--text);
   /* One light from above (navy cast) + a quiet vignette seating the page foot — the same
      lit-instrument atmosphere as the app. */
   background:

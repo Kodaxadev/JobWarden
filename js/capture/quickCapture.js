@@ -13,7 +13,7 @@ import { todayDateStr } from '../domain/timeUtils.js';
 const WHO = ['Manager', 'Supervisor', 'Coworker', 'Customer', 'Other'];
 
 // Pure: assemble the incident input. Kept DOM-free so it can be unit-tested.
-export function interruptedLunchInput({ by = '', name = '', returnedToWork = true, note = '', workplace = '', attachments = [] } = {}) {
+export function interruptedLunchInput({ by = '', name = '', returnedToWork = false, note = '', workplace = '', attachments = [] } = {}) {
   const interruptedBy = [by, name.trim()].filter(Boolean).join(' — ');
   return {
     incidentDate: todayDateStr(),
@@ -56,7 +56,7 @@ export async function openInterruptedLunch({ onSaved } = {}) {
   }));
 
   const nameInput = el('input', { type: 'text', placeholder: 'Name (optional)' });
-  const returnedCb = el('input', { type: 'checkbox', checked: true });
+  const returnedCb = el('input', { type: 'checkbox' });
   const note = el('textarea', { rows: '2', placeholder: 'What happened (optional)' });
 
   const thumbs = el('div', { class: 'thumbs' });

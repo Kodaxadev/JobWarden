@@ -24,11 +24,11 @@ export async function renderCaptureForm(container, { onSaved, existing, template
   clear(container);
   const settings = await getSettings();
 
-  // Slim "right now" bar (fresh log only): quick log + the shift tracker.
+  // Slim "right now" bar (fresh log only): interrupted-lunch capture + shift tracker.
   if (!existing && !template && !prefill) {
     const liveBar = el('div', { class: 'live-bar' });
     const quickBtn = el('button', { type: 'button', class: 'btn live-quick', onclick: () => openInterruptedLunch({ onSaved }) },
-      [iconEl('circle-alert'), document.createTextNode(' Quick log')]);
+      [iconEl('circle-alert'), document.createTextNode(' Interrupted lunch')]);
     const shiftHost = el('div', { class: 'shift-host' });
     liveBar.append(quickBtn, shiftHost);
     container.appendChild(liveBar);

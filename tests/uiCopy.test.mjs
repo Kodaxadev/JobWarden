@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { TRAIL_STEPS, ISSUE_GROUPS, BANNED_PRIMARY_WORDS } from '../js/config/uiCopy.js';
 import { TOPICS } from '../js/ui/rightsFaq.js';
 
@@ -22,6 +23,15 @@ test('trail steps use approved order', () => {
 test('primary copy avoids jargon', () => {
   const text = primaryCopy();
   for (const word of BANNED_PRIMARY_WORDS) assert.equal(text.includes(word), false, word);
+});
+
+test('the interrupted-lunch shortcut says exactly what it opens', () => {
+  const app = readFileSync('js/capture/captureForm.js', 'utf8');
+  const landing = readFileSync('install.html', 'utf8');
+  assert.doesNotMatch(app, /Quick log/);
+  assert.doesNotMatch(landing, /Quick log/);
+  assert.match(app, /Interrupted lunch/);
+  assert.match(landing, /Interrupted lunch/);
 });
 
 // The banned-word list guards vocabulary. It says nothing about sentence length, which is

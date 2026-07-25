@@ -11,14 +11,18 @@
   --gold:#cdab45; --gold-bright:#e7cd7e;
   --serif:"Cinzel",Georgia,serif; --sans:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
 
+  /* Type is in rem, not px, so browser text-size preferences can enlarge it. This is the web
+     counterpart to Dynamic Type: custom type must follow the user's chosen reading size.
+     Before this, changing the browser's default text size left these long documents unchanged,
+     exactly where a reader most needs comfortable type. */
   /* One scale for the longest reading on the site. 14.5 and 16.5 were eyeballed; a legal page
      is read top to bottom on a phone and the hierarchy has to be unambiguous. */
-  --lg-sm:13px;    /* stamps, footer, captions      */
-  --lg-note:14px;  /* the toc, notes, back link     */
-  --lg-body:17px;  /* the reading size              */
-  --lg-h3:17px;    /* sub-headings, weight does it  */
-  --lg-h2:20px;    /* numbered sections             */
-  --lg-h1:clamp(26px, 6vw, 30px);
+  --lg-sm:0.8125rem;    /* stamps, footer, captions      */
+  --lg-note:0.875rem;  /* the toc, notes, back link     */
+  --lg-body:1.0625rem;  /* the reading size              */
+  --lg-h3:1.0625rem;    /* sub-headings, weight does it  */
+  --lg-h2:1.25rem;    /* numbered sections             */
+  --lg-h1:clamp(1.625rem, 6vw, 1.875rem);
 }
 *{box-sizing:border-box} html,body{margin: 0}
 /* The contents list jumps within a long document; gliding keeps the reader's place instead of

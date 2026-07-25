@@ -21,6 +21,12 @@ test('not returning to work leaves relieved-of-duty unknown (null), not asserted
   assert.equal(i.meal.interruptedBy, 'Supervisor');
 });
 
+test('quick capture does not pre-assert that the user returned to work', () => {
+  const i = interruptedLunchInput();
+  assert.equal(i.meal.interrupted, true);
+  assert.equal(i.meal.relievedOfDuty, null);
+});
+
 test('the captured facts drive the on-duty finding (no agreement yet -> no premature verdict)', () => {
   const i = interruptedLunchInput({ by: 'Manager', returnedToWork: true });
   const fk = flagsOf({ ...i, meal: { ...i.meal }, meal2: {}, rest: {}, offClock: {}, classification: {} });
