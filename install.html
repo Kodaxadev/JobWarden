@@ -2,211 +2,95 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0c1626">
-  <meta name="description" content="JobWarden — a private California meal, rest break & unpaid-work log. Document what happens at work, sealed so it can't be quietly changed. Free, no account, works offline.">
-  <title>JobWarden — Document. Preserve. Understand.</title>
+  <meta name="theme-color" content="#0a101c">
+  <meta name="description" content="Install JobWarden on iPhone, iPad, Android, or desktop and keep your private work log within reach.">
+  <title>Install JobWarden</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="./icons/logo-mark.svg">
-  <link rel="icon" href="./icons/icon-192.png">
   <link rel="apple-touch-icon" href="./icons/icon-192.png">
   <link rel="stylesheet" href="./css/install.css">
 </head>
 <body>
-  <div class="wrap">
-    <header class="top">
-      <span class="chip"><svg viewBox="0 0 100 110" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M50 9 L84 22 V53 C84 77 68 93 50 100 C32 93 16 77 16 53 V22 Z" stroke-width="6"/><path d="M35 55 L46 66 L70 38" stroke-width="9"/></svg></span>
-      <span class="name"><span>Job</span><span class="w">Warden</span></span>
-    </header>
+  <header class="site-header">
+    <a class="brand" href="./landing.html" aria-label="JobWarden home">
+      <img src="./icons/logo-mark.svg" alt="">
+      <span><strong>JobWarden</strong><small>Field Log</small></span>
+    </a>
+    <a class="back-link" href="./landing.html"><span aria-hidden="true">←</span> Back to overview</a>
+  </header>
 
-    <main>
-      <section class="hero">
-        <div class="hero-copy">
-          <p class="overline">California meal · rest break · unpaid-work log</p>
-          <h1>Document what happens at work.<br><span class="gold">In your own words.</span></h1>
-          <p class="lede">A private log for skipped lunches, off-the-clock work, missed breaks and more, captured the moment they happen and sealed so it can't be quietly changed.</p>
-          <p class="lede plain">To be straight with you: this is <strong>your log of your side of things</strong>. It is not proof, it does not decide whether your employer did anything wrong, and it cannot tell you whether you have a case. What it does is make sure you still have the details when someone asks.</p>
-          <div class="cta">
-            <button id="install" class="btn gold" disabled>Install the app</button>
-            <a id="open" class="btn ghost" href="./index.html">Open in browser</a>
+  <main>
+    <section class="install-hero">
+      <div>
+        <p class="eyebrow">Install guide</p>
+        <h1>Put JobWarden<br>on your home screen.</h1>
+        <p class="lede">Keep the log one tap away and available when your connection is not.</p>
+        <div class="actions">
+          <button id="install" class="button button-primary" type="button" disabled>Install JobWarden</button>
+          <a id="open" class="button button-secondary" href="./index.html">Open in browser</a>
+        </div>
+        <p id="status" class="status" role="status">Checking what this device supports…</p>
+      </div>
+      <div class="install-mark" aria-hidden="true">
+        <img src="./icons/logo-mark.svg" alt="">
+        <span>Add to Home Screen</span>
+      </div>
+    </section>
+
+    <section class="instructions" aria-labelledby="instructions-title">
+      <div class="section-intro">
+        <p class="section-number">Choose your device</p>
+        <h2 id="instructions-title">A minute now.<br>Ready when you need it.</h2>
+      </div>
+
+      <div class="device-guides">
+        <article id="ios" class="device-guide">
+          <div class="guide-heading">
+            <span class="guide-number">01</span>
+            <div><p>iPhone or iPad</p><h3>Use Safari</h3></div>
           </div>
-          <p id="status" class="status">Checking your device…</p>
-          <ul class="badges"><li>Free</li><li>No account</li><li>Works offline</li><li>Stays on your phone</li></ul>
-        </div>
-        <div class="hero-art">
-          <div class="device" aria-hidden="true"><div class="screen"><div class="notch"></div><div class="sc">
-            <div class="sc-head">
-              <span class="sc-mark"><svg viewBox="0 0 100 110" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M50 9 L84 22 V53 C84 77 68 93 50 100 C32 93 16 77 16 53 V22 Z" stroke-width="7"/><path d="M35 55 L46 66 L70 38" stroke-width="10"/></svg></span>
-              <span><span class="sc-name"><span>Job</span><span class="w">Warden</span></span><span class="sc-over">FIELD LOG</span></span>
-              <span class="sc-saved">Saved on this phone</span>
-            </div>
-            <div class="sc-livebar">
-              <div class="sc-btn q"><b>⚠</b> Interrupted lunch</div>
-              <div class="sc-btn">◷ Start a shift</div>
-            </div>
-            <div class="sc-card what">
-              <div class="sc-ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> What happened?</div>
-              <div class="sc-grid2" style="margin-top:9px">
-                <div><div class="sc-lbl">Date</div><div class="sc-input">Jun 16, 2026</div></div>
-                <div><div class="sc-lbl">Place</div><div class="sc-input" style="font-family:var(--sans)">Westgate Market</div></div>
-              </div>
-              <div class="sc-why">Tap everything that applies — this decides what we ask next.</div>
-              <div class="sc-grp">Lunch problem</div>
-              <div class="sc-chip on">Lunch started late</div>
-              <div class="sc-chip">No lunch at all</div>
-              <div class="sc-chip on">Someone bothered me at lunch</div>
-            </div>
-            <div class="sc-tabs"><span class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>Log</span><span>Records</span><span>Export</span><span>Settings</span></div>
-          </div></div></div>
-        </div>
-      </section>
+          <ol>
+            <li><span>1</span><p>Open this page in <strong>Safari</strong>.</p></li>
+            <li><span>2</span><p>Tap the <strong>Share</strong> button in the browser toolbar.</p></li>
+            <li><span>3</span><p>Choose <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.</p></li>
+          </ol>
+        </article>
 
-      <section id="ios" class="card install-card hide">
-        <h2>Install on iPhone or iPad</h2>
-        <ol>
-          <li>In <strong>Safari</strong>, tap the <strong>Share</strong> button.</li>
-          <li>Choose <strong>Add to Home Screen</strong>.</li>
-          <li>Tap <strong>Add</strong>. JobWarden opens like a normal app and works offline.</li>
-        </ol>
-      </section>
+        <article id="manual" class="device-guide">
+          <div class="guide-heading">
+            <span class="guide-number">02</span>
+            <div><p>Android or desktop</p><h3>Use the browser menu</h3></div>
+          </div>
+          <ol>
+            <li><span>1</span><p>Open the browser menu, usually at the top right.</p></li>
+            <li><span>2</span><p>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</p></li>
+            <li><span>3</span><p>Confirm the install. JobWarden will appear with your other apps.</p></li>
+          </ol>
+        </article>
+      </div>
+    </section>
 
-      <section id="manual" class="card install-card hide">
-        <h2>Install from the browser menu</h2>
-        <ol>
-          <li>Open the browser menu (<strong>⋮</strong> or <strong>···</strong>, usually top-right).</li>
-          <li>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong>.</li>
-        </ol>
-      </section>
+    <section class="after-install">
+      <p class="section-number">After installation</p>
+      <h2>The same private app,<br>without the browser chrome.</h2>
+      <ul>
+        <li><strong>Works offline</strong><span>Log a workday without a connection.</span></li>
+        <li><strong>Stays on this device</strong><span>No account, analytics, or automatic upload.</span></li>
+        <li><strong>Backups are your choice</strong><span>Export regularly so a lost phone does not mean lost records.</span></li>
+      </ul>
+    </section>
 
-      <section class="band">
-        <h2>You're not imagining it.</h2>
-        <div class="pain-grid">
-          <span class="pain">“They keep making me skip lunch.”</span>
-          <span class="pain">“I end up working off the clock.”</span>
-          <span class="pain">“I'm on-call during my break.”</span>
-          <span class="pain">“My paychecks don't add up.”</span>
-          <span class="pain">“I got blamed after I spoke up.”</span>
-        </div>
-        <p class="sub sub-spaced">JobWarden turns what happened into a clear, dated record: in your words, with your photos, the moment it happens.</p>
-      </section>
-
-      <section class="showcase">
-        <div class="sc-copy">
-          <p class="step-tag">Step 1 · Log it</p>
-          <h2>Pick what happened. It asks only what matters.</h2>
-          <p>Tap the issues, and JobWarden asks only for the details those need: times fill in to now, and you can attach a photo of the clock, a pay stub, or a text.</p>
-          <ul class="ticks"><li>One screen, only the relevant questions</li><li>Plain language, no legal jargon</li><li>Saved in seconds, the moment it happens</li></ul>
-        </div>
-        <div class="shot-wrap">
-          <div class="device" aria-hidden="true"><div class="screen"><div class="notch"></div><div class="sc">
-            <div class="sc-card what">
-              <div class="sc-ttl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Your lunch</div>
-              <div class="sc-why">When it started, and whether you were really free.</div>
-              <div class="sc-grid2">
-                <div><div class="sc-lbl">Lunch started</div><div class="sc-input">14:40</div></div>
-                <div><div class="sc-lbl">Lunch ended</div><div class="sc-input">15:10</div></div>
-              </div>
-              <div class="sc-chip" style="margin-top:10px">☑ Someone bothered me during lunch</div>
-              <div class="sc-lbl">Who bothered you (name / role)</div>
-              <div class="sc-input" style="font-family:var(--sans)">Shift manager</div>
-              <div class="sc-lbl">Was there a written on-duty meal agreement?</div>
-              <div class="sc-input" style="font-family:var(--sans)">No</div>
-            </div>
-          </div></div></div>
-        </div>
-      </section>
-
-      <section class="showcase flip">
-        <div class="sc-copy">
-          <p class="step-tag">Step 2 · It builds your record</p>
-          <h2>One late lunch is a story. Twelve is a record.</h2>
-          <p>Every entry rolls up into a timeline and an at-a-glance pattern, and each record is fingerprinted with SHA-256, so it can't be quietly changed after you save it.</p>
-          <ul class="ticks"><li>Counts the pattern for you, by issue and by who caused it</li><li>Tamper-evident seal on every record</li><li>Factual flags, never a verdict</li></ul>
-        </div>
-        <div class="shot-wrap">
-          <div class="device" aria-hidden="true"><div class="screen"><div class="notch"></div><div class="sc">
-            <div class="sc-card sc-glance">
-              <div class="sc-ttl" style="font-size:13px">Your records at a glance</div>
-              <div class="gr">12 shifts logged · May 3 – Jun 14 (6 weeks)</div>
-              <div class="sc-kpis">
-                <div class="sc-kpi"><b>8</b><span>Late lunch</span></div>
-                <div class="sc-kpi"><b>3</b><span>Missed rest break</span></div>
-              </div>
-              <div class="sc-pill">Lunch interrupted 5× — Manager (4), Customer (1)</div>
-            </div>
-            <div class="sc-rec">
-              <div class="d">Tue, Jun 10, 2026</div>
-              <span class="tag">Late lunch</span>
-              <div class="sc-seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Fingerprint verified — unchanged since saved</div>
-            </div>
-          </div></div></div>
-        </div>
-      </section>
-
-      <section class="showcase">
-        <div class="sc-copy">
-          <p class="step-tag">Live · while you work</p>
-          <h2>It warns you before you skip lunch.</h2>
-          <p>Start a shift and JobWarden tracks the clock against California's meal-break deadline, so you get a heads-up before the 5th hour instead of a regret after it.</p>
-          <ul class="ticks"><li>Counts down to your meal-break deadline</li><li>One tap to log an interrupted lunch</li><li>Turns into a record when the shift ends</li></ul>
-          <p class="caveat">Straight answer: the reminder only fires while JobWarden is open, because nothing here talks to a server. Leave it running in the background during a shift, or set a phone alarm for the deadline it shows you.</p>
-        </div>
-        <div class="shot-wrap">
-          <div class="device" aria-hidden="true"><div class="screen"><div class="notch"></div><div class="sc">
-            <div class="sc-livebar"><div class="sc-btn q"><b>⚠</b> Interrupted lunch</div></div>
-            <div class="sc-card gold">
-              <div class="sc-shift-head">
-                <span class="live"><span class="dot"></span> Shift in progress</span>
-                <span class="t">8:30 AM · 4h 20m</span>
-              </div>
-              <div class="sc-deadline">Lunch must start by 1:30 PM</div>
-              <div class="sc-sactions">
-                <div class="primary">Start lunch</div>
-                <div>Rest break (0)</div>
-                <div>End shift</div>
-              </div>
-            </div>
-          </div></div></div>
-        </div>
-      </section>
-
-      <section class="band">
-        <h2>Built to be careful.</h2>
-        <div class="feat-grid">
-          <div class="feat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg></span><h3>California-specific</h3><p>Meal &amp; rest timing (§512, §226.7), off-the-clock work, on-duty meals, final pay, and adverse action after you speak up.</p></div>
-          <div class="feat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><h3>Private by design</h3><p>Everything stays on your phone. No account, no server, no tracking. Only you can see it.</p></div>
-          <div class="feat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span><h3>Tamper-evident</h3><p>Each record is fingerprinted (SHA-256), so a later change to it shows up. That is all it shows: it says nothing about whether what you wrote is accurate.</p></div>
-          <div class="feat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span><h3>Facts, not legal advice</h3><p>It records what you say happened, and points at the rules that might apply. Whether anything was actually done wrong is for you and an attorney to work out.</p></div>
-          <div class="feat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span><h3>See the pattern</h3><p>One late lunch is a story. “8 late lunches in 6 weeks” is a record, and JobWarden builds it for you.</p></div>
-          <div class="feat"><span class="fi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></span><h3>Never lose it</h3><p>Email a backup to yourself in one tap, and restore it on any phone. Your record follows you.</p></div>
-        </div>
-      </section>
-
-      <section class="band">
-        <div class="privacy">
-          <span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-          <h2>Your employer can't see it.</h2>
-          <p>There's no company account, no login, nothing your workplace controls. It is just an app on your phone, like your notes or your camera. Nothing is uploaded and nothing leaves the device unless you choose to share it. No account to make, no one watching.</p>
-        </div>
-      </section>
-
-      <section class="final">
-        <h2>Start your record today.</h2>
-        <div class="cta cta-center">
-          <a class="btn gold" href="./index.html">Open JobWarden</a>
-        </div>
-        <p class="status">Free · Private · Works offline · No sign-up. Install it from the top of this page to keep it on your home screen.</p>
-      </section>
-    </main>
-  </div>
+    <section class="closing">
+      <p>Already installed?</p>
+      <a class="button button-primary" href="./index.html">Open JobWarden <span aria-hidden="true">→</span></a>
+    </section>
+  </main>
 
   <footer>
-    <div class="wrap">
-      <div class="fmark"><span>Job</span><span class="w">Warden</span> · Document · Preserve · Understand</div>
-      <p class="foot-links"><a href="./privacy.html">Privacy Policy</a> · <a href="./terms.html">Terms of Service</a></p>
-      JobWarden keeps your own account of your own working conditions. It is not legal advice, it does not decide whether anything was done wrong, and it cannot tell you whether you have a claim. A self-kept log is one person’s contemporaneous account, not proof on its own, and no representation is made about how any employer, agency, or court will treat it. No audio recording (illegal in California without all-party consent). Confirm anything you intend to rely on with an employment attorney or the California Labor Commissioner.
-    </div>
+    <p>JobWarden records your own account. It does not decide whether anything was done wrong or tell you whether you have a claim. General information, not legal advice.</p>
+    <div><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a><a href="mailto:Justin@Kodaxa.dev">Contact</a></div>
   </footer>
 
   <script type="module" src="./js/installPage.js"></script>

@@ -29,7 +29,7 @@ network-first and bypasses the HTTP cache, so a plain reload runs whatever you j
 edited — no version bump, no fresh port. In production it stays cache-first, because
 offline is the point.
 
-**Install on a phone:** deploy the static files to any HTTPS static host (Vercel, Netlify, GitHub Pages — static only, no backend). Open the URL on the phone → browser menu → **Add to Home Screen**. It installs as an app and works fully offline; the entered data stays on the phone. `install.html` is an in-app marketing + install guide.
+**Install on a phone:** deploy the static files to any HTTPS static host (Vercel, Netlify, GitHub Pages — static only, no backend). Open the URL on the phone → browser menu → **Add to Home Screen**. It installs as an app and works fully offline; the entered data stays on the phone. `landing.html` is the focused public homepage; `install.html` is the dedicated device-aware install guide.
 
 ## Using it
 - **Log** — pick *what happened*; the form then asks **only** for the details those issues need (hours, lunch, rest, unpaid work, the shift you were scheduled for, what you paid for out of pocket, final pay, what happened after you spoke up), each with a one-line "why," and the rest tucked behind "More details." Add GPS + photos (timeclock, paystub, manager texts) and write plain facts. Also here: a live **shift tracker** (start a shift → get meal-deadline alerts, *while the app is open* — a closed PWA can't fire one without a server, and the panel says so) and an **Interrupted lunch** shortcut for capturing one in seconds.
@@ -47,7 +47,7 @@ offline is the point.
 Vanilla ES modules, no build step, no runtime dependencies. One concern per file, every source file under the 400-line cap. The evidence engine (capture, model, integrity, patterns, export) is jurisdiction-agnostic; per-state **rules** live behind a thin seam — `js/rules/index.js` (`getRules` dispatch + merged finding labels) over `js/rules/california.js` and `js/rules/newYork.js` (draft, attorney-gated), scoped by `config/jurisdictions.js`.
 
 ```
-index.html · install.html · manifest.webmanifest · service-worker.js
+landing.html · install.html · index.html · manifest.webmanifest · service-worker.js
 css/   styles · tokens · shell · forms · records
 js/
   app.js · installPage.js · version.js   bootstrap · routing · shift-alert monitor · SW version query

@@ -42,8 +42,8 @@ test('every cached path actually exists', () => {
   assert.deepEqual(gone, [], `these are cached but not in the repo: ${gone.join(', ')}`);
 });
 
-test('the entry points and both HTML shells are cached', () => {
-  for (const required of [...ENTRIES, 'index.html', 'install.html', 'manifest.webmanifest']) {
+test('the entry points and all HTML shells are cached', () => {
+  for (const required of [...ENTRIES, 'index.html', 'landing.html', 'install.html', 'manifest.webmanifest']) {
     assert.ok(ASSETS.includes(required), `${required} must be cached`);
   }
   assert.ok(ASSETS.includes(''), 'the app root "./" must be cached for offline launch');
@@ -51,7 +51,7 @@ test('the entry points and both HTML shells are cached', () => {
 
 test('every stylesheet the pages link is cached', () => {
   const linked = new Set();
-  for (const page of ['index.html', 'install.html', 'privacy.html', 'terms.html']) {
+  for (const page of ['index.html', 'landing.html', 'install.html', 'privacy.html', 'terms.html']) {
     for (const m of readFileSync(page, 'utf8').matchAll(/href="\.\/(css\/[^"]+\.css)"/g)) linked.add(m[1]);
   }
   const missing = [...linked].filter(c => !ASSETS.includes(c)).sort();

@@ -7,6 +7,18 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v80 — 2026-07-25
+
+**A real front door.** The root now opens a focused marketing page built around the actual
+JobWarden interface: one clear promise, direct access to the app, a concise product story,
+and an explicit local-only privacy model. The previous all-in-one marketing and install page
+is now a dedicated install guide with permanent Safari and browser-menu instructions,
+device-aware emphasis, and an honest reminder to export backups.
+
+The new editorial direction uses a restrained navy, gold, and warm-paper system, with a
+real app capture rather than an invented device mockup. Both pages remain static,
+offline-cached, responsive, and free of third-party requests.
+
 ## v71 — 2026-07-25
 
 **The operator is named.** JobWarden is made by **Kodaxa Innovations** ([kodaxa.dev](https://kodaxa.dev)),

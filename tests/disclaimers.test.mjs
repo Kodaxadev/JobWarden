@@ -46,7 +46,7 @@ test('the short form still names the two essentials', () => {
 // --- no over-promise reaches the user ---------------------------------------
 
 const USER_FACING_FILES = [
-  'install.html', 'index.html', 'privacy.html', 'terms.html',
+  'landing.html', 'install.html', 'index.html', 'privacy.html', 'terms.html',
   'js/config/uiCopy.js', 'js/config/infractionTypes.js',
   'js/ui/legalView.js', 'js/ui/rightsFaq.js', 'js/ui/incidentList.js',
   'js/ui/onboarding.js', 'js/ui/settingsView.js', 'js/ui/exportView.js', 'js/ui/shiftPanel.js',

@@ -1,198 +1,46 @@
-/* install.css — landing/marketing page styles (install.html). Mirrors the app's navy+gold
-   "legal authority" language; the device-framed screens are faithful HTML recreations of
-   real app screens (no binary screenshots — they stay crisp and never go stale). */
-@font-face { font-family:"Geist"; font-weight:400; font-display:swap; src:url("../fonts/geist-sans-latin-400-normal.woff2") format("woff2"); }
-@font-face { font-family:"Geist"; font-weight:500; font-display:swap; src:url("../fonts/geist-sans-latin-500-normal.woff2") format("woff2"); }
-@font-face { font-family:"Geist"; font-weight:600; font-display:swap; src:url("../fonts/geist-sans-latin-600-normal.woff2") format("woff2"); }
-@font-face { font-family:"Geist Mono"; font-weight:400; font-display:swap; src:url("../fonts/geist-mono-latin-400-normal.woff2") format("woff2"); }
-@font-face { font-family:"Geist Mono"; font-weight:500; font-display:swap; src:url("../fonts/geist-mono-latin-500-normal.woff2") format("woff2"); }
-@font-face { font-family:"Cinzel"; font-weight:600; font-display:swap; src:url("../fonts/cinzel-latin-600-normal.woff2") format("woff2"); }
-@font-face { font-family:"Cinzel"; font-weight:700; font-display:swap; src:url("../fonts/cinzel-latin-700-normal.woff2") format("woff2"); }
-:root{
-  --bg:#0a0e16; --navy:#16263f; --navy-2:#22395f; --navy-deep:#0c1626;
-  --surface:#121a2a; --surface-2:#18253b; --line:rgba(214,224,240,.12); --line-2:rgba(214,224,240,.2);
-  --text:#eef2f8; --muted:#9fb0c8; --faint:#7286a3;
-  --gold:#cdab45; --gold-1:#dcc06a; --gold-2:#b6912c; --gold-bright:#e7cd7e; --on-gold:#14233c; --ok:#7fcf92; --incident:#e6b15a; --danger:#e0594d;
-  --serif:"Cinzel",Georgia,serif; --sans:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; --mono:"Geist Mono",ui-monospace,Menlo,Consolas,monospace;
-  --r:16px; --r-sm:11px; --r-lg:20px; --r-btn:14px;  /* --r-btn matches the app's --radius */
-  --ease-out:cubic-bezier(.22, 1, .36, 1); --dur-press:.12s; --dur-state:.16s;
-
-  /* Type is in rem, not px, so browser text-size preferences can enlarge it. This is the web
-     counterpart to Dynamic Type: custom type must follow the user's chosen reading size.
-     Before this, changing the browser's default text size left the page's authored scale
-     unchanged. The miniature phone illustrations below deliberately keep fixed geometry. */
-  /* Type scale. The page rendered seventeen sizes in its own chrome — 11.5, 12.5, 13.5, 14.5,
-     16.5, 17.5 — and three different H2s (23, 25, 26) doing one job. Seven steps, modular,
-     with >=1.25 between heading tiers so the hierarchy is a decision rather than a drift.
-     (The device mockups keep their own miniature scale; they are drawings of a phone.) */
-  --ls-micro:0.75rem;   /* overline, badges, footer            */
-  --ls-sm:0.875rem;      /* feature copy, ticks, status, caveat */
-  --ls-body:1rem;    /* body and the plain-spoken statement */
-  --ls-lg:1.125rem;      /* lede, wordmark                      */
-  --ls-h3:1.25rem;      /* feature and card headings           */
-  --ls-h2:1.5625rem;      /* section headings                    */
-  --ls-h1:clamp(1.9375rem, 7vw, 2.5rem);  /* one fluid hero, replacing the media-query override */
-  --lh-tight:1.08; --lh-snug:1.35; --lh-body:1.6;
-}
-*{box-sizing:border-box} html,body{margin: 0}
-::selection{ background:rgba(205,171,69,.28); color:var(--text); }
-a,button{ -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
-.btn,.badges li,.top .name{ -webkit-user-select:none; user-select:none; }
-body{ font:400 var(--ls-body)/var(--lh-body) var(--sans); color:var(--text);
-  /* One light from above (navy cast) + a quiet vignette seating the page foot — the same
-     lit-instrument atmosphere as the app. */
-  background:
-    radial-gradient(120% 70% at 50% -10%, #1b2c4a 0%, rgba(27,44,74,0) 52%) no-repeat,
-    radial-gradient(140% 30% at 50% 108%, rgba(0,0,0,.45), rgba(0,0,0,0) 62%) no-repeat,
-    var(--bg);
-  -webkit-font-smoothing:antialiased; }
-.wrap{ max-width:980px; margin: 0 auto; padding: 0 20px; }
-a{ color:var(--gold-bright); }
-h1,h2,h3{ letter-spacing:-.01em; }
-.gold{ color:var(--gold); }
-.hide{ display:none !important; }
-:focus-visible{ outline:2px solid var(--gold-bright); outline-offset:2px; border-radius:4px; }
-@media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{ transition-duration:.001ms !important; animation-duration:.001ms !important; }
-}
-
-.top{ display:flex; align-items:center; gap: 12px; padding: 24px 0 8px; }
-.top .chip{ width:38px;height:38px;flex:none;border-radius:11px;display:grid;place-items:center;background:linear-gradient(160deg,var(--navy-2),var(--navy-deep));border:1px solid rgba(205,171,69,.32); }
-.top .chip svg{ width:21px;height:21px;color:var(--gold-bright); }
-.top .name{ font-family:var(--serif); font-weight:600; font-size:var(--ls-lg); letter-spacing:.05em; }
-.top .name .w{ color:var(--gold); }
-
-.hero{ display:grid; grid-template-columns:1fr; gap: 32px; align-items:center; padding: 32px 0 24px; }
-.hero-copy{ text-align:left; }
-.overline{ font-size:var(--ls-micro); letter-spacing:.22em; text-transform:uppercase; color:var(--gold); margin: 0 0 16px; }
-.hero h1{ font-size:var(--ls-h1); line-height:var(--lh-tight); text-wrap:balance; font-weight:600; margin: 0 0 16px; }
-.lede{ font-size:var(--ls-lg); color:var(--muted); max-width:44ch; margin: 0 0 24px; }
-/* The straight answer about what this is and isn't. Sits in the hero, at readable size, in
-   the same voice as the pitch above it — a claim and its limit should not be different
-   typographic classes, or the limit reads as something to skip. */
-.lede.plain{ font-size:var(--ls-body); line-height:var(--lh-body); max-width:46ch; padding: 12px 16px; border:1px solid var(--line); border-radius:var(--r); background:rgba(255,255,255,.022); }
-.lede.plain strong{ color:var(--text); font-weight:600; }
-.cta{ display:flex; flex-wrap:wrap; gap: 12px; }
-.cta-center{ justify-content:center; }
-.btn{ display:inline-flex; align-items:center; justify-content:center; gap: 8px; min-height:54px; padding: 16px 24px; border-radius:var(--r-btn); font:600 var(--ls-body)/var(--lh-snug) var(--sans); cursor:pointer; text-decoration:none; border:1px solid transparent; transition:transform var(--dur-press) var(--ease-out), border-color var(--dur-state) var(--ease-out), background var(--dur-state) var(--ease-out), box-shadow var(--dur-state) var(--ease-out); }
-/* Machined gold, same material as the app: bright catch, body, deep base, seated bevel. */
-.btn.gold{ background:linear-gradient(180deg,#e3c464,#d2af49 45%,#b28b29); color:var(--on-gold); border-color:var(--gold-bright); box-shadow: inset 0 1px 0 rgba(255,255,255,.42), inset 0 -1px 0 rgba(74,52,9,.45), 0 0 44px -12px rgba(205,171,69,.5), 0 8px 18px -8px rgba(0,0,0,.5); }
-.btn.gold:hover{ background:linear-gradient(180deg,#eccf74,#d9b752 45%,#b9922e); }
-.btn.gold:active{ transform:translateY(1px); background:linear-gradient(180deg,#c4a13c,#a9832a); box-shadow:inset 0 2px 4px rgba(66,46,8,.5); }
-.btn.ghost{ background:var(--surface-2); color:var(--text); border-color:var(--line-2); font-weight:500; box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 2px 6px -3px rgba(0,0,0,.4); }
-.btn.ghost:hover{ border-color:rgba(214,224,240,.34); background:#1d2c45; }
-.btn.ghost:active{ transform:translateY(1px); box-shadow:inset 0 2px 3px rgba(0,0,0,.35); }
-.btn:disabled{ opacity:.5; cursor:default; transform:none; }
-.status{ font-size:var(--ls-sm); color:var(--muted); margin: 16px 0 0; min-height:20px; }
-/* Legal links are the ones people reach for on a phone with one thumb; inline text at
-   14px tall is not a target. 20px line + 12px padding lands exactly on the 44px floor. */
-.foot-links{ margin:0 0 12px; }
-.foot-links a{ display:inline-block; line-height:20px; padding:12px 8px; }
-.status.ok{ color:var(--ok); }
-.badges{ list-style:none; display:flex; flex-wrap:wrap; gap: 8px; padding: 0; margin: 24px 0 0; }
-.badges li{ font-size:var(--ls-micro); color:var(--muted); border:1px solid var(--line); border-radius:999px; padding: 8px 12px; }
-.hero-art{ display:flex; justify-content:center; }
-
-/* device frame + faithful app-screen recreations */
-.device{ position:relative; width:288px; max-width:82vw; border-radius:42px; padding:9px;
-  background:linear-gradient(165deg,#243857,#0a121f); border:1px solid rgba(205,171,69,.22);
-  box-shadow:0 46px 90px -34px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.07); }
-.device::after{ content:""; position:absolute; inset:-32px -22px; z-index:-1; border-radius:60px;
-  background:radial-gradient(60% 50% at 50% 22%, rgba(205,171,69,.16), rgba(205,171,69,0) 70%); }
-.screen{ border-radius:34px; overflow:hidden; background:#0a0b0e; }
-.screen .notch{ height:24px; display:flex; align-items:center; justify-content:center; }
-.screen .notch::before{ content:""; width:78px; height:5px; border-radius:99px; background:rgba(255,255,255,.16); }
-.sc{ padding:0 12px 14px; font-size:13px; }
-.sc-head{ display:flex; align-items:center; gap:7px; padding:4px 2px 12px; }
-.sc-mark{ width:25px;height:25px;flex:none;border-radius:7px;display:grid;place-items:center;background:linear-gradient(160deg,#22395f,#0c1626);border:1px solid rgba(205,171,69,.32); }
-.sc-mark svg{ width:14px;height:14px;color:var(--gold-bright); }
-.sc-name{ font-family:var(--serif); font-size:11.5px; letter-spacing:.04em; line-height:1; }
-.sc-name .w{ color:var(--gold); }
-.sc-over{ display:block; font-family:var(--mono); font-size:7px; letter-spacing:.18em; color:var(--gold); margin-top:2px; }
-.sc-saved{ margin-left:auto; font-size:8.5px; color:var(--ok); border:1px solid rgba(127,207,146,.3); background:rgba(127,207,146,.07); border-radius:99px; padding:3px 8px; white-space:nowrap; }
-.sc-saved::before{ content:"● "; }
-.sc-livebar{ display:flex; gap:7px; margin-bottom:11px; }
-.sc-btn{ flex:1; border-radius:11px; border:1px solid var(--line-2); background:#1c1f27; padding:9px; text-align:center; font-size:11px; font-weight:500; }
-.sc-btn.q{ border-color:rgba(224,89,77,.34); } .sc-btn.q b{ color:var(--danger); font-weight:700; }
-.sc-card{ border-radius:15px; border:1px solid var(--line); background:#14161c; padding:12px; box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 8px 18px -10px rgba(0,0,0,.6); }
-.sc-card.what{ border-color:rgba(205,171,69,.32); box-shadow:0 0 30px -12px rgba(205,171,69,.4), inset 0 1px 0 rgba(255,255,255,.06); }
-.sc-card.gold{ background:linear-gradient(180deg,#1b2a44,#121a2c); border-color:rgba(205,171,69,.32); box-shadow:0 0 30px -12px rgba(205,171,69,.4); }
-.sc-ttl{ display:flex; align-items:center; gap:7px; font-size:13.5px; font-weight:600; }
-.sc-ttl svg{ width:15px;height:15px; color:var(--gold); flex:none; }
-.sc-lbl{ font-size:10px; color:var(--muted); margin:9px 0 4px; }
-.sc-input{ border-radius:10px; border:1px solid var(--line-2); background:#0d0e13; padding:8px 10px; font-family:var(--mono); font-size:11px; color:var(--text); }
-.sc-why{ font-size:10.5px; color:var(--muted); margin:9px 0; line-height:1.4; }
-.sc-grp{ font-family:var(--mono); font-size:8.5px; letter-spacing:.1em; color:var(--faint); text-transform:uppercase; margin:9px 0 6px; }
-.sc-chip{ border-radius:10px; border:1px solid var(--line-2); background:#262a33; padding:9px 11px; font-size:11.5px; margin-bottom:6px; }
-.sc-chip.on{ background:linear-gradient(180deg,#22395f,#16263f); border-color:var(--gold); color:#fff; font-weight:500; }
-.sc-grid2{ display:flex; gap:8px; } .sc-grid2 > *{ flex:1; }
-.sc-glance .gr{ font-family:var(--mono); font-size:10px; color:var(--muted); margin:4px 0 11px; line-height:1.4; }
-.sc-kpis{ display:flex; gap:7px; }
-.sc-kpi{ flex:1; border-radius:11px; border:1px solid var(--line); background:#1c1f27; padding:9px 10px; }
-.sc-kpi b{ display:block; font-family:var(--mono); font-size:19px; color:var(--incident); font-weight:500; line-height:1; }
-.sc-kpi span{ font-size:10px; color:var(--muted); }
-.sc-pill{ margin-top:9px; border-radius:9px; border:1px solid rgba(230,177,90,.28); background:rgba(230,177,90,.08); color:var(--incident); font-size:10.5px; padding:7px 9px; }
-.sc-rec{ border-radius:13px; border:1px solid var(--line); background:#14161c; padding:11px 12px; margin-top:10px; box-shadow:0 6px 14px -8px rgba(0,0,0,.5); }
-.sc-rec .d{ font-family:var(--mono); font-size:12px; font-weight:500; }
-.sc-rec .tag{ display:inline-block; font-size:9.5px; color:var(--muted); border:1px solid var(--line-2); border-radius:99px; padding:2px 8px; margin:6px 0; }
-.sc-seal{ display:flex; align-items:center; gap:6px; font-size:10px; color:var(--ok); background:rgba(127,207,146,.07); border:1px solid rgba(127,207,146,.28); border-radius:8px; padding:7px 9px; margin-top:4px; }
-.sc-seal svg{ width:12px;height:12px;flex:none; }
-.sc-shift-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-.sc-shift-head .live{ display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; }
-.sc-shift-head .live .dot{ width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 7px var(--ok); }
-.sc-shift-head .t{ font-family:var(--mono); font-size:10.5px; color:var(--muted); }
-.sc-deadline{ font-size:11.5px; color:var(--incident); border:1px solid rgba(230,177,90,.42); background:rgba(230,177,90,.08); border-radius:10px; padding:9px 11px; margin-bottom:10px; }
-.sc-sactions{ display:flex; gap:7px; flex-wrap:wrap; }
-.sc-sactions > *{ flex:1 1 44%; border-radius:10px; padding:9px; text-align:center; font-size:11px; font-weight:500; border:1px solid var(--line-2); background:#1c1f27; }
-.sc-sactions .primary{ background:linear-gradient(180deg,var(--gold-1),var(--gold-2)); color:var(--on-gold); border-color:var(--gold-bright); font-weight:700; flex-basis:100%; }
-.sc-tabs{ display:flex; justify-content:space-around; border-top:1px solid var(--line); margin:13px -12px 0; padding:10px 0 4px; font-size:8.5px; color:var(--faint); }
-.sc-tabs .on{ color:var(--gold); }
-.sc-tabs span{ display:flex; flex-direction:column; align-items:center; gap:3px; }
-
-.install-card{ max-width:480px; margin: 0 auto 16px; }
-.card{ background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,0) 46%),var(--surface); border:1px solid var(--line); border-radius:var(--r); padding: 20px; box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 14px 34px -16px rgba(0,0,0,.5); }
-.card h2{ font-size:var(--ls-h3); margin: 0 0 12px; }
-ol{ margin: 8px 0 0; padding-left: 20px; } ol li{ margin: 8px 0; color:var(--muted); }
-
-section.band{ padding: 40px 0; }
-.band h2{ font-size:var(--ls-h2); text-wrap:balance; font-weight:600; margin: 0 0 8px; text-align:center; }
-.band .sub{ color:var(--muted); text-align:center; max-width:46ch; margin: 0 auto 24px; }
-.sub-spaced{ margin-top:24px; }
-.pain-grid{ display:flex; flex-wrap:wrap; gap: 12px; justify-content:center; }
-/* Worker quotes: a faint gold wash on a lit card — never a side-stripe. */
-.pain{ background:linear-gradient(180deg,rgba(205,171,69,.06),rgba(205,171,69,.015) 60%),var(--surface); border:1px solid rgba(205,171,69,.22); border-radius:var(--r-sm); padding: 12px 16px; font-size:var(--ls-body); color:var(--text); font-style:italic; box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 4px 12px -6px rgba(0,0,0,.4); }
-
-.showcase{ display:grid; grid-template-columns:1fr; gap: 24px; align-items:center; padding: 32px 0; }
-.showcase .sc-copy h2{ text-align:left; font-size:var(--ls-h2); text-wrap:balance; margin:0 0 12px; }
-.showcase .sc-copy p{ color:var(--muted); margin:0 0 16px; max-width:42ch; text-wrap:pretty; }
-.showcase .sc-copy .step-tag{ font-family:var(--mono); font-size:var(--ls-micro); letter-spacing:.16em; text-transform:uppercase; color:var(--gold); margin:0 0 12px; }
-.showcase ul.ticks{ list-style:none; padding: 0; margin: 0; }
-.showcase ul.ticks li{ position:relative; padding-left: 24px; margin: 8px 0; color:var(--muted); font-size:var(--ls-sm); }
-.showcase ul.ticks li::before{ content:"✓"; position:absolute; left:0; color:var(--ok); font-weight:700; }
-/* Honest limits, set off from the claims above so they read as disclosure, not fine print. */
-.showcase .sc-copy .caveat{ margin:16px 0 0; padding-top:12px; border-top:1px solid var(--line); font-size:var(--ls-sm); line-height:1.55; }
-.shot-wrap{ display:flex; justify-content:center; }
-
-.feat-grid{ display:grid; gap: 12px; grid-template-columns:repeat(3,1fr); }
-.feat{ background:linear-gradient(180deg,rgba(255,255,255,.022),rgba(255,255,255,0) 46%),var(--surface); border:1px solid var(--line); border-radius:var(--r); padding: 16px; box-shadow:inset 0 1px 0 rgba(255,255,255,.05), inset 0 -1px 0 rgba(0,0,0,.22), 0 6px 16px -10px rgba(0,0,0,.45); }
-.feat .fi{ color:var(--gold-bright); margin-bottom: 12px; display:block; } .feat .fi svg{ width:24px;height:24px; }
-.feat h3{ font-size:var(--ls-h3); margin: 0 0 8px; } .feat p{ margin: 0; color:var(--muted); font-size:var(--ls-sm); line-height:1.5; }
-
-.privacy{ text-align:center; background:linear-gradient(180deg,#101b30,#0c1626); border:1px solid var(--line); border-radius:20px; padding: 32px 24px; margin: 8px 0; box-shadow:inset 0 1px 0 rgba(255,255,255,.06), inset 0 -1px 0 rgba(0,0,0,.28), 0 18px 40px -18px rgba(0,0,0,.55); }
-.privacy .lock{ color:var(--ok); } .privacy .lock svg{ width:30px;height:30px; }
-.privacy h2{ margin: 12px 0 8px; } .privacy p{ color:var(--muted); max-width:48ch; margin: 0 auto; }
-.final{ text-align:center; padding: 48px 0 24px; } .final h2{ font-size:var(--ls-h2); text-wrap:balance; margin: 0 0 16px; }
-
-footer{ border-top:1px solid var(--line); padding: 24px 0 40px; text-align:center; color:var(--faint); font-size:var(--ls-micro); line-height:1.6; }
-footer .fmark{ font-family:var(--serif); font-weight:600; letter-spacing:.05em; color:var(--muted); font-size:var(--ls-sm); margin-bottom: 8px; }
-footer .fmark .w{ color:var(--gold); }
-
-@media (min-width:760px){
-  .hero{ grid-template-columns:1.05fr .95fr; gap: 40px; }
-  .showcase{ grid-template-columns:1fr 1fr; gap: 40px; }
-  .showcase.flip .sc-copy{ order:2; }
-}
-@media (max-width:680px){
-  .feat-grid{ grid-template-columns:1fr; }
-  .hero-copy{ text-align:center; } .hero .cta{ justify-content:center; } .hero .badges{ justify-content:center; } .hero .lede{ margin-left: auto;margin-right: auto; }
-}
+@font-face{font-family:Geist;src:url("../fonts/geist-sans-latin-400-normal.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:Geist;src:url("../fonts/geist-sans-latin-500-normal.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:Geist;src:url("../fonts/geist-sans-latin-600-normal.woff2") format("woff2");font-weight:600;font-display:swap}
+@font-face{font-family:"Geist Mono";src:url("../fonts/geist-mono-latin-400-normal.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:Cinzel;src:url("../fonts/cinzel-latin-600-normal.woff2") format("woff2");font-weight:600;font-display:swap}
+:root{--navy:#0a101c;--ivory:#f2ecdf;--ink:#171b24;--white:#f8f5ec;--gold:#d4ad4b;--line:rgba(248,245,236,.18);--serif:Cinzel,Georgia,serif;--sans:Geist,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--mono:"Geist Mono",ui-monospace,monospace;--ls-micro:.7rem;--ls-sm:.8rem;--ls-body:1rem;--ls-lg:1.15rem;--ls-h3:1.55rem;--ls-h2:2.6rem;--lh-body:1.55}
+*{box-sizing:border-box}body{margin:0;background:var(--navy);color:var(--white);font:400 var(--ls-body)/var(--lh-body) var(--sans)}
+a{color:inherit}img{display:block;max-width:100%}
+a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:5px}
+.site-header,.install-hero,.instructions,.after-install,.closing,footer{padding-left:max(5vw,24px);padding-right:max(5vw,24px)}
+.site-header{height:92px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+.brand{display:inline-flex;align-items:center;gap:12px;text-decoration:none}.brand img{width:42px;height:46px}.brand span{display:grid}
+.brand strong{font-family:var(--serif);font-size:1.03rem;letter-spacing:.035em}.brand small{color:var(--gold);font-family:var(--mono);font-size:.63rem;letter-spacing:.26em;text-transform:uppercase}
+.back-link{font-size:.84rem;text-underline-offset:5px}
+.install-hero{min-height:590px;display:grid;grid-template-columns:1.1fr .7fr;align-items:center;gap:10vw;padding-top:70px;padding-bottom:70px}
+.eyebrow,.section-number{margin:0 0 22px;color:var(--gold);font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase}
+h1,h2{font-family:var(--sans);font-weight:600;letter-spacing:-.045em;line-height:1.06}
+h1{margin:0 0 25px;font-size:clamp(3.2rem,6.4vw,6.1rem)}.lede{max-width:620px;margin:0 0 32px;color:#bbc4d3;font-size:1.15rem}
+.actions{display:flex;flex-wrap:wrap;gap:12px}
+.button{min-height:52px;display:inline-flex;align-items:center;justify-content:center;gap:18px;border:1px solid transparent;border-radius:3px;padding:13px 22px;font:600 .9rem/1 var(--sans);text-decoration:none;transition:transform .16s ease,background .16s ease,color .16s ease}
+.button:hover{transform:translateY(-2px)}.button-primary{background:var(--gold);color:#111827}.button-primary:hover{background:#e2be61}
+.button-primary:disabled{background:#5f543b;color:#a6a08e;cursor:not-allowed;transform:none}.button-secondary{border-color:rgba(248,245,236,.35)}
+.button-secondary:hover{border-color:var(--gold);color:var(--gold)}.status{min-height:24px;margin:20px 0 0;color:#7f8da2;font-size:.79rem}.status.ok{color:#8bd09b}
+.install-mark{justify-self:center;width:min(100%,340px);aspect-ratio:1;display:grid;place-content:center;justify-items:center;gap:20px;border:1px solid rgba(212,173,75,.36);background:#0e1727;box-shadow:0 30px 70px rgba(0,0,0,.32)}
+.install-mark img{width:112px;height:122px}.install-mark span{color:var(--gold);font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase}
+.instructions{padding-top:110px;padding-bottom:110px;background:var(--ivory);color:var(--ink)}
+.section-intro{display:grid;grid-template-columns:.7fr 1.3fr;align-items:end;gap:8vw;margin-bottom:64px}
+.section-intro h2,.after-install h2{margin:0;font-size:clamp(2.6rem,4.6vw,4.7rem)}
+.device-guides{display:grid;grid-template-columns:1fr 1fr;gap:24px}.device-guide{padding:34px;border:1px solid #cfc4b1;background:#ede5d7}
+.device-guide.recommended{border-color:#8b6e2d;box-shadow:inset 0 4px 0 var(--gold)}.guide-heading{display:flex;align-items:flex-start;gap:22px;padding-bottom:28px;border-bottom:1px solid #c7bcaa}
+.guide-number{color:#8b6e2d;font:400 .72rem/1 var(--mono)}.guide-heading p{margin:0 0 3px;color:#6c665d;font-size:.77rem}.guide-heading h3{margin:0;font:600 1.55rem/1.2 var(--sans)}
+.device-guide ol{margin:0;padding:0;list-style:none}.device-guide li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:22px 0;border-bottom:1px solid #d2c8b7}
+.device-guide li:last-child{border:0;padding-bottom:0}.device-guide li>span{width:28px;height:28px;display:grid;place-items:center;border:1px solid #8b6e2d;color:#7b6127;font:.72rem/1 var(--mono)}
+.device-guide li p{margin:2px 0 0}.after-install{padding-top:110px;padding-bottom:110px;background:#101827}.after-install h2{max-width:900px;margin-bottom:60px}
+.after-install ul{margin:0;padding:0;border-top:1px solid var(--line);list-style:none}.after-install li{display:grid;grid-template-columns:.8fr 1.2fr;gap:60px;padding:24px 0;border-bottom:1px solid var(--line)}
+.after-install strong{font-family:var(--sans);font-size:1.15rem}.after-install span{color:#9daabd}
+.closing{display:flex;align-items:center;justify-content:space-between;gap:40px;padding-top:58px;padding-bottom:58px;background:var(--gold);color:#101622}
+.closing p{margin:0;font:600 clamp(1.7rem,3vw,2.8rem)/1.1 var(--sans)}.closing .button-primary{background:#101622;color:var(--white)}
+.closing a:focus-visible{outline-color:#101622}
+footer{display:flex;justify-content:space-between;gap:50px;padding-top:48px;padding-bottom:50px;background:#070b13;color:#778398;font-size:.72rem}
+footer p{max-width:780px;margin:0}footer div{display:flex;gap:18px;white-space:nowrap}footer a:hover{color:var(--gold)}
+@media (max-width:820px){.install-hero{grid-template-columns:1fr;min-height:0}.install-mark{width:260px}.section-intro{grid-template-columns:1fr;gap:8px}.device-guides{grid-template-columns:1fr}footer{flex-direction:column}}
+@media (max-width:600px){.site-header{height:76px}.brand img{width:35px;height:39px}.back-link{font-size:.76rem}.install-hero{padding-top:62px;padding-bottom:70px}h1{font-size:clamp(2.8rem,13.5vw,4rem)}
+  .actions{display:grid}.button{width:100%}.install-mark{display:none}.instructions,.after-install{padding-top:76px;padding-bottom:76px}.section-intro h2,.after-install h2{font-size:2.55rem}
+  .device-guide{padding:26px 22px}.after-install li{grid-template-columns:1fr;gap:6px}.closing{align-items:flex-start;flex-direction:column}footer div{flex-wrap:wrap}}
+@media (prefers-reduced-motion:reduce){.button{transition:none}}

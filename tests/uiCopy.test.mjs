@@ -27,7 +27,7 @@ test('primary copy avoids jargon', () => {
 
 test('the interrupted-lunch shortcut says exactly what it opens', () => {
   const app = readFileSync('js/capture/captureForm.js', 'utf8');
-  const landing = readFileSync('install.html', 'utf8');
+  const landing = readFileSync('landing.html', 'utf8');
   assert.doesNotMatch(app, /Quick log/);
   assert.doesNotMatch(landing, /Quick log/);
   assert.match(app, /Interrupted lunch/);

@@ -1,12 +1,14 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v79';
+const CACHE = 'jobwarden-v80';
 const ASSETS = [
-  './', './index.html', './install.html', './privacy.html', './terms.html', './manifest.webmanifest',
-  './css/styles.css', './css/tokens.css', './css/shell.css', './css/forms.css', './css/records.css', './css/install.css', './css/legal.css',
+  './', './index.html', './landing.html', './install.html', './privacy.html', './terms.html', './manifest.webmanifest',
+  './css/styles.css', './css/tokens.css', './css/shell.css', './css/forms.css', './css/records.css', './css/marketing.css', './css/install.css', './css/legal.css',
   './fonts/geist-sans-latin-400-normal.woff2', './fonts/geist-sans-latin-500-normal.woff2', './fonts/geist-sans-latin-600-normal.woff2',
   './fonts/geist-mono-latin-400-normal.woff2', './fonts/geist-mono-latin-500-normal.woff2',
   './fonts/cinzel-latin-600-normal.woff2', './fonts/cinzel-latin-700-normal.woff2',
   './icons/logo-mark.svg', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png',
+  './icons/marketing-lock.svg', './icons/marketing-shield.svg', './icons/marketing-wifi-off.svg',
+  './assets/marketing-app-preview.png', './assets/marketing-paper-texture.png',
   './js/app.js', './js/installPage.js', './js/version.js',
   './js/config/infractionTypes.js', './js/config/uiCopy.js', './js/config/jurisdictions.js', './js/config/disclaimers.js',
   './js/domain/timeUtils.js', './js/domain/breakRules.js', './js/domain/incidentModel.js', './js/domain/integrity.js', './js/domain/patterns.js', './js/domain/shiftClock.js',
@@ -69,6 +71,12 @@ self.addEventListener('fetch', e => {
         caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
       }
       return res;
-    }).catch(() => (req.mode === 'navigate' ? caches.match('./index.html') : Response.error())))
+    }).catch(() => {
+      if (req.mode !== 'navigate') return Response.error();
+      const path = new URL(req.url).pathname;
+      if (path.endsWith('/install.html')) return caches.match('./install.html');
+      if (path.endsWith('/') || path.endsWith('/landing.html')) return caches.match('./landing.html');
+      return caches.match('./index.html');
+    }))
   );
 });
