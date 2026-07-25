@@ -6,7 +6,7 @@ const DEFAULTS = {
   key: KEY,
   employeeName: '',
   role: '',
-  payType: 'hourly',     // sensible default for this audience; 'commission' | 'salary_exempt' | ''
+  payType: '',           // never infer coverage; see config/payStatus.js for supported values
   employer: '',
   jurisdiction: 'CA',    // which state's rule set applies (California-only today)
   awsElection: '',       // alternative workweek schedule (e.g. 4/10): '' unknown | 'yes' | 'no'

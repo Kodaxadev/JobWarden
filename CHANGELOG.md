@@ -7,6 +7,24 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v83 — 2026-07-25
+
+**Safer defaults and sharper California wording.** First-run setup now leaves pay and
+exemption status unknown until the worker chooses it; salary no longer silently means
+exempt. The optional profile is collapsed so the required disclosure and start action fit
+the mobile first screen. Settings and reports use the same explicit hourly, commission,
+salary-unknown, salary-nonexempt, and confirmed-exempt choices.
+
+Meal logging now records mutual first- and second-meal waivers, explains their 6- and
+12-hour limits, and states both conditions for an on-duty-meal exception. Final-pay capture
+uses the exact 72-hour distinction and keeps a quit-without-notice entry pending while that
+window is still open. Recording-consent language is limited to confidential conversations,
+and unencrypted backups now say what they contain, who can read them, and ask for
+confirmation before leaving the app.
+
+The California rule review date is July 2026. The formal policy and findings language still
+require review by a licensed California employment attorney before public launch.
+
 ## v82 — 2026-07-25
 
 **Light without the glare.** Light mode is now the paper-and-ink counterpart to the dark

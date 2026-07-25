@@ -49,7 +49,7 @@ const checkbox = (label, checked, onchange) => el('label', { class: 'check' }, [
 ]);
 function triSelect(value, onchange) {
   const sel = el('select', { onchange: e => { const v = e.target.value; onchange(v === '' ? null : v === 'yes'); } });
-  [['', '—'], ['yes', 'Yes'], ['no', 'No']].forEach(([v, t]) =>
+  [['', 'Not sure / not entered'], ['yes', 'Yes'], ['no', 'No']].forEach(([v, t]) =>
     sel.appendChild(el('option', { value: v, text: t, selected: (value === true && v === 'yes') || (value === false && v === 'no') })));
   return sel;
 }
@@ -129,7 +129,11 @@ function lunchSection(state) {
   const agreeSel = el('select', { onchange: e => m.writtenAgreement = e.target.value });
   [['', 'Not sure'], ['yes', 'Yes'], ['no', 'No']].forEach(([v, t]) =>
     agreeSel.appendChild(el('option', { value: v, text: t, selected: (m.writtenAgreement || '') === v })));
-  const agreeField = field('Was there a written, revocable on-duty meal agreement?', agreeSel, 'California allows working through a meal only with a signed, revocable agreement.');
+  const agreeField = field(
+    'Was there a written, revocable on-duty meal agreement?',
+    agreeSel,
+    'An on-duty meal may be allowed only when the work objectively prevents relief and a written agreement can be revoked in writing.',
+  );
   const sync = () => { agreeField.hidden = !onDuty(); };
   sync();
 
@@ -146,12 +150,15 @@ function lunchSection(state) {
     checkbox('I had to stay reachable (radio / phone / on-call) during lunch', m.onCall, c => { m.onCall = c; sync(); }),
     field('Were you free to leave?', triSelect(m.relievedOfDuty, v => { m.relievedOfDuty = v; sync(); })),
     agreeField,
-    checkbox('I skipped lunch by choice', m.waived, c => m.waived = c),
+    checkbox('My employer and I mutually agreed to waive this lunch', m.waived, c => m.waived = c),
+    el('p', { class: 'hint', text: 'A first-lunch waiver generally applies only when the shift is no more than 6 hours.' }),
     el('p', { class: 'sub-head', text: 'Second lunch (shift over 10 hours)' }),
     el('div', { class: 'grid2' }, [
       timeRow('2nd lunch started', state.meal2.start, v => state.meal2.start = v),
       timeRow('2nd lunch ended', state.meal2.end, v => state.meal2.end = v),
     ]),
+    checkbox('My employer and I mutually agreed to waive the second lunch', state.meal2.waived, c => state.meal2.waived = c),
+    el('p', { class: 'hint', text: 'A second-lunch waiver generally applies only through 12 hours, and only if the first lunch was not waived.' }),
   ];
   return section('lunch', 'sandwich', 'Your lunch', 'When it started, and whether you were really free.', essentials, advanced);
 }
@@ -202,7 +209,7 @@ function spokeUpSection(state) {
 function finalPaySection(state) {
   const fp = state.finalPay;
   const sep = el('select', { onchange: e => fp.separation = e.target.value });
-  [['', 'How did the job end?'], ['fired', 'Fired or laid off'], ['quit_notice', 'I quit with 3+ days notice'], ['quit_no_notice', 'I quit without notice']]
+  [['', 'How did the job end?'], ['fired', 'Fired or laid off'], ['quit_notice', 'I quit with at least 72 hours’ notice'], ['quit_no_notice', 'I quit with less than 72 hours’ notice']]
     .forEach(([v, t]) => sep.appendChild(el('option', { value: v, text: t, selected: fp.separation === v })));
   return section('finalPay', 'wallet', 'Your final paycheck', 'When the job ends, final pay has strict timing.',
     [
@@ -211,7 +218,7 @@ function finalPaySection(state) {
         dateField('Last day you worked', fp.lastDay, v => fp.lastDay = v),
         dateField('Date final pay arrived', fp.datePaid, v => fp.datePaid = v, 'Leave blank if not paid yet.'),
       ]),
-      field('Were you paid everything you were owed?', triSelect(fp.fullyPaid, v => fp.fullyPaid = v)),
+      field('Did the final check include all wages you expected?', triSelect(fp.fullyPaid, v => fp.fullyPaid = v), 'Record what you received; JobWarden does not decide the amount legally due.'),
     ]);
 }
 
@@ -307,7 +314,7 @@ export function proofSection(state) {
       el('div', { class: 'field' }, [
         el('span', { class: 'field-label', text: 'Photos of time clock, pay stub, or messages' }),
         el('div', { class: 'loc-row' }, [photoBtn, fileInput]),
-        el('span', { class: 'hint', text: 'Your own records only. No secret audio — illegal in CA.' }),
+        el('span', { class: 'hint', text: 'Your own records only. JobWarden does not record audio. California generally requires every party’s consent before recording a confidential conversation.' }),
       ]),
       thumbs,
       field('Where were you?', el('div', { class: 'loc-row' }, [locBtn, locStatus])),

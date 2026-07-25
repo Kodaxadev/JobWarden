@@ -34,7 +34,7 @@ export function emailSummary(incidents, settings = {}) {
   s.headline.forEach(h => lines.push('• ' + h.count + ' ' + h.label));
   if (s.offClock.records) lines.push('• ' + s.offClock.totalMinutes + ' min off-the-clock work');
   lines.push('');
-  lines.push('Full records (with photos) are in the attached JobWarden backup file.');
+  lines.push('The unencrypted JobWarden backup file includes the full records and photos. Anyone with the file can read them.');
   lines.push('');
   // This body is the export most likely to be forwarded — to a lawyer, to HR, to a friend —
   // so it carries the same framing as the printable documents rather than a one-line footer.

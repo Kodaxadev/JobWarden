@@ -28,19 +28,30 @@ export async function renderExportView(container, { onChanged } = {}) {
     if (!items.length) return toast('No records yet');
     await withBusy(btn, busyLabel, fn);
   };
+  const confirmPlainBackup = () => confirmDialog(
+    'This backup is not encrypted. It includes your records and photos, and anyone who receives or opens the file can read them. Continue?',
+    { confirmText: 'Continue', danger: false },
+  );
 
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Export & back up' }),
     el('p', { class: 'hint', text: `${items.length} record${items.length === 1 ? '' : 's'}, saved on this phone only.` }),
     el('div', { class: 'btn-col' }, [
-      action('Email to myself', 'Opens your email with a summary + the backup file attached — the fastest way to keep a copy off this phone.', 'btn primary',
+      action('Share unencrypted backup', 'Uses your phone’s share sheet when available. The file includes records and photos; anyone with it can read them.', 'btn primary',
         guard('Preparing…', async () => {
+          if (!await confirmPlainBackup()) return;
           const r = await emailRecords(items, settings);
           if (r !== 'cancelled') { await markBackedUp(); onChanged?.(); }
-          toast(r === 'shared' ? 'Shared ✓' : r === 'fallback' ? 'Opening email — attach the saved file' : 'Email canceled');
+          toast(r === 'shared' ? 'Shared ✓' : r === 'fallback' ? 'Backup saved — attach it in the email that opened' : 'Share canceled');
         })),
-      action('Save full backup', 'Download a complete copy with photos to this device.', 'btn',
-        guard('Building backup…', async () => { const n = await exportJson(items, settings); await markBackedUp(); toast(`Backed up ${n} record(s)`); onChanged?.(); })),
+      action('Save unencrypted backup', 'Downloads a complete copy with photos. Anyone who opens the file can read it.', 'btn',
+        guard('Building backup…', async () => {
+          if (!await confirmPlainBackup()) return;
+          const n = await exportJson(items, settings);
+          await markBackedUp();
+          toast(`Backed up ${n} record(s)`);
+          onChanged?.();
+        })),
       action('Save locked backup', 'The same backup, locked with a passphrase — so a copy sitting in your email is unreadable to anyone else. Lose the passphrase and the file is gone for good.', 'btn',
         guard(null, async (btn) => {
           const pass = await choosePassphrase();
@@ -60,7 +71,7 @@ export async function renderExportView(container, { onChanged } = {}) {
         guard('Building…', async () => { exportCsv(items); toast('Spreadsheet saved'); })),
       action('Make printable report', 'A report to print or save as PDF for the Labor Commissioner, a lawyer, or HR.', 'btn',
         guard('Building report…', async () => { const ok = await openPrintReport(items, settings); if (!ok) toast('Allow pop-ups to print'); })),
-      action('Make summary report', 'A one-page overview — the patterns and a timeline — a lawyer can read in 30 seconds.', 'btn',
+      action('Make summary report', 'A one-page overview of reported patterns and the timeline.', 'btn',
         guard('Building summary…', async () => { const ok = await openPrintSummary(items, settings); if (!ok) toast('Allow pop-ups to print'); })),
     ]),
   ]));

@@ -13,7 +13,7 @@ Preview: <https://jobwarden.kodaxa.dev> — made by **Kodaxa Innovations** ([kod
 ## Privacy model (read this)
 - **All data stays in the browser on the device** (IndexedDB). Nothing is sent to any server. No account, no tracking, no analytics, no network calls.
 - Hosting the *app code* (so it can be installed) does **not** upload anyone's *records* — records never leave the device unless the user taps Export / Email / Print / Share.
-- **No audio recording** — California is all-party-consent (Penal Code §632); covert recording can be a crime.
+- **No audio recording** — California generally requires every party’s consent before recording a confidential communication (Penal Code §632), subject to statutory context and exceptions.
 - **Back up often.** Local-only means a lost or wiped phone loses the records. The app nags after 7 days; "Email to myself" or "Save full backup" keeps a copy off-device, and "Restore from a backup" brings it back.
 - **A plain backup is readable by anyone who opens it** — that is what makes it restorable. Since the usual way it leaves the phone is an email to yourself, **"Save locked backup"** encrypts it with a passphrase (AES-256-GCM, PBKDF2-SHA256 at 310k iterations, key derived on-device). Nothing is escrowed: a lost passphrase means the file cannot be opened by anyone.
 
@@ -39,7 +39,7 @@ offline is the point.
 
 ## What it does NOT do (by design)
 - **No dollar/damage math.** Premium pay turns on the "regular rate" (incl. bonuses/commissions) — getting that wrong hurts credibility. The app records the inputs; let DLSE/counsel compute.
-- **No audio recording.** California is all-party-consent (Penal Code §632).
+- **No audio recording.** California generally requires all-party consent for confidential communications (Penal Code §632), subject to exceptions.
 - **No cloud sync, no account.** Local-first by design — it is the privacy model *and* the trust model.
 - **No legal advice or filings.** General information plus the user's own records — not the practice of law. See [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md).
 
@@ -66,7 +66,7 @@ js/
            passphraseDialog (locked backups)
   export/  download · exportJson (Blob backups) · backupCrypto (AES-GCM passphrase lock) · exportCsv ·
            exportReport · exportSummary · reportBrand (paper mode) · emailExport · importBackup · backup
-tests/     Node built-in runner — 220 tests
+tests/     Node built-in runner — 234 tests
 docs/      LEGAL_FOUNDATION.md · IMPROVEMENT_AUDIT.md · superpowers/plans/ (design + Phase 3 plan)
 scripts/   build-app-icons.mjs (SVG → PNG app icons) · build-icons.mjs (Lucide → js/ui/icons.js)
 CHANGELOG.md   keyed on the service-worker cache id shown in Settings → About
@@ -79,7 +79,7 @@ Committed tests under `tests/`, using Node's built-in runner. The app ships **ze
 npm test          # alias for: node --test
 ```
 
-The suite (**220 tests** at last run) covers:
+The suite (**234 tests** at last run) covers:
 
 - **Rules** — meal timing and waivers (measured in hours *worked*), the >10h second-meal rule, reporting-time pay (the less-than-half-the-scheduled-shift trigger, with the unpaid meal netted out first), §2802 work expenses, picked-issue assertions (a chip alone produces its finding, and a chip with no times produces a *reported* finding rather than silence), daily + weekly overtime roll-ups, on-duty-meal agreements, final-pay/waiting-time timing, off-the-clock minutes, the exempt/AWS/CBA caveats, non-blocking time-sanity warnings, and the New York draft set (noon/evening/night §162 windows, overnight shifts).
 - **Time** — DST-correct overnight spans (a 10pm–6am shift is 7h on spring-forward, 9h on fall-back), and the null-in/null-out edges.

@@ -8,6 +8,7 @@ const base = (over = {}) => ({
   meal: {}, meal2: {}, rest: {}, offClock: {}, classification: {}, ...over,
 });
 const flagsOf = i => Object.fromEntries(analyze(i).map(f => [f.key, f.value]));
+const flagsAt = (i, asOfDate) => Object.fromEntries(analyze(i, { asOfDate }).map(f => [f.key, f.value]));
 
 test('mealsRequired thresholds (§512)', () => {
   assert.equal(mealsRequired(4), 0);
@@ -103,6 +104,21 @@ test('exempt classification adds a caveat flag', () => {
   assert.equal(flagsOf(base({ clockIn: '09:00', clockOut: '18:00', classification: { payType: 'salary_exempt' } })).exemptCaveat, true);
 });
 
+test('unknown or salary-unknown classification stays cautious without suppressing checks', () => {
+  for (const payType of ['', 'salary_unknown', 'commission']) {
+    const fk = flagsOf(base({ clockIn: '08:00', clockOut: '18:00', classification: { payType } }));
+    assert.equal(fk.classificationUnknown, true);
+    assert.equal(fk.dailyOvertime, 10);
+  }
+});
+
+test('salary marked nonexempt does not suppress daily overtime context', () => {
+  const fk = flagsOf(base({ clockIn: '08:00', clockOut: '18:00', classification: { payType: 'salary_nonexempt' } }));
+  assert.equal(fk.exemptCaveat, undefined);
+  assert.equal(fk.classificationUnknown, undefined);
+  assert.equal(fk.dailyOvertime, 10);
+});
+
 test('final pay late is measured in days, never dollars (§203)', () => {
   const fk = flagsOf(base({ types: ['final_pay'], finalPay: { separation: 'fired', lastDay: '2026-06-01', datePaid: '2026-06-10' } }));
   assert.equal(fk.finalPayLate, 9);
@@ -116,6 +132,13 @@ test('quitting without notice gets a 72-hour grace before pay is “late”', ()
 test('final pay not yet received, and not-fully-paid, are each flagged', () => {
   assert.equal(flagsOf(base({ types: ['final_pay'], finalPay: { separation: 'fired', lastDay: '2026-06-01', datePaid: '' } })).finalPayUnpaid, true);
   assert.equal(flagsOf(base({ types: ['final_pay'], finalPay: { separation: 'fired', lastDay: '2026-06-01', datePaid: '2026-06-01', fullyPaid: false } })).finalPayShort, true);
+});
+
+test('missing final pay stays pending until the 72-hour window has passed', () => {
+  const incident = base({ types: ['final_pay'], finalPay: { separation: 'quit_no_notice', lastDay: '2026-06-01', datePaid: '' } });
+  assert.equal(flagsAt(incident, '2026-06-03').finalPayPending, '2026-06-04');
+  assert.equal(flagsAt(incident, '2026-06-04').finalPayPending, '2026-06-04');
+  assert.equal(flagsAt(incident, '2026-06-05').finalPayUnpaid, true);
 });
 
 test('on-time final pay produces no late flag', () => {

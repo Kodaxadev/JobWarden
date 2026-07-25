@@ -6,6 +6,7 @@ import { icon } from './icons.js';
 import { getSettings, saveSettings } from '../data/settingsRepo.js';
 import { requestPersistence } from '../data/db.js';
 import { NOT_A_VERDICT, ONBOARD_ACK } from '../config/disclaimers.js';
+import { PAY_STATUS_OPTIONS, PAY_STATUS_HINT, EXEMPT_STATUS_WARNING } from '../config/payStatus.js';
 
 const iconEl = (n) => { const s = el('span'); s.innerHTML = icon(n); return s.firstElementChild || s; };
 const field = (label, input, hint) => el('label', { class: 'field' }, [
@@ -13,8 +14,6 @@ const field = (label, input, hint) => el('label', { class: 'field' }, [
   hint ? el('span', { class: 'hint', text: hint }) : null,
 ]);
 const text = (v, ph) => el('input', { type: 'text', value: v || '', placeholder: ph || '' });
-
-const PAY_OPTIONS = [['hourly', 'Hourly'], ['commission', 'Commissioned'], ['salary_exempt', 'Salaried'], ['', 'Not sure yet']];
 
 export async function renderOnboarding(container, { onDone } = {}) {
   clear(container);
@@ -25,9 +24,9 @@ export async function renderOnboarding(container, { onDone } = {}) {
   const role = text(s.role, 'e.g. cashier, server, caregiver');
 
   const pay = el('select', {});
-  PAY_OPTIONS.forEach(([v, t]) => pay.appendChild(el('option', { value: v, text: t, selected: s.payType === v })));
+  PAY_STATUS_OPTIONS.forEach(([v, t]) => pay.appendChild(el('option', { value: v, text: t, selected: s.payType === v })));
   const payWarn = el('p', { class: 'hint warn-text', hidden: s.payType !== 'salary_exempt',
-    text: 'Some pay types have different break rules. If you are not sure, ask a lawyer or the Labor Commissioner.' });
+    text: EXEMPT_STATUS_WARNING });
   pay.addEventListener('change', () => { payWarn.hidden = pay.value !== 'salary_exempt'; });
 
   const places = el('textarea', { rows: '3', placeholder: 'One place per line' });
@@ -82,14 +81,19 @@ export async function renderOnboarding(container, { onDone } = {}) {
       el('p', { class: 'onboard-tag', text: 'Keep a private record of meal breaks, rest breaks, and unpaid work — the moment it happens. It stays on this phone; only you can see it.' }),
       el('p', { class: 'onboard-scope', text: 'Currently built for California rules. More states are coming.' }),
     ]),
-    el('section', { class: 'card' }, [
-      el('h2', { text: 'Quick setup' }),
-      el('p', { class: 'hint', text: 'All optional — it just makes your records and reports more complete. You can skip this and add it later in Settings.' }),
-      field('Your name', name, 'Goes on your printable report.'),
-      field('Employer', employer),
-      field('Role', role),
-      field('Pay type', pay, 'Hourly workers get the strongest break protections.'), payWarn,
-      field('Where you work', places, 'These fill in the place box when you log.'),
+    el('details', { class: 'card onboard-setup', open: !!(s.employeeName || s.employer || s.role || s.workplaces?.length) }, [
+      el('summary', { class: 'onboard-setup-summary' }, [
+        el('span', { class: 'onboard-setup-title', text: 'Add optional profile details' }),
+        el('span', { class: 'onboard-setup-action', text: 'Add' }),
+      ]),
+      el('div', { class: 'onboard-setup-body' }, [
+        el('p', { class: 'hint', text: 'These make reports more complete. You can add or change them later in Settings.' }),
+        field('Your name', name, 'Goes on your printable report.'),
+        field('Employer', employer),
+        field('Role', role),
+        field('Pay and exemption status', pay, PAY_STATUS_HINT), payWarn,
+        field('Where you work', places, 'These fill in the place box when you log.'),
+      ]),
     ]),
     el('section', { class: 'card onboard-legal' }, [
       el('p', { class: 'legal-lead', text: NOT_A_VERDICT }),

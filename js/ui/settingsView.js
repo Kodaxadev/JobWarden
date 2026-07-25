@@ -6,6 +6,7 @@ import { jurisdictionLabel } from '../config/jurisdictions.js';
 import { swVersion } from '../version.js';
 import { readErrors, clearErrors, errorLogText } from '../data/errorLog.js';
 import { setTheme } from './theme.js';
+import { PAY_STATUS_OPTIONS, PAY_STATUS_HINT, EXEMPT_STATUS_WARNING } from '../config/payStatus.js';
 
 // Bytes → a short human string that also handles GB (humanSize in media.js stops at MB).
 function fmtBytes(n) {
@@ -30,10 +31,10 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
   const role = text(s.role, 'e.g. cashier, server, caregiver');
   const employer = text(s.employer, 'Employer');
   const pay = el('select', {});
-  [['', 'Select…'], ['hourly', 'Hourly'], ['commission', 'Commissioned'], ['salary_exempt', 'Salaried']]
-    .forEach(([v, t]) => pay.appendChild(el('option', { value: v, text: t, selected: s.payType === v })));
+  PAY_STATUS_OPTIONS.forEach(([v, t]) =>
+    pay.appendChild(el('option', { value: v, text: t, selected: s.payType === v })));
   const payWarn = el('p', { class: 'hint warn-text', hidden: s.payType !== 'salary_exempt',
-    text: 'Some pay types have different rules. If you are not sure, ask a lawyer or the Labor Commissioner.' });
+    text: EXEMPT_STATUS_WARNING });
   pay.addEventListener('change', () => { payWarn.hidden = pay.value !== 'salary_exempt'; });
 
   const sched = (val) => {
@@ -63,7 +64,7 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'About you' }),
     field('Name', name), field('Role', role), field('Employer', employer),
-    field('Pay type', pay, 'Hourly workers get the strongest break protections.'), payWarn,
+    field('Pay and exemption status', pay, PAY_STATUS_HINT), payWarn,
   ]));
 
   const theme = el('select', {}, [['dark', 'Dark'], ['light', 'Light'], ['system', 'Match my phone']]
@@ -77,7 +78,7 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
     el('h2', { text: 'Schedule & coverage' }),
     el('p', { class: 'hint', text: 'Optional — helps the app avoid flagging rules that may not apply to you.' }),
     field('Alternative workweek (e.g. four 10-hour days)?', aws, 'If validly adopted by a vote, daily overtime after 8 hours may not apply.'),
-    field('Covered by a union contract (CBA)?', cba, 'A union agreement can change the meal/rest rules.'),
+    field('Covered by a union contract (CBA)?', cba, 'Some California rules have specific union-agreement exceptions; the agreement and rule must be checked.'),
   ]));
   container.appendChild(el('section', { class: 'card' }, [
     el('h2', { text: 'Workplaces' }),
@@ -123,7 +124,7 @@ export async function renderSettingsView(container, { onShowRights, onShowLegal 
     el('p', { class: 'hint', text: 'Records stay on this phone only. This asks your browser not to auto-delete them (some browsers clear unused data after a while) — it is not a backup, so export often.' }),
     storageLine,
     persistLine,
-    el('p', { class: 'hint', text: 'Not legal advice. No audio recording (illegal in California without all-party consent).' }),
+    el('p', { class: 'hint', text: 'Not legal advice. JobWarden does not record audio; California generally requires every party’s consent to record a confidential conversation.' }),
     el('div', { class: 'actions' }, [persistBtn]),
     versionLine,
   ]));

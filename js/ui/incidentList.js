@@ -78,7 +78,7 @@ function emptyState() {
   return el('div', { class: 'empty teach' }, [
     el('div', { class: 'empty-mark' }, [iconEl('shield-check')]),
     el('p', { class: 'empty-title', text: 'Your record starts here' }),
-    el('p', { class: 'hint', text: 'When something happens at work — a skipped lunch, unpaid minutes, a break cut short — log it in seconds. JobWarden stamps the time, seals it so it can’t be quietly changed, and builds the pattern over weeks.' }),
+    el('p', { class: 'hint', text: 'When something happens at work — a skipped lunch, unpaid minutes, a break cut short — log it in seconds. JobWarden stamps the time, fingerprints the record, and lists any later edits.' }),
     el('p', { class: 'hint', text: 'Tap Log below to add the first one.' }),
   ]);
 }
@@ -208,12 +208,12 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
   const add = (k, v) => { if (v == null || v === '') return; facts.appendChild(el('dt', { text: k })); facts.appendChild(el('dd', { text: String(v) })); };
   add('Started work', item.clockIn); add('Stopped work', item.clockOut);
   if (item.meal?.start || item.meal?.end) add('Lunch', `${item.meal.start || '—'} → ${item.meal.end || '—'}`);
-  if (item.meal?.waived) add('Skipped lunch by choice', 'Yes');
+  if (item.meal?.waived) add('Mutual first-meal waiver reported', 'Yes');
   if (item.meal?.interruptedBy) add('Bothered by', item.meal.interruptedBy);
   if (item.meal?.onCall) add('Stayed reachable at lunch', 'Yes');
   if (item.meal?.detail) add('What happened', item.meal.detail);
   if (item.meal2?.start || item.meal2?.end) add('Second lunch', `${item.meal2.start || '—'} → ${item.meal2.end || '—'}`);
-  if (item.meal2?.waived) add('Skipped 2nd lunch by choice', 'Yes');
+  if (item.meal2?.waived) add('Mutual second-meal waiver reported', 'Yes');
   if (item.rest?.taken != null) add('Rest breaks taken', item.rest.taken);
   if (item.offClock?.start || item.offClock?.end) add('Unpaid work', `${item.offClock.start || '—'} → ${item.offClock.end || '—'}`);
   if (item.offClock?.task) add('What you did', item.offClock.task);
@@ -222,10 +222,10 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
   if (item.notice?.to) add('Told', `${item.notice.to} (${item.notice.channel || '—'})`);
   if (item.notice?.response) add('They said', item.notice.response);
   if (item.notice?.adverseAction) add('After I spoke up', item.notice.adverseAction);
-  if (item.finalPay?.separation) add('How the job ended', { fired: 'Fired or laid off', quit_notice: 'Quit with 3+ days notice', quit_no_notice: 'Quit without notice' }[item.finalPay.separation] || item.finalPay.separation);
+  if (item.finalPay?.separation) add('How the job ended', { fired: 'Fired or laid off', quit_notice: 'Quit with at least 72 hours’ notice', quit_no_notice: 'Quit with less than 72 hours’ notice' }[item.finalPay.separation] || item.finalPay.separation);
   if (item.finalPay?.lastDay) add('Last day worked', formatDate(item.finalPay.lastDay));
   if (item.finalPay?.datePaid) add('Final pay arrived', formatDate(item.finalPay.datePaid));
-  if (item.finalPay && item.finalPay.fullyPaid != null) add('Paid everything owed', item.finalPay.fullyPaid ? 'Yes' : 'No');
+  if (item.finalPay && item.finalPay.fullyPaid != null) add('Final check included expected wages', item.finalPay.fullyPaid ? 'Yes' : 'No');
   if (item.witnesses) add('Who saw it', item.witnesses);
   if ((item.attachments || []).length) add('Photos saved', `${item.attachments.length} photo(s)`);
   add('Saved at', new Date(item.createdAt).toLocaleString());

@@ -4,7 +4,7 @@
 // EXTRACTED from the second state (New York) — not guessed from California alone — so this file
 // stays deliberately thin (labels/scope only, no rules abstraction) until there are two states.
 export const JURISDICTIONS = {
-  CA: { code: 'CA', label: 'California', status: 'live', rulesAsOf: 'June 2026' },
+  CA: { code: 'CA', label: 'California', status: 'live', rulesAsOf: 'July 2026' },
   // 'draft' = rules built + tested, but NOT exposed to users until a NY employment-attorney
   // reviews the findings language (see docs/LEGAL_FOUNDATION.md). No picker offers it yet.
   NY: { code: 'NY', label: 'New York', status: 'draft', rulesAsOf: 'June 2026' },

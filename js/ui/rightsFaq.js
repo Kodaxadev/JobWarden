@@ -86,7 +86,7 @@ export const TOPICS = [
     q: 'Pay stubs and your records',
     paras: [
       'California law requires an accurate, itemized wage statement each pay period, and gives workers the right to inspect or copy their own time and pay records.',
-      'Keeping your own contemporaneous log — like this one — protects you if the employer’s records are wrong or missing.',
+      'A contemporaneous log can help preserve your account when employer records are incomplete or disputed, but it is not automatic proof.',
     ],
     cite: 'Labor Code §§226, 1174',
   },

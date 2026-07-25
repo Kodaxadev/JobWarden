@@ -55,7 +55,7 @@
 
 /**
  * @typedef {Object} Classification
- * @property {''|'hourly'|'commission'|'salary_exempt'} [payType]
+ * @property {''|'hourly'|'commission'|'salary_unknown'|'salary_nonexempt'|'salary_exempt'} [payType]
  * @property {''|'yes'|'no'} [awsElection]
  * @property {''|'yes'|'no'} [cbaCovered]
  */

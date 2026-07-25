@@ -116,7 +116,7 @@ function offClockFlags(i) {
 export function analyze(i) {
   const flags = [];
   if (i.classification?.payType === 'salary_exempt') {
-    flags.push(f('exemptCaveat', true, 'Marked salaried-exempt — meal rules may not apply. Confirm classification before relying on findings.'));
+    flags.push(f('exemptCaveat', true, 'Worker marked “confirmed exempt.” Salary alone does not establish exemption; confirm classification before relying on findings.'));
   }
   if (i.classification?.cbaCovered === 'yes') {
     flags.push(f('cbaCaveat', true, 'Covered by a union contract (CBA) — terms may differ. Confirm the agreement.'));

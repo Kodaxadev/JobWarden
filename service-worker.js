@@ -1,5 +1,5 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v82';
+const CACHE = 'jobwarden-v83';
 const ASSETS = [
   './', './index.html', './landing.html', './install.html', './privacy.html', './terms.html', './manifest.webmanifest',
   './css/styles.css', './css/tokens.css', './css/shell.css', './css/forms.css', './css/records.css', './css/light.css', './css/marketing.css', './css/install.css', './css/legal.css',
@@ -10,7 +10,7 @@ const ASSETS = [
   './icons/marketing-lock.svg', './icons/marketing-shield.svg', './icons/marketing-wifi-off.svg',
   './assets/marketing-app-preview.png', './assets/marketing-paper-texture.png',
   './js/app.js', './js/installPage.js', './js/version.js',
-  './js/config/infractionTypes.js', './js/config/uiCopy.js', './js/config/jurisdictions.js', './js/config/disclaimers.js',
+  './js/config/infractionTypes.js', './js/config/uiCopy.js', './js/config/jurisdictions.js', './js/config/disclaimers.js', './js/config/payStatus.js',
   './js/domain/timeUtils.js', './js/domain/breakRules.js', './js/domain/incidentModel.js', './js/domain/integrity.js', './js/domain/patterns.js', './js/domain/shiftClock.js',
   './js/rules/index.js', './js/rules/california.js', './js/rules/newYork.js',
   './js/data/db.js', './js/data/storageErrors.js', './js/data/incidentRepo.js', './js/data/settingsRepo.js', './js/data/shiftRepo.js', './js/data/errorLog.js',

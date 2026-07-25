@@ -2,7 +2,7 @@
 // Returns FACTUAL flags only — never dollar amounts (see docs/LEGAL_FOUNDATION.md).
 // Flags are framed as "potential" issues: waivers/classification can change the result,
 // so the app records facts and flags possibilities; it does not render a verdict.
-import { combine, minutesBetween, hoursWorked, formatDate } from './timeUtils.js';
+import { combine, minutesBetween, hoursWorked, formatDate, todayDateStr } from './timeUtils.js';
 
 export const FIFTH_HOUR_MIN = 300;   // first meal must begin before 300 min in (§512)
 export const TENTH_HOUR_MIN = 600;   // second meal must begin before 600 min in (§512)
@@ -63,10 +63,10 @@ function firstMealFlags(i, ci, hrs) {
 
   if (meal.waived) {
     if ((hrs ?? 0) <= FIRST_WAIVER_MAX_H) {
-      out.push(f('firstMealWaived', true, 'First meal waived — valid only if the shift is 6 hours or less.'));
+      out.push(f('firstMealWaived', true, 'A mutual first-meal waiver was reported. It may be valid only if the shift is 6 hours or less.'));
       return out; // valid waiver: no missed/late finding
     }
-    out.push(f('firstMealWaiverInvalid', true, 'First-meal waiver is invalid on a shift over 6 hours (§512).'));
+    out.push(f('firstMealWaiverInvalid', true, 'A mutual first-meal waiver was reported on a shift over 6 hours, outside the usual §512 waiver limit.'));
   }
 
   const timing = mealTiming(ci, ms, FIFTH_HOUR_MIN);
@@ -79,15 +79,15 @@ function firstMealFlags(i, ci, hrs) {
     out.push(f('missedMealReported', true, 'Reported working over 5 hours with no meal; work times were not recorded, so the 5-hour threshold could not be checked. Potential §512 / §226.7 issue as reported.'));
   }
   if (len.known && len.short) out.push(f('shortMeal', len.minutes, 'First meal under 30 minutes (§512).'));
-  if (saysInterrupted) out.push(f('interruptedMeal', true, 'Interrupted / on-duty meal is non-compliant (§512).'));
-  if (meal.onCall) out.push(f('mealOnCall', true, 'Required to stay on-call / reachable during the meal — not relieved of all duty (§512).'));
-  if (meal.relievedOfDuty === false) out.push(f('notRelieved', true, 'Not relieved of all duty during meal (§512).'));
-  // On-duty meal: California permits it only with a written, revocable agreement (IWC Wage Orders §11).
+  if (saysInterrupted) out.push(f('interruptedMeal', true, 'Meal was interrupted or on duty — potential §512 / Wage Order issue.'));
+  if (meal.onCall) out.push(f('mealOnCall', true, 'Required to stay on-call or reachable during the meal — potential failure to relieve all duty (§512).'));
+  if (meal.relievedOfDuty === false) out.push(f('notRelieved', true, 'Reported not being relieved of all duty during the meal — potential §512 issue.'));
+  // On-duty meal: nature of work must prevent relief and the agreement must be written/revocable.
   const onDuty = saysInterrupted || meal.onCall || meal.relievedOfDuty === false;
   if (onDuty && meal.writtenAgreement === 'no') {
-    out.push(f('onDutyNoAgreement', true, 'Worked / stayed on duty during the meal and reported no written, revocable on-duty meal agreement. California permits an on-duty meal only with such an agreement. Factual observation, not a legal conclusion.'));
+    out.push(f('onDutyNoAgreement', true, 'Worked or stayed on duty and reported no written, revocable agreement. An on-duty meal exception also requires that the nature of the work objectively prevent relief.'));
   } else if (onDuty && meal.writtenAgreement === 'yes') {
-    out.push(f('onDutyAgreement', true, 'Reported a written on-duty meal agreement existed — an on-duty meal may be permissible if that agreement is valid and revocable.'));
+    out.push(f('onDutyAgreement', true, 'Reported a written, revocable on-duty meal agreement. The exception applies only if the nature of the work objectively prevented relief.'));
   }
   return out;
 }
@@ -119,8 +119,8 @@ function secondMealFlags(i, ci, hrs) {
     return out;
   }
   if (m2.waived) {
-    if (waiverAllowed) out.push(f('secondMealWaived', true, 'Second meal waived — valid only if shift ≤12h and the first meal was not waived.'));
-    else out.push(f('secondMealWaiverInvalid', true, 'Second-meal waiver invalid: shift over 12h or first meal was waived (§512).'));
+    if (waiverAllowed) out.push(f('secondMealWaived', true, 'A mutual second-meal waiver was reported. It may be valid only through 12 hours when the first meal was not waived.'));
+    else out.push(f('secondMealWaiverInvalid', true, 'A second-meal waiver was reported outside the usual §512 limit: the shift exceeded 12 hours or the first meal was waived.'));
     return out;
   }
   out.push(f('secondMealMissed', true, 'Second meal owed on a 10h+ shift, none recorded — potential §512 / §226.7 issue.'));
@@ -140,8 +140,8 @@ function restFlags(i, hrs) {
     // (but never when the hours show no rest was owed at all).
     out.push(f('restMissedReported', true, 'Reported a missed rest break; the break count or work times needed to compute the shortfall were not recorded. Potential §226.7 issue as reported.'));
   }
-  if (rest.interrupted || types.includes('rest_interrupted')) out.push(f('restInterrupted', true, 'Rest break interrupted (§226.7).'));
-  if (rest.onCall) out.push(f('restOnCall', true, 'On-call rest is non-compliant (Augustus v. ABM).'));
+  if (rest.interrupted || types.includes('rest_interrupted')) out.push(f('restInterrupted', true, 'Rest break was interrupted — potential §226.7 issue.'));
+  if (rest.onCall) out.push(f('restOnCall', true, 'Reported remaining on call during rest — potential rest-period issue under Augustus v. ABM.'));
   return out;
 }
 
@@ -174,7 +174,7 @@ function addDays(dateStr, n) {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 // Final-pay timing — FACTS only (days late), never the dollar penalty (§§201–203).
-function finalPayFlags(i) {
+function finalPayFlags(i, asOfDate) {
   const fp = i.finalPay || {};
   if (!((i.types || []).includes('final_pay') || fp.separation || fp.lastDay)) return [];
   const out = [];
@@ -184,8 +184,10 @@ function finalPayFlags(i) {
     if (fp.datePaid) {
       const daysLate = Math.round((parseDay(fp.datePaid) - parseDay(dueStr)) / 86400000);
       if (daysLate > 0) out.push(f('finalPayLate', daysLate, `Final pay was due ${formatDate(dueStr)} and arrived ${formatDate(fp.datePaid)} — ${daysLate} day(s) late. Potential §203 waiting-time issue.`));
+    } else if (fp.separation === 'quit_no_notice' && parseDay(asOfDate) <= parseDay(dueStr)) {
+      out.push(f('finalPayPending', dueStr, `Final pay was not yet received, but the reported 72-hour payment window runs through ${formatDate(dueStr)}. Check again after that date.`));
     } else {
-      out.push(f('finalPayUnpaid', true, 'Final pay reported as not yet received after separation. Potential §203 waiting-time issue.'));
+      out.push(f('finalPayUnpaid', true, `Final pay reported as not yet received after the ${formatDate(dueStr)} due date. A §203 waiting-time penalty generally also depends on willfulness and can be affected by a good-faith dispute.`));
     }
   }
   if (fp.fullyPaid === false) out.push(f('finalPayShort', true, 'Reported the final paycheck did not include everything owed at separation (§§201–203).'));
@@ -211,9 +213,9 @@ function reportingTimeFlags(i, hrs) {
   if (workedMin < scheduledMin / 2) {
     const owedMin = Math.min(240, Math.max(120, Math.round(scheduledMin / 2)));
     out.push(f('reportingTimeShort', Math.round(workedMin / 6) / 10,
-      `Scheduled for ${(scheduledMin / 60).toFixed(1)}h but worked ${(workedMin / 60).toFixed(1)}h — under half the scheduled shift. Reporting-time pay of about ${(owedMin / 60).toFixed(1)}h (half the shift, min 2h, max 4h) may be owed. IWC Wage Orders §5. Not computed here.`));
+      `Scheduled for ${(scheduledMin / 60).toFixed(1)}h but worked ${(workedMin / 60).toFixed(1)}h — under half the scheduled shift. Reporting-time pay of about ${(owedMin / 60).toFixed(1)}h may apply (half the shift, min 2h, max 4h), subject to IWC Wage Orders §5 requirements and exceptions. Not computed here.`));
   }
-  if (s.reason) out.push(f('reportingTimeReason', s.reason, 'Reason given for being sent home — reporting-time pay is not owed when the cause is outside the employer’s control (for example a utility failure or a threat to safety). IWC §5(C).'));
+  if (s.reason) out.push(f('reportingTimeReason', s.reason, 'Reason reported for being sent home. Wage Order §5(C) includes exceptions for specified causes outside the employer’s control; JobWarden does not decide whether an exception is satisfied.'));
   return out;
 }
 
@@ -240,16 +242,19 @@ function expenseFlags(i) {
  * @param {import('./types.js').Incident} i
  * @returns {import('./types.js').Flag[]}
  */
-export function analyze(i) {
+export function analyze(i, { asOfDate = todayDateStr() } = {}) {
   const flags = [];
-  if (i.classification?.payType === 'salary_exempt') {
-    flags.push(f('exemptCaveat', true, 'Worker marked salaried-exempt — meal/rest rules may not apply. Confirm classification before relying on findings.'));
+  const payType = i.classification?.payType || '';
+  if (payType === 'salary_exempt') {
+    flags.push(f('exemptCaveat', true, 'Worker marked “confirmed exempt.” Salary alone does not create an exemption; duties and pay tests still control. Confirm classification before relying on findings.'));
+  } else if (!payType || payType === 'salary_unknown' || payType === 'commission') {
+    flags.push(f('classificationUnknown', true, 'Exemption status is not confirmed. JobWarden shows nonexempt-worker checks as possibilities; salary or commission pay alone does not establish exemption.'));
   }
   if (i.classification?.cbaCovered === 'yes') {
-    flags.push(f('cbaCaveat', true, 'Covered by a union contract (CBA) — meal/rest rules may differ under the agreement. Confirm its terms.'));
+    flags.push(f('cbaCaveat', true, 'A collective-bargaining agreement was reported. Some California rules have specific CBA exceptions; confirm the agreement and the rule involved.'));
   }
   if (i.classification?.awsElection === 'yes') {
-    flags.push(f('awsNote', true, 'On an alternative workweek schedule — daily overtime after 8 hours may not apply (hours up to the scheduled day are straight time). Meal/rest rules are unaffected.'));
+    flags.push(f('awsNote', true, 'An alternative workweek was reported. A validly adopted schedule can change daily-overtime thresholds; JobWarden does not verify that the schedule is valid.'));
   }
   const { ci, hrs } = computeHours(i);
   if (hrs != null) flags.push(f('hoursWorked', Number(hrs.toFixed(2))));
@@ -258,8 +263,8 @@ export function analyze(i) {
   // only a problem if the premium wasn't paid, which the app can't know; it points, doesn't judge.
   if (hrs != null && hrs > 8 && i.classification?.payType !== 'salary_exempt' && i.classification?.awsElection !== 'yes') {
     const note = hrs > 12
-      ? 'Worked over 12 hours in a day — California owes 1.5× after 8 hours and 2× after 12. Make sure the overtime premium was paid. Not computed here.'
-      : 'Worked over 8 hours in a day — California daily overtime (1.5×) may apply. Make sure the premium was paid. Not computed here.';
+      ? 'Worked over 12 hours in a day. For nonexempt workers, California generally requires 1.5× after 8 hours and 2× after 12, subject to exceptions. Check whether the premium was paid. Not computed here.'
+      : 'Worked over 8 hours in a day. California daily overtime may apply to nonexempt workers, subject to exceptions. Check whether the premium was paid. Not computed here.';
     flags.push(f('dailyOvertime', Number(hrs.toFixed(2)), note));
   }
   const rm = mealsRequired(hrs);
@@ -269,7 +274,7 @@ export function analyze(i) {
   flags.push(...restFlags(i, hrs));
   flags.push(...offClockFlags(i));
   flags.push(...noticeFlags(i));
-  flags.push(...finalPayFlags(i));
+  flags.push(...finalPayFlags(i, asOfDate));
   flags.push(...reportingTimeFlags(i, hrs));
   flags.push(...expenseFlags(i));
   return flags;
@@ -301,6 +306,7 @@ export function summarize(flags = []) {
   if (m.retaliationNoted) p.push('Possible retaliation');
   if (m.finalPayLate) p.push(`Final pay ${m.finalPayLate.value}d late`);
   if (m.finalPayUnpaid) p.push('Final pay not received');
+  if (m.finalPayPending) p.push('Final pay window open');
   if (m.finalPayShort) p.push('Final pay short');
   if (m.reportingTimeShort) p.push('Sent home early');
   if (m.reportingTimeReported) p.push('Sent home early (reported)');

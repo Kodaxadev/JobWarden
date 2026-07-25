@@ -5,6 +5,7 @@ import { getRules } from '../rules/index.js';
 import { labelFor } from '../config/infractionTypes.js';
 import { downloadText, dateStamp } from './download.js';
 import { CSV_PREAMBLE } from '../config/disclaimers.js';
+import { payStatusLabel } from '../config/payStatus.js';
 
 const HEADER = [
   'Date', 'Workplace', 'Issues', 'Pay type', 'Clock in', 'Clock out', 'Hours worked',
@@ -29,7 +30,8 @@ const tri = v => (v === true ? 'Yes' : v === false ? 'No' : '');
 // a clean dataset (skip the first rows to parse). Every cell still goes through cell().
 export function buildCsv(incidents, { preamble = true } = {}) {
   const rows = incidents.map(i => [
-    i.incidentDate, i.workplace, (i.types || []).map(labelFor).join('; '), i.classification?.payType,
+    i.incidentDate, i.workplace, (i.types || []).map(labelFor).join('; '),
+    i.classification?.payType ? payStatusLabel(i.classification.payType) : '',
     i.clockIn, i.clockOut, flag(i.flags, 'hoursWorked'),
     i.meal?.start, i.meal?.end, tri(i.meal?.waived), tri(i.meal?.interrupted), i.meal?.interruptedBy, tri(i.meal?.relievedOfDuty),
     i.meal2?.start, i.meal2?.end, tri(i.meal2?.waived),

@@ -167,7 +167,7 @@ test('a legacy record missing newer fields is hydrated on read without breaking'
 test('settings return defaults before anything is saved', async () => {
   const s = await getSettings();
   assert.equal(s.jurisdiction, 'CA');
-  assert.equal(s.payType, 'hourly');
+  assert.equal(s.payType, '');
   assert.equal(s.theme, 'dark');
   assert.deepEqual(s.workplaces, []);
 });
@@ -178,7 +178,7 @@ test('saving settings merges rather than replacing', async () => {
   const s = await getSettings();
   assert.equal(s.employeeName, 'Ana R.', 'an earlier field is not wiped by a later save');
   assert.deepEqual(s.workplaces, ['Store #12']);
-  assert.equal(s.payType, 'hourly', 'untouched defaults survive');
+  assert.equal(s.payType, '', 'unknown classification stays unknown until the worker chooses');
 });
 
 test('markBackedUp stamps a time the backup banner can read', async () => {

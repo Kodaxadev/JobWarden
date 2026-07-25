@@ -23,7 +23,7 @@ export function renderLegal(container, { settings = {}, onBack } = {}) {
   container.appendChild(el('section', { class: 'card legal-disclaim' }, [
     el('p', { class: 'legal-lead', text: NOT_A_VERDICT }),
     el('p', { text: `JobWarden gives you general information about ${region} labor law and helps you keep your own records. It is not legal advice, not a law firm, and not a substitute for a lawyer or the Labor Commissioner.` }),
-    el('p', { text: `These cover ${region} only — rules in other states differ.` }),
+    el('p', { text: `The rules and checks shown here cover ${region} only. Rules in other states differ.` }),
     el('p', { text: 'Rules have exceptions and deadlines. For advice about your situation, talk to a licensed employment attorney or your state Labor Commissioner.' }),
   ]));
 
@@ -45,7 +45,7 @@ export function renderLegal(container, { settings = {}, onBack } = {}) {
   container.appendChild(card('Your privacy', [
     'Your records and profile are stored only on this device. There is no account, no server, no cloud sync, no analytics, and no tracking — nothing is sent anywhere on its own.',
     'Your information leaves this device only when you choose to export, email, print, or share it. After that, it is in your hands.',
-    'Photos you add stay on this device. JobWarden never records audio — secret audio recording is illegal in California.',
+    'Photos you add stay on this device. JobWarden never records audio. California generally requires every party’s consent before recording a confidential conversation; exceptions can apply.',
     'Because everything is local, losing this phone or letting the browser clear its storage can lose your records. Back up regularly from the Export screen.',
   ]));
 
