@@ -1,0 +1,106 @@
+/* light.css — warm daylight theme. One concern: light-mode materials and states.
+   The dark ledger remains the brand default; this is its paper-and-ink counterpart. */
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* Warm stone canvas + layered paper. No pure white: hierarchy comes from tone, not glare. */
+  --bg:#e5dfd4; --surface:#f7f3ea; --surface-2:#eee8dd; --surface-3:#e3ddd2;
+  --field-bg:#ebe5db;
+  --line:rgba(23,32,51,.14); --line-2:rgba(23,32,51,.22); --node:rgba(23,32,51,.34);
+  --hi:rgba(255,252,244,.72);
+  --text:#172033; --muted:#4c5564; --faint:#5b6370;
+
+  /* Gold is deepened when it carries text; filled gold actions keep navy ink. */
+  --primary:#806115; --primary-strong:#694c0d; --primary-deep:#5b4109;
+  --incident:#855407; --ok:#1c6a3a; --gtext:#1b6337;
+  --iline:rgba(133,84,7,.34); --ifill:rgba(133,84,7,.08);
+  --gline:rgba(28,106,58,.34); --gfill:rgba(28,106,58,.085);
+  --danger:#b73a2f; --danger-text:#8c271f;
+
+  /* Daylight materials: broad ambient depth, no dark-theme plastic bevels. */
+  --edge-top:rgba(255,252,244,.82); --edge-bottom:rgba(23,32,51,.09);
+  --sheen:linear-gradient(180deg, rgba(255,252,244,.5), rgba(255,252,244,0) 48%);
+  --shadow-1:inset 0 1px 0 var(--edge-top), inset 0 -1px 0 var(--edge-bottom),
+    0 1px 2px rgba(45,37,27,.06), 0 8px 22px -12px rgba(45,37,27,.25);
+  --shadow-2:inset 0 1px 0 rgba(255,252,244,.86),
+    0 2px 4px rgba(45,37,27,.08), 0 16px 36px -18px rgba(45,37,27,.32);
+  --shadow-3:inset 0 1px 0 rgba(255,252,244,.88),
+    0 8px 20px rgba(45,37,27,.13), 0 28px 58px -24px rgba(45,37,27,.38);
+  --glow-gold:0 12px 30px -20px rgba(128,97,21,.46);
+
+  --header-bg:linear-gradient(180deg, rgba(248,244,235,.98), rgba(238,232,221,.97));
+  --tabbar-bg:linear-gradient(180deg, #f4efe6, #e9e2d7);
+  --banner-bg:linear-gradient(180deg, #f3e5bd, #ead9a9);
+  --banner-text:#5b4109; --banner-line:rgba(128,97,21,.34);
+  --page-glow:radial-gradient(130% 72% at 50% -18%, #f4eee2 0%, rgba(244,238,226,0) 62%);
+  --page-vignette:radial-gradient(145% 46% at 50% 112%, rgba(63,51,35,.1), rgba(63,51,35,0) 65%);
+}
+
+/* Navy instruments keep their dark-theme ink instead of inheriting daylight ink. */
+:root[data-theme="light"] :is(.mark, .shift-panel, .empty-mark) {
+  --text:#eef1f6; --muted:#a8aebb; --faint:#949cab;
+  --primary:#cdab45; --primary-strong:#e6cd7e;
+  --incident:#e6b15a; --ok:#7fcf92; --gtext:#86d597;
+  --iline:rgba(230,177,90,.42); --ifill:rgba(230,177,90,.08);
+  --line:rgba(234,238,246,.09); --line-2:rgba(234,238,246,.16);
+  color:var(--text);
+}
+
+/* Recessed controls should read as pressed paper wells, not black-shadowed plastic. */
+:root[data-theme="light"] :is(input[type=text], input[type=password], input[type=time],
+  input[type=date], input[type=number], select, textarea) {
+  box-shadow:inset 0 1px 2px rgba(45,37,27,.13), inset 0 -1px 0 rgba(255,252,244,.68);
+}
+:root[data-theme="light"] :is(input, select, textarea):focus {
+  box-shadow:inset 0 1px 2px rgba(45,37,27,.1), var(--ring-gold);
+}
+
+/* Light controls lift by one quiet edge; dark-mode shadows were too heavy on paper. */
+:root[data-theme="light"] .btn {
+  box-shadow:inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(45,37,27,.1),
+    0 7px 14px -12px rgba(45,37,27,.34);
+}
+:root[data-theme="light"] .btn:hover {
+  box-shadow:inset 0 1px 0 var(--edge-top), 0 2px 4px rgba(45,37,27,.12),
+    0 9px 18px -13px rgba(45,37,27,.36);
+}
+:root[data-theme="light"] .btn:active {
+  box-shadow:inset 0 2px 3px rgba(45,37,27,.18);
+}
+:root[data-theme="light"] .chip {
+  box-shadow:inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(45,37,27,.1);
+}
+:root[data-theme="light"] .chip:hover {
+  box-shadow:inset 0 1px 0 var(--edge-top), 0 2px 4px rgba(45,37,27,.13);
+}
+:root[data-theme="light"] .chip:active {
+  box-shadow:inset 0 1px 2px rgba(45,37,27,.16);
+}
+
+/* Interaction tints are ink-based in daylight; white tints disappear on pale surfaces. */
+:root[data-theme="light"] :is(.rights-item summary, .row-head):hover {
+  background:rgba(23,32,51,.035);
+}
+:root[data-theme="light"] :is(.rights-item summary, .row-head):active {
+  background:rgba(23,32,51,.065);
+}
+:root[data-theme="light"] .tab:active .icon { background:rgba(23,32,51,.055); }
+:root[data-theme="light"] .glance-sol,
+:root[data-theme="light"] .hist-entry { background:rgba(23,32,51,.035); }
+
+/* Data wells remain visibly recessed without carrying the dark theme's black inner edge. */
+:root[data-theme="light"] :is(.kpi, .narrative) {
+  box-shadow:inset 0 1px 2px rgba(45,37,27,.12), inset 0 -1px 0 rgba(255,252,244,.62);
+}
+
+/* Danger controls need dark red text on paper; the dark theme uses a pale red. */
+:root[data-theme="light"] .btn.danger {
+  color:var(--danger-text);
+  background:rgba(183,58,47,.09);
+  border-color:rgba(183,58,47,.34);
+}
+:root[data-theme="light"] .btn.danger:hover {
+  background:rgba(183,58,47,.14);
+  border-color:rgba(183,58,47,.48);
+}

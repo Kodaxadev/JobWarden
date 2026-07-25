@@ -7,6 +7,15 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v82 — 2026-07-25
+
+**Light without the glare.** Light mode is now the paper-and-ink counterpart to the dark
+ledger: warm stone canvas, ivory surfaces, navy ink, restrained gold, and softer daylight
+elevation. Inputs, buttons, data wells, hover states, alerts, and navigation all receive
+light-specific materials instead of carrying dark-mode black shadows onto white panels.
+There is no pure-white app surface, while text and secondary copy retain accessible
+contrast for bright-condition reading.
+
 ## v81 — 2026-07-25
 
 **The same mark, properly resolved.** The shield-and-check identity now uses smoother shield

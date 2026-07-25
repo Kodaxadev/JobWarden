@@ -90,3 +90,82 @@ Fix:
   check centering, negative space, stroke consistency, and 192 px reproduction.
 - Header, app shell, favicon, standard PWA tile, and maskable PWA tile now resolve from the
   same canonical SVG geometry. The maskable mark remains inside the platform-safe center area.
+
+## v82 daylight theme addendum
+
+Final result: passed
+
+### Source and implementation
+
+- Source visual truth (the previous light theme):
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\light-theme\before-settings-viewport.jpg`
+- Final implementation:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\light-theme\after-settings-viewport.jpg`
+- Same-state comparison:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\light-theme\comparison-settings.jpg`
+- Focused selected-state evidence:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\light-theme\after-selected-state.jpg`
+- Empty-state evidence:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\light-theme\after-empty-records.jpg`
+- Dark-theme isolation comparison:
+  `C:\Users\Justi\.codex\visualizations\2026\07\25\019f9aef-b609-7981-9acd-f30f694ee1df\light-theme\comparison-dark-regression.jpg`
+
+The source and implementation use the same Settings screen, content, browser, theme,
+and requested 390 × 844 CSS viewport at 1× density. Screenshots with a vertical scrollbar
+are 375 × 812 pixels because the in-app browser excludes its scrollbar and browser chrome.
+The side-by-side comparison is 750 × 812 pixels with no rescaling.
+
+### Comparison history
+
+#### Pass 1
+
+- P1 color/materials: pure-white cards on a cool blue-gray canvas created the reported
+  glare, while black inset shadows carried dark-theme plasticity into the light theme.
+- P2 state fidelity: white hover tints disappeared on pale surfaces, and recessed data wells
+  remained too heavily shadowed for a daylight material.
+
+Fixes:
+
+- Replaced the light palette with warm stone, layered ivory paper, navy ink, and deepened
+  text gold; no app surface uses pure white.
+- Added light-specific elevation for fields, buttons, chips, data wells, navigation,
+  interaction tints, and danger controls in the isolated `css/light.css` module.
+
+#### Pass 2
+
+- P2 accessibility: the first warm-palette pass left the faint/placeholder token at 3.93:1
+  against the input well.
+
+Fix:
+
+- Darkened the faint token and pinned native placeholder opacity. Automated checks now require
+  text at 7:1 and muted/faint/brand-link text at 4.5:1 or better across the canvas, card,
+  secondary surface, and field well.
+
+### Final checks
+
+- Fonts and typography: existing Geist/Cinzel hierarchy, sizes, line heights, and wrapping are
+  unchanged; the theme changes material, not information density.
+- Spacing and layout: card geometry, 16 px page margins, 48 px minimum controls, radii, and
+  vertical rhythm remain consistent. The softer shadows improve separation without increasing
+  apparent bulk.
+- Colors and tokens: the visible hierarchy comes from warm tonal layers rather than white
+  luminance. Navy selected chips, green local-only status, amber attention, and red danger
+  states remain semantically distinct.
+- Image and icon quality: the canonical logo and existing Lucide icon set are unchanged and
+  retain their sharp source assets; no replacement artwork or CSS-drawn asset was introduced.
+- Copy and content: all product, privacy, and legal language is unchanged.
+- States and interactions: default, selected, empty, theme-switching, and no-record export
+  feedback were exercised. The dark theme was switched through the real UI and showed no
+  light-theme leakage.
+- Responsiveness: 320 × 568, 390 × 844, and 768 × 1024 were browser-checked. There was no
+  horizontal overflow; the narrow header wraps intentionally and persistent navigation remains
+  reachable.
+- Accessibility: semantic controls and labels are unchanged, rem-based type and reduced motion
+  remain present, focus rings remain gold and high contrast, and new token tests enforce text
+  contrast. Settings reported no locally recorded app errors.
+- P0 remaining: none.
+- P1 remaining: none.
+- P2 remaining: none.
+
+Final result: passed

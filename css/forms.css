@@ -17,6 +17,7 @@ input[type=text], input[type=password], input[type=time], input[type=date], inpu
   min-height: 50px; box-shadow: inset 0 1px 3px rgba(0,0,0,.5), inset 0 6px 12px -8px rgba(0,0,0,.35), inset 0 -1px 0 rgba(255,255,255,.045); transition: border-color var(--dur-state) var(--ease-out), box-shadow var(--dur-state) var(--ease-out);
 }
 input[type=time], input[type=date], input[type=number] { font-family: var(--mono); font-size: var(--fs-ui); }
+::placeholder { color: var(--faint); opacity: 1; }
 /* iOS gives DATE inputs an intrinsic min-width that overflows narrow containers; appearance:none
    lets CSS sizing win. Deliberately NOT on time inputs — appearance:none breaks Android's native
    clock picker (its "Set" button renders off-screen). Time keeps the native control. */

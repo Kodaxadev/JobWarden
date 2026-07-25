@@ -111,52 +111,6 @@
   --serif:"Cinzel",Georgia,"Times New Roman",serif;
 }
 
-/* ── Light theme ─────────────────────────────────────────────────────────────
-   The dark sealed-ledger is the brand default. Light is for reading in bright sun
-   / on a dim cheap screen — a cool near-white canvas, navy + gold kept, gold
-   DARKENED to a deep tone for text (bright gold is illegible on white; gold FILLS
-   keep their navy text). Cool only, never warm (the Cool-Canvas Rule holds). The
-   app resolves "System" to an explicit data-theme in JS, so this one block covers
-   every light case (no media-query duplication). */
-:root[data-theme="light"] {
-  color-scheme: light;
-  --bg:#e9edf3; --surface:#ffffff; --surface-2:#f3f6fa; --surface-3:#e7ecf3;
-  --line:rgba(20,32,52,.12); --line-2:rgba(20,32,52,.18); --node:rgba(20,32,52,.3);
-  --hi:rgba(255,255,255,.7);
-  --text:#16202e; --muted:#465063; --faint:#5a6474;
-  --primary:#8a6a12; --primary-strong:#7a5d0f; --primary-deep:#6f5410;
-  --incident:#8a5a08; --ok:#166b3a; --gtext:#166b3a;
-  --iline:rgba(138,90,8,.36); --ifill:rgba(138,90,8,.07);
-  --gline:rgba(22,107,58,.4); --gfill:rgba(22,107,58,.09);
-  --danger:#c0392b; --danger-text:#8a1c12;
-  --field-bg:#f5f7fb;
-  --edge-top:rgba(255,255,255,.9); --edge-bottom:rgba(20,32,52,.1);
-  --sheen:linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,0) 46%);
-  --shadow-1:inset 0 1px 0 var(--edge-top), inset 0 -1px 0 var(--edge-bottom), 0 1px 2px rgba(20,32,52,.08), 0 3px 8px -2px rgba(20,32,52,.1), 0 14px 30px -14px rgba(20,32,52,.16);
-  --shadow-2:inset 0 1px 0 rgba(255,255,255,.9), 0 2px 4px rgba(20,32,52,.1), 0 10px 22px -8px rgba(20,32,52,.18), 0 26px 52px -18px rgba(20,32,52,.2);
-  --shadow-3:inset 0 1px 0 rgba(255,255,255,.9), 0 6px 14px rgba(20,32,52,.14), 0 20px 44px -12px rgba(20,32,52,.24);
-  --glow-gold:0 0 40px -14px rgba(150,115,30,.28);
-  --header-bg:linear-gradient(180deg, rgba(255,255,255,.96), rgba(240,243,248,.94));
-  --tabbar-bg:linear-gradient(180deg, #ffffff, #eef1f6);
-  --banner-bg:linear-gradient(180deg, #fbf1d6, #f7ead0); --banner-text:#6f5410; --banner-line:rgba(150,115,30,.36);
-  --page-glow:radial-gradient(135% 74% at 50% -16%, #dfe6f2 0%, rgba(223,230,242,0) 58%);
-  --page-vignette:radial-gradient(140% 44% at 50% 112%, rgba(20,32,52,.06), rgba(20,32,52,0) 62%);
-}
-
-/* Three surfaces stay dark navy in BOTH themes — the brand mark, the live shift panel, and
-   the empty-state seal. They are the "instrument" of the design and inverting them would
-   flatten it. But light mode's ink is dark, and dark ink on dark navy is unreadable: the
-   header mark measured 1.87:1 and the shift status 1.68:1 before this block. So pin the
-   dark-theme ink inside them. Every value here is the dark theme's own, verified above. */
-:root[data-theme="light"] :is(.mark, .shift-panel, .empty-mark) {
-  --text:#eef1f6; --muted:#a8aebb; --faint:#949cab;
-  --primary:#cdab45; --primary-strong:#e6cd7e;
-  --incident:#e6b15a; --ok:#7fcf92; --gtext:#86d597;
-  --iline:rgba(230,177,90,.42); --ifill:rgba(230,177,90,.08);
-  --line:rgba(234,238,246,.09); --line-2:rgba(234,238,246,.16);
-  color: var(--text);
-}
-
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
