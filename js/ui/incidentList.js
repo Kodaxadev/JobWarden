@@ -231,12 +231,29 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
   add('Saved at', new Date(item.createdAt).toLocaleString());
   host.appendChild(facts);
 
-  const seal = el('div', { class: 'seal', role: 'status', 'aria-live': 'polite', text: 'Checking record fingerprint…' });
+  // The tamper-evidence payoff, and the one moment in the app worth a beat. Verification is
+  // real async work (SHA-256 over the record and every photo), so there IS a pause — it used
+  // to end in a bare text swap that popped. Now the result settles in: the glyphs come from
+  // the app's own icon set rather than Unicode look-alikes, and the state carries a class the
+  // stylesheet can resolve. Still a quiet stamp, not a wax seal (see DESIGN.md).
+  const sealText = el('span', { class: 'seal-text', text: 'Checking record fingerprint…' });
+  const seal = el('div', { class: 'seal', role: 'status', 'aria-live': 'polite' }, [sealText]);
   host.appendChild(seal);
+  const settle = (cls, iconName, text) => {
+    seal.className = `seal ${cls}`;
+    sealText.textContent = text;
+    if (iconName) {
+      const mark = iconEl(iconName);
+      mark.setAttribute('aria-hidden', 'true');
+      seal.insertBefore(el('span', { class: 'seal-mark' }, [mark]), sealText);
+    }
+    // Next frame, so the transition has a from-state to run from.
+    setTimeout(() => seal.classList.add('settled'), 20);
+  };
   verifyIntegrity(item).then(v => {
-    if (!v.sealed) { seal.className = 'seal none'; seal.textContent = 'Not sealed (older record)'; }
-    else if (v.ok) { seal.className = 'seal ok'; seal.textContent = '✓ Fingerprint verified — unchanged since saved'; }
-    else { seal.className = 'seal warn'; seal.textContent = '⚠ This record may have been changed outside the app'; }
+    if (!v.sealed) settle('none', null, 'Not sealed (older record)');
+    else if (v.ok) settle('ok', 'check', 'Fingerprint verified — unchanged since saved');
+    else settle('warn', 'triangle-alert', 'This record may have been changed outside the app');
   }).catch(() => seal.remove());
 
   const noted = (item.flags || []).filter(f => f.note);

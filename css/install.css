@@ -31,6 +31,9 @@
   --lh-tight:1.08; --lh-snug:1.35; --lh-body:1.6;
 }
 *{box-sizing:border-box} html,body{margin: 0}
+::selection{ background:rgba(205,171,69,.28); color:var(--text); }
+a,button{ -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+.btn,.badges li,.top .name{ -webkit-user-select:none; user-select:none; }
 body{ font:400 16px/1.6 var(--sans); color:var(--text);
   /* One light from above (navy cast) + a quiet vignette seating the page foot — the same
      lit-instrument atmosphere as the app. */

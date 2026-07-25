@@ -97,13 +97,28 @@
 .row-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
 .row-detail a { color: var(--primary-strong); }
 
-.seal { font-family: var(--mono); font-size: var(--fs-sm); margin: 2px 0 12px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); color: var(--muted); line-height: 1.45; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+/* The signature component. It resolves rather than pops: the verification is real async work,
+   so the result eases into its tint instead of snapping, and the mark settles the last pixel
+   with it. Quiet stamp, not a wax seal. Reduced motion flattens it via the global block. */
+.seal { display: flex; align-items: center; gap: var(--space-2); font-family: var(--mono); font-size: var(--fs-sm); margin: 2px 0 12px; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); color: var(--muted); line-height: 1.45; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+.seal { transition: background var(--dur-enter) var(--ease-out), border-color var(--dur-enter) var(--ease-out), color var(--dur-enter) var(--ease-out); }
+.seal-mark { display: inline-flex; flex: none; }
+/* The mark is visible BY DEFAULT and the entrance only enhances it. Gating visibility on
+   a class-triggered transition strands it invisible anywhere the transition does not run
+   — a background tab, a headless render — and this is the one element that must never
+   silently fail to appear. */
+.seal.settled .seal-mark { animation: seal-settle var(--dur-enter) var(--ease-out); }
+@keyframes seal-settle { from { opacity: 0; transform: scale(.86); } }
+.seal-mark svg { width: 16px; height: 16px; }
+.seal-text { min-width: 0; }
 .seal.ok { color: var(--gtext); border-color: var(--gline); background: var(--gfill); box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 0 18px -8px rgba(127,207,146,.35); }
 .seal.warn { color: var(--danger-text); border-color: rgba(224,89,77,.45); background: rgba(224,89,77,.1); font-weight: 500; }
 
 .history { margin-top: 16px; font-size: var(--fs-sm); color: var(--muted); }
 .history summary { cursor: pointer; padding: 8px 0; font-family: var(--mono); letter-spacing: .04em; }
-.hist-entry { margin: 8px 0; padding-left: 12px; border-left: 2px solid var(--line-2); }
+/* Was a 2px border-left — the side-stripe DESIGN.md bans. An edit entry is a stamped row in
+   the ledger, so it gets the recessed treatment the rest of the data uses instead. */
+.hist-entry { margin: 8px 0; padding: 8px 12px; background: rgba(234,238,246,.03); border: 1px solid var(--line); border-radius: var(--radius-xs); }
 .hist-change { font-family: var(--mono); font-size: var(--fs-micro); color: var(--text); word-break: break-word; }
 
 .deleted-wrap { margin-top: 24px; }

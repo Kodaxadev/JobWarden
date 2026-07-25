@@ -21,6 +21,12 @@
   --lg-h1:clamp(26px, 6vw, 30px);
 }
 *{box-sizing:border-box} html,body{margin: 0}
+/* The contents list jumps within a long document; gliding keeps the reader's place instead of
+   teleporting them. scroll-margin on h2 already stops the heading hiding under the top. */
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+::selection{ background:rgba(205,171,69,.28); color:var(--text); }
+a,button,summary{ -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
 body{ font:400 var(--lg-body)/1.7 var(--sans); color:var(--text);
   background:radial-gradient(120% 60% at 50% -8%, #16243c 0%, rgba(22,36,60,0) 55%), var(--bg);
   -webkit-font-smoothing:antialiased; }

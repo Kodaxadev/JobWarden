@@ -163,9 +163,51 @@ body {
   font: 400 16px/1.55 var(--font);
   letter-spacing: -.005em;
   -webkit-text-size-adjust: 100%; padding-bottom: env(safe-area-inset-bottom);
+  /* Installed to the home screen, this is an app, not a document. Overscroll should stop at
+     the app's own edges rather than rubber-band the shell or chain to a pull-to-refresh. */
+  overscroll-behavior-y: contain;
 }
 :focus-visible { outline: 2px solid var(--primary-strong); outline-offset: 2px; border-radius: var(--radius-xs); }
 a { color: var(--primary-strong); }
+
+/* ---------------------------------------------------------------------------
+   Native feel. Everything here is a browser default that betrays "web page" on a
+   device, on a product that installs to the home screen and is used one-handed.
+   None of it is decoration; each line removes a tell.
+   --------------------------------------------------------------------------- */
+
+/* The loudest one. Android paints rgba(51,181,229,.4) — a cyan flash — over every
+   tap target, on a navy-and-gold instrument, fighting the press states the app
+   already draws. Removing it is only safe BECAUSE every control here has a real
+   :active (the Press-Rises Rule); without that this would leave taps unanswered. */
+a, button, summary, label, input, select, textarea, [role="button"] { -webkit-tap-highlight-color: transparent; }
+
+/* Kills the ~300ms double-tap-to-zoom wait on controls. The page is already
+   width=device-width, so pinch-zoom on content is untouched. */
+a, button, summary, .chip, .tab, [role="button"] { touch-action: manipulation; }
+
+/* Chrome is not text. Long-pressing a button should feel like holding a button,
+   not raise a selection handle. Content is deliberately exempt below — being able
+   to select and copy your own record is the point of the thing. */
+button, .tab, .chip, .field-label, .logsec-title, .kpi-label, .month-head, .count,
+.over, .pill, .issue-group-label, summary { -webkit-user-select: none; user-select: none; }
+/* …and the record itself stays selectable, explicitly. */
+.narrative, .row-detail, .facts, .legal-p, .rights-body, .hint, p, li, dd, code
+  { -webkit-user-select: text; user-select: text; }
+
+/* Brand-toned selection and caret. The defaults are a system blue that belongs to
+   no part of this palette. */
+::selection { background: rgba(205,171,69,.28); color: var(--text); }
+input, textarea, select { caret-color: var(--primary); }
+
+/* Kerning and default ligatures on, explicitly, rather than left to the UA. */
+body { text-rendering: optimizeLegibility; font-kerning: normal; font-variant-ligatures: common-ligatures; }
+
+/* Numbers in prose and on controls ("Rest break (0)" → "(1)") shift width as they
+   change with proportional digits. Data already uses Geist Mono; this covers the
+   sans that sits next to it. */
+.btn, .chip, .kpi, .row-flags, .glance-range, .glance-foot, .seal, .history
+  { font-variant-numeric: tabular-nums; }
 .icon { display: inline-flex; vertical-align: -0.15em; }
 .icon svg { width: 1.2em; height: 1.2em; }
 .mono { font-family: var(--mono); }
