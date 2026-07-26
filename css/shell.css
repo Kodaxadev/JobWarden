@@ -14,22 +14,25 @@
 
 .banner-host:empty { display: none; }
 .banner {
-  display: flex; gap: 10px; align-items: center; justify-content: space-between;
+  display: flex; gap: var(--space-3); align-items: center; justify-content: space-between;
   background: var(--banner-bg); color: var(--banner-text);
-  border-bottom: 1px solid var(--banner-line); padding: 10px 16px;
+  border-bottom: 1px solid var(--banner-line); padding: var(--space-3) var(--space-4);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.04), inset 0 -1px 0 rgba(0,0,0,.2);
 }
 .banner-icon {
   width: 34px; height: 34px; flex: none; display: grid; place-items: center;
   color: var(--primary-strong); border: 1px solid rgba(205,171,69,.26);
-  border-radius: 10px; background: rgba(0,0,0,.12);
+  border-radius: var(--radius-tile); background: rgba(0,0,0,.12);
 }
 .banner-icon svg { width: 18px; height: 18px; }
-.banner-copy { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 1px; }
+.banner-copy { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: var(--space-hair); }
 .banner-title { color: var(--banner-text); font-size: var(--fs-sm); line-height: var(--lh-snug); }
+/* Wraps rather than truncates. "Only on this phone · Last backup never" needs 212px in a
+   176px column, so nowrap+ellipsis was cutting off "never" — the one word that carries the
+   urgency, on a banner that shows on every screen. */
 .banner-detail {
   color: var(--banner-text); opacity: .82; font-size: var(--fs-micro);
-  line-height: var(--lh-snug); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  line-height: var(--lh-snug); text-wrap: pretty;
 }
 .banner .btn { flex: none; }
 
@@ -109,7 +112,7 @@
 }
 .onboard-expectation:last-child { border-bottom: 0; }
 .onboard-expectation-icon {
-  width: 36px; height: 36px; display: grid; place-items: center; border-radius: 10px;
+  width: 36px; height: 36px; display: grid; place-items: center; border-radius: var(--radius-tile);
   color: var(--primary-strong); border: 1px solid rgba(205,171,69,.22);
   background: rgba(205,171,69,.07);
 }
@@ -149,7 +152,7 @@ body.onboarding .disclaimer { padding-bottom: calc(24px + env(safe-area-inset-bo
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 .toast-icon {
-  width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px;
+  width: 30px; height: 30px; display: grid; place-items: center; border-radius: var(--radius-tile);
   color: var(--primary-strong); background: rgba(205,171,69,.08); border: 1px solid rgba(205,171,69,.2);
 }
 .toast-icon .icon svg { width: 17px; height: 17px; }
@@ -167,7 +170,7 @@ body.onboarding .disclaimer { padding-bottom: calc(24px + env(safe-area-inset-bo
 .confirm-dialog { max-width: 390px; padding: 20px; }
 .confirm-head { display: grid; grid-template-columns: 44px minmax(0,1fr); gap: 12px; align-items: center; }
 .confirm-icon {
-  width: 44px; height: 44px; display: grid; place-items: center; border-radius: 13px;
+  width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radius-tile);
   color: var(--incident); border: 1px solid var(--iline); background: var(--ifill);
 }
 .confirm-icon .icon svg { width: 22px; height: 22px; }

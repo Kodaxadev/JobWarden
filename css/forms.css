@@ -50,8 +50,11 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .issue-group[open] { border-color: var(--line-2); background: rgba(255,255,255,.025); }
 .issue-group.has-selection { border-color: rgba(205,171,69,.32); }
 .issue-group-head {
-  display: grid; grid-template-columns: 38px minmax(0,1fr) auto 18px; gap: 12px;
-  align-items: center; min-height: 66px; padding: 10px 12px; cursor: pointer;
+  /* Four tracks with 12px gaps spent 36px on air and left the copy column ~7px too narrow for
+     its own helper text. At --space-2 the gaps cost 24px, the text fits on one line again, and
+     the wrap rule below is the safety net rather than the everyday case. */
+  display: grid; grid-template-columns: 38px minmax(0,1fr) auto 18px; gap: var(--space-2);
+  align-items: center; min-height: 66px; padding: var(--space-3); cursor: pointer;
   list-style: none; transition: background var(--dur-state) var(--ease-out);
 }
 .issue-group-head::-webkit-details-marker { display: none; }
@@ -60,19 +63,23 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .issue-group-head:active { background: rgba(255,255,255,.045); }
 .issue-group-icon {
   width: 38px; height: 38px; display: grid; place-items: center; color: var(--primary-strong);
-  border: 1px solid rgba(205,171,69,.22); border-radius: 10px;
+  border: 1px solid rgba(205,171,69,.22); border-radius: var(--radius-tile);
   background: linear-gradient(160deg, rgba(34,58,97,.88), rgba(14,27,46,.92));
   box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
 .issue-group-icon svg { width: 19px; height: 19px; }
-.issue-group-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.issue-group-copy { display: flex; flex-direction: column; gap: var(--space-hair); min-width: 0; }
 .issue-group-label {
   color: var(--text); font-size: var(--fs-ui); font-weight: 600;
   line-height: var(--lh-snug); letter-spacing: -.006em;
 }
+/* Wraps rather than truncates. On a 375px screen "Missed, late, short, or interrupted" needs
+   181px in a 174px column, so nowrap+ellipsis was cutting it mid-word — trading the copy that
+   tells someone what the group covers for a tidy single line. The row grows instead; these
+   strings are short enough that two lines is the ceiling in practice. */
 .issue-group-help {
   color: var(--muted); font-size: var(--fs-micro); line-height: 1.35;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  white-space: normal; overflow-wrap: anywhere; text-wrap: pretty;
 }
 .issue-group-state {
   color: var(--faint); font-family: var(--mono); font-size: var(--fs-micro);
@@ -87,7 +94,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 }
 .issue-group[open] .issue-group-chevron svg { transform: rotate(180deg); color: var(--primary); }
 .issue-grid {
-  display: grid; grid-template-columns: 1fr; gap: 6px; padding: 8px;
+  display: grid; grid-template-columns: 1fr; gap: var(--space-2); padding: var(--space-2);
   border-top: 1px solid var(--line);
 }
 .chip { background: var(--sheen), var(--surface-3); color: var(--text); border: 1px solid var(--line-2); border-radius: var(--radius-sm); padding: 16px 16px; font-size: var(--fs-ui); min-height: 52px; cursor: pointer; text-align: left; display: inline-flex; align-items: center; gap: 12px; line-height: 1.35; overflow-wrap: anywhere; box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(0,0,0,.28); transition: border-color var(--dur-state) var(--ease-out), background var(--dur-state) var(--ease-out), box-shadow var(--dur-state) var(--ease-out), transform var(--dur-press) var(--ease-out); }
@@ -96,8 +103,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .chip.on { background: var(--sheen), linear-gradient(180deg, var(--navy-2), var(--navy)); border-color: var(--primary); font-weight: 500; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.3); }
 .chip.on:hover { border-color: var(--primary-strong); }
 .issue-choice {
-  width: 100%; min-height: 50px; padding: 8px 10px; gap: 10px;
-  background: transparent; border-color: transparent; border-radius: 10px;
+  width: 100%; min-height: 50px; padding: var(--space-2) var(--space-3); gap: var(--space-3);
+  background: transparent; border-color: transparent; border-radius: var(--radius-sm);
   box-shadow: none; font-weight: 500;
 }
 .issue-choice:hover {
@@ -108,7 +115,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .issue-choice-icon {
   width: 32px; height: 32px; flex: none; display: grid; place-items: center;
   color: var(--muted); background: var(--surface-2); border: 1px solid var(--line);
-  border-radius: 9px; transition: color var(--dur-state) var(--ease-out), border-color var(--dur-state) var(--ease-out);
+  border-radius: var(--radius-sm); transition: color var(--dur-state) var(--ease-out), border-color var(--dur-state) var(--ease-out);
 }
 .issue-choice-icon svg { width: 17px; height: 17px; }
 .issue-choice-label { flex: 1; min-width: 0; }
@@ -226,7 +233,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
   background: rgba(0,0,0,.12);
 }
 .shift-reminder-icon {
-  width: 34px; height: 34px; display: grid; place-items: center; border-radius: 9px;
+  width: 34px; height: 34px; display: grid; place-items: center; border-radius: var(--radius-tile);
   color: var(--primary-strong); border: 1px solid rgba(205,171,69,.22);
   background: rgba(205,171,69,.07);
 }

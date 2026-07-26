@@ -28,6 +28,12 @@
   --gline:rgba(90,160,100,.34); --gfill:rgba(78,150,92,.14); --gtext:#86d597;
 
   --radius-xs:4px; --radius:14px; --radius-sm:11px; --radius-lg:18px; --radius-pill:999px; --tap:48px;
+  /* Square icon tiles. Seven of them existed at 30/34/36/38/40/44px with hand-picked radii of
+     9, 9, 10, 11, 11 and 13 — all landing between 27% and 30% of the tile, because each was
+     eyeballed separately to look "equally rounded". A percentage IS that relationship, so it
+     scales with the tile and a new one at any size is right without a decision. */
+  --radius-tile:30%;
+  --space-hair:2px;   /* paired label + sub-label only: they read as one unit */
   --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:20px; --space-6:24px;
 
   /* Type is in rem, not px, so browser text-size preferences can enlarge it. This is the web
