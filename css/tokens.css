@@ -91,6 +91,26 @@
   --glow-gold:0 0 44px -12px rgba(205,171,69,.3);
   --elev-gold:var(--glow-gold), var(--shadow-2);   /* the single "elevated gold" recipe (one source of truth) */
 
+  /* Interaction lighting. Surfaces, shadows, spacing, type and motion each got a scale; the
+     STATES never did — so every control eyeballed its own, and the app shipped seven press
+     washes (.045–.06), three hover washes (.025/.03/.032) and four press-inset depths. Same
+     failure as the pre-token type scale: with nothing to reach for, each file invents a number.
+     It also broke the light theme, where a white 3% wash on a cream surface is invisible, so
+     daylight hover had to be re-patched selector by selector and most controls were missed.
+     Light comes from above (the One-Light Rule): hover catches a little more of it; a press
+     brightens the contact AND sinks the surface (the Press-Rises Rule). */
+  --wash-hover:rgba(255,255,255,.03);              /* pointer resting on a pressable surface */
+  --wash-press:rgba(255,255,255,.055);             /* held down */
+  --press-drop:1px;                                /* how far a pressed control travels */
+  --press-sink:inset 0 2px 3px rgba(0,0,0,.4);     /* a button pushed into the surface */
+  --press-sink-sm:inset 0 1px 2px rgba(0,0,0,.3);  /* the same, for chips, cells and tiles */
+  /* …and the other half of the same rule: things you write or read are SUNK into the ledger and
+     stay there. Three depths were in play (.22 / .26 / .4) for one idea. Two roles, because a
+     field you type into is legitimately deeper than a well you read a number out of, and the
+     well catches a hairline of bounce off the surface below it. */
+  --recess:inset 0 1px 2px rgba(0,0,0,.26), inset 0 -1px 0 rgba(255,255,255,.035);  /* data wells */
+  --recess-field:inset 0 1px 2px rgba(0,0,0,.4);                                    /* inputs */
+
   /* Machined gold: a bright catch at the top edge, the body, a deep base — seated by a
      bevel. The material for the one gold action on a screen (the Rare Gold Rule). */
   --gold-face:linear-gradient(180deg, #e3c464, #d2af49 45%, #b28b29);

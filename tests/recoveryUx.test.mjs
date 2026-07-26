@@ -36,7 +36,7 @@ test('every full backup path includes recoverable Deleted records', () => {
   const exportView = readFileSync('js/ui/exportView.js', 'utf8');
   assert.match(app, /getAllIncidents\(\{ includeDeleted: true \}\)/);
   assert.match(app, /countIncidents\(\{ includeDeleted: true \}\)/);
-  assert.match(exportView, /getAllIncidents\(\{ includeDeleted: true \}\)/);
+  assert.match(exportView, /all: backupItems/); // the group read's `all` is the includes-Deleted list
   assert.match(exportView, /exportJson\(backupItems/);
   assert.match(exportView, /exportEncryptedJson\(backupItems/);
   assert.match(exportView, /emailRecords\(backupItems/);

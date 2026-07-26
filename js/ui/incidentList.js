@@ -2,11 +2,12 @@
 import { el, clear, toast } from './dom.js';
 import { confirmDialog } from './confirmDialog.js';
 import { icon } from './icons.js';
-import { getAllIncidents, getDeletedIncidents, putIncident } from '../data/incidentRepo.js';
-import { softDelete, restoreIncident } from '../domain/incidentModel.js';
+import { getIncidentGroups, putIncident } from '../data/incidentRepo.js';
+import { softDelete } from '../domain/incidentModel.js';
+import { deletedSection } from './deletedRecords.js';
 import { verifyIntegrity } from '../domain/integrity.js';
 import { getRules } from '../rules/index.js';
-import { WHAT_FINDINGS_MEAN } from '../config/disclaimers.js';
+import { WHAT_FINDINGS_MEAN, weeklyOvertimeCaveat } from '../config/disclaimers.js';
 import { summarizePatterns } from '../domain/patterns.js';
 import { labelFor } from '../config/infractionTypes.js';
 import { formatDate } from '../domain/timeUtils.js';
@@ -21,7 +22,7 @@ const fmt = v => (Array.isArray(v) ? v.join(', ') : v === true ? 'Yes' : v === f
 
 export async function renderIncidentList(container, { onCreate, onEdit, onChanged, onRepeat } = {}) {
   clear(container);
-  const [items, deleted] = await Promise.all([getAllIncidents(), getDeletedIncidents()]);
+  const { active: items, deleted } = await getIncidentGroups();
 
   if (!items.length && !deleted.length) {
     container.appendChild(emptyState({
@@ -86,12 +87,10 @@ export async function renderIncidentList(container, { onCreate, onEdit, onChange
   }
 
   if (deleted.length) {
-    const wrap = el('details', {
-      class: 'deleted-wrap',
-      open: !items.length,
-    }, [el('summary', { text: `Deleted (${deleted.length}) — recoverable` })]);
-    deleted.forEach(d => wrap.appendChild(deletedRow(d, { onChanged })));
-    container.appendChild(wrap);
+    container.appendChild(deletedSection(
+      { items: deleted, openByDefault: !items.length },
+      { onChanged },
+    ));
   }
 }
 
@@ -162,7 +161,7 @@ function glanceCard(items) {
 
   const ot = s.weeklyOvertime;
   const otLine = ot && ot.count > 0
-    ? el('p', { class: 'glance-interrupt', text: `${ot.count} week${ot.count === 1 ? '' : 's'} over 40 hours (${ot.totalOtHours}h total over 40, Sun–Sat) — possible weekly overtime. Your employer's workweek may start on another day; confirm it.` })
+    ? el('p', { class: 'glance-interrupt', text: `${ot.count} week${ot.count === 1 ? '' : 's'} over 40 hours (${ot.totalOtHours}h total over 40) — possible weekly overtime. ${weeklyOvertimeCaveat(ot)}` })
     : null;
 
   // Statute-of-limitations nudge: facts + route to help, no per-claim deadline math.
@@ -336,7 +335,14 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
     const link = mapsLink(item.location);
     host.appendChild(el('p', { class: 'hint' }, [
       el('span', { text: 'Location: ' + formatLoc(item.location) + '  ' }),
-      link ? el('a', { href: link, target: '_blank', rel: 'noopener', text: 'map' }) : null,
+      // This is the one control in the app that sends recorded evidence to a third party, so it
+      // names the third party instead of saying "map". Everything else here stays on the phone
+      // until the person exports it; a two-letter link was the wrong amount of warning.
+      // `noreferrer` matches every other outbound link (and does not rely on the edge header).
+      link ? el('a', {
+        href: link, target: '_blank', rel: 'noopener noreferrer',
+        text: 'open in Google Maps',
+      }) : null,
     ]));
   }
   if ((item.attachments || []).length) {
@@ -346,7 +352,10 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
   const hist = item.editLog || [];
   if (hist.length) {
     host.appendChild(el('details', { class: 'history' }, [
-      el('summary', { text: `Edit history (${hist.length})` }),
+      el('summary', { class: 'quiet-summary' }, [
+        el('span', { text: `Edit history (${hist.length})` }),
+        el('span', { class: 'quiet-summary-chevron' }, [iconEl('chevron-down')]),
+      ]),
       ...hist.map(h => el('div', { class: 'hist-entry' }, [
         el('div', { class: 'hint', text: `${new Date(h.at).toLocaleString()} — ${h.note}` }),
         ...(h.changes || []).map(c => el('div', { class: 'hist-change', text: `${c.field}: ${fmt(c.from)} → ${fmt(c.to)}` })),
@@ -377,18 +386,3 @@ function buildDetail(host, item, { onEdit, onChanged, onRepeat }) {
   ]));
 }
 
-function deletedRow(item, { onChanged }) {
-  return el('article', { class: 'row deleted' }, [
-    el('div', { class: 'row-head static' }, [
-      el('div', { class: 'row-main' }, [el('div', { class: 'row-date', text: formatDate(item.incidentDate) }), chipRow(item)]),
-      el('button', {
-        class: 'btn tiny deleted-restore',
-        onclick: async () => {
-          await putIncident(restoreIncident(item));
-          toast('Record restored to Records', { tone: 'success' });
-          onChanged?.();
-        },
-      }, [iconEl('rotate-ccw'), document.createTextNode(' Restore record')]),
-    ]),
-  ]);
-}

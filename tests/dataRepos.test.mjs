@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import { openDb, tx, DB_VERSION, MIGRATIONS, STORE_INCIDENTS, STORE_SETTINGS, _resetDbForTests } from '../js/data/db.js';
 import {
   addIncident, putIncident, putIncidentRaw, getIncident, deleteIncident,
-  getAllIncidents, getDeletedIncidents, countIncidents,
+  getAllIncidents, getDeletedIncidents, getIncidentGroups, countIncidents,
 } from '../js/data/incidentRepo.js';
 import { getSettings, saveSettings, markBackedUp } from '../js/data/settingsRepo.js';
 import { createIncident, reviseIncident, softDelete, restoreIncident } from '../js/domain/incidentModel.js';
@@ -111,6 +111,39 @@ test('a soft delete hides the record from the list but keeps it recoverable', as
 
   await putIncident(restoreIncident(deleted[0]));
   assert.equal((await getAllIncidents()).length, 1);
+});
+
+// Records and Export both need the active list AND the Deleted list. They take them from one
+// read, so the split has to stay honest about which group a record belongs to.
+test('one grouped read separates active from Deleted without losing either', async () => {
+  await addIncident(rec({ incidentDate: '2026-06-10' }));
+  const doomed = rec({ incidentDate: '2026-06-18' });
+  await addIncident(doomed);
+  await putIncident(softDelete(await getIncident(doomed.id), 'wrong day'));
+
+  const groups = await getIncidentGroups();
+  assert.deepEqual(groups.active.map(i => i.incidentDate), ['2026-06-10']);
+  assert.deepEqual(groups.deleted.map(i => i.incidentDate), ['2026-06-18']);
+  assert.equal(groups.all.length, 2, 'backups take `all`, so it must include the Deleted record');
+  assert.deepEqual(groups.all.map(i => i.incidentDate), ['2026-06-18', '2026-06-10'], 'newest first');
+});
+
+// The theme saves the instant it is picked, and "Save settings" can land while that write is
+// still in flight. Read-then-write outside a transaction let the second save start from the same
+// stored value and overwrite the first, losing whichever change lost the race.
+test('two settings saves that overlap do not overwrite each other', async () => {
+  await saveSettings({ employeeName: 'A. Worker', workplaces: ['Store #12'] });
+  await Promise.all([
+    saveSettings({ theme: 'light' }),
+    saveSettings({ employer: 'Acme Warehouse' }),
+    markBackedUp(),
+  ]);
+  const s = await getSettings();
+  assert.equal(s.theme, 'light', 'the theme pick survived');
+  assert.equal(s.employer, 'Acme Warehouse', 'the profile edit survived');
+  assert.ok(s.lastBackupAt, 'and so did the backup timestamp');
+  assert.equal(s.employeeName, 'A. Worker', 'untouched fields are still there');
+  assert.deepEqual(s.workplaces, ['Store #12']);
 });
 
 test('a hard delete really removes it', async () => {

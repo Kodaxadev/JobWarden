@@ -37,7 +37,7 @@ offline is the point.
 
 ## Using it
 - **Log** — pick *what happened*; the form then asks **only** for the details those issues need (hours, lunch, rest, unpaid work, the shift you were scheduled for, what you paid for out of pocket, final pay, what happened after you spoke up), each with a one-line "why," and the rest tucked behind "More details." Add GPS + photos (timeclock, paystub, manager texts) and write plain facts. Also here: a live **shift tracker** (start a shift → get meal-deadline alerts, *while the app is open* — a closed PWA can't fire one without a server, and the panel says so) and an **Interrupted lunch** shortcut for capturing one in seconds.
-- **Records** — every entry, newest first, with the computed findings and a tamper-evident SHA-256 fingerprint seal, plus an at-a-glance pattern roll-up (e.g. "lunch interrupted 4× — Manager (3)"). Expand to edit, delete, or duplicate; edits are logged and the original `createdAt` never changes (contemporaneity).
+- **Records** — every entry, newest first, with the computed findings and a tamper-evident SHA-256 fingerprint seal, plus an at-a-glance pattern roll-up (e.g. "lunch interrupted 4× — Manager (3)"). Expand to edit, delete, or duplicate; edits are logged and the original `createdAt` never changes (contemporaneity). Deleting moves a record to **Deleted**, where it can be restored or deleted forever; Settings can erase everything on the phone at once.
 - **Export** — Email to myself (summary + backup file), full JSON backup (with photos), a **passphrase-locked backup**, CSV spreadsheet, a printable **PDF report**, a one-page **pattern summary**, and **Restore from a backup** (plain or locked).
 - **Settings** — profile (name, role, employer, pay type); schedule & coverage (alternative workweek / union contract, so findings don't overstate); workplaces; a **"Know your rights"** offline California guide; a **"Legal & privacy"** disclosure; and a storage-protection toggle.
 
@@ -51,7 +51,8 @@ offline is the point.
 Vanilla ES modules, no build step, no runtime dependencies. One concern per file, every source file under the 400-line cap. The evidence engine (capture, model, integrity, patterns, export) is jurisdiction-agnostic; per-state **rules** live behind a thin seam — `js/rules/index.js` (`getRules` dispatch + merged finding labels) over `js/rules/california.js` and `js/rules/newYork.js` (draft, attorney-gated), scoped by `config/jurisdictions.js`.
 
 ```
-landing.html · install.html · index.html · manifest.webmanifest · service-worker.js
+landing.html · install.html · index.html · privacy.html · terms.html
+manifest.webmanifest · service-worker.js · robots.txt · sitemap.xml
 css/   styles · tokens · shell · forms · records
 js/
   app.js · installPage.js · version.js   bootstrap · routing · shift-alert monitor · SW version query
@@ -64,16 +65,20 @@ js/
            soft-delete, sanity warnings) · integrity (versioned SHA-256 content+record seals) ·
            patterns (roll-ups + weekly OT) · shiftClock
   data/    db (IndexedDB + append-only migration ladder) · incidentRepo · settingsRepo · shiftRepo ·
-           errorLog (local ring buffer)
+           errorLog (local ring buffer) · eraseAll (the one destructive path)
+           settingsRepo reads + writes in ONE transaction, so overlapping saves cannot drop each other
   capture/ captureForm · captureFields · fieldUi · payIssueFields · quickCapture (interrupted-lunch) ·
            geo · media (downscale on ingest)
-  ui/      dom (el + shared focus trap) · icons · theme (dark/light/system) · onboarding · incidentList
-           (filter/group/scoped-export) · exportView · settingsView · shiftPanel · rightsFaq · legalView ·
-           passphraseDialog (locked backups)
+  ui/      dom (el + shared focus trap + withBusy, the double-tap guard) · icons · storageUnavailable
+           (the app cannot save here) · theme + themePref/themeBoot (dark/light/system,
+           painted before first paint) · onboarding · incidentList (filter/group/scoped-export) ·
+           deletedRecords (restore / delete forever) · exportView · settingsView · eraseData ·
+           shiftPanel · rightsFaq · legalView · passphraseDialog (locked backups)
   export/  download · exportJson (Blob backups) · backupCrypto (AES-GCM passphrase lock) · exportCsv ·
            exportReport · exportSummary · reportBrand (paper mode) · emailExport · importBackup · backup
-tests/     Node built-in runner — 244 tests
-docs/      LEGAL_FOUNDATION.md · IMPROVEMENT_AUDIT.md · superpowers/plans/ (design + Phase 3 plan)
+tests/     Node built-in runner — 342 tests
+docs/      LEGAL_FOUNDATION.md · IMPROVEMENT_AUDIT.md + IMPROVEMENT_PROGRESS.md ·
+           CHANGELOG-ARCHIVE.md · superpowers/plans/ (design + Phase 3 plan)
 scripts/   build-app-icons.mjs (SVG → PNG app icons) · build-icons.mjs (Lucide → js/ui/icons.js)
 CHANGELOG.md   keyed on the service-worker cache id shown in Settings → About
 ```
@@ -85,7 +90,7 @@ Committed tests under `tests/`, using Node's built-in runner. The app ships **ze
 npm test          # alias for: node --test
 ```
 
-The suite (**244 tests** at last run) covers:
+The suite (**342 tests** at last run) covers:
 
 - **Rules** — meal timing and waivers (measured in hours *worked*), the >10h second-meal rule,
   reporting-time pay, §2802 work expenses, structured split-shift/pay-stub/tip/sick-leave
@@ -100,7 +105,13 @@ The suite (**244 tests** at last run) covers:
 - **Imports** — every named import across the reachable module graph must resolve to a real export in the target (a UI module importing a symbol nobody exports is a blank screen and a green suite).
 - **Failure paths** — every storage-write failure (full phone, blocked/private-mode storage, a second tab holding the database, the unknown case) maps to a message that says the record was *not* saved and what to do next, and cannot be made to throw by any junk passed to it.
 - **Print** — both printable documents are built from a record whose every free-text field carries a script payload; no tag, event handler, or `javascript:` URL survives, and each document declares its own `script-src 'none'` policy.
-- **Shell** — an offline-asset gate that walks the real import graph and fails if a reachable module is missing from the service worker's cache list, the icon build pipeline, a plain-language copy guard (banned jargon *and* a 28-word sentence ceiling on the rights guide), and repo hygiene: the 400-line cap, no debug markers, zero runtime dependencies.
+- **Shell** — an offline-asset gate that walks the real import graph (entry points discovered from the pages themselves) and fails if a reachable module is missing from the service worker's cache list, the icon build pipeline, a plain-language copy guard (banned jargon *and* a 28-word sentence ceiling on the rights guide), and repo hygiene: the 400-line cap, no debug markers, zero runtime dependencies.
+- **Service worker** — the install, activate and fetch handlers are driven against stub globals: every listed asset cached, a redirect at the app root stored as a plain response (a cached redirect answers a navigation with a network error), nothing non-`ok` cached as if it were the file, old caches dropped on activate, the three offline navigation fallbacks, and the localhost network-first dev path.
+- **Interaction lighting** — the hover/press/recess vocabulary exists as tokens, is remapped for daylight (an ink tint, never a white wash that a cream surface swallows), and no stylesheet hand-writes a press value; every disclosure opens with one shared keyframe and none of them animate height under a clipped box, so a reveal can never be the reason content cannot be read.
+- **Saving** — the one action that cannot be retried from memory: the busy guard goes on before the first await (both taps of a double-tap land in the same turn), releases on failure, and swaps the label without deleting the icon beside it; export filenames carry the LOCAL date, probed in two timezones because an in-process check only catches the UTC bug half the day.
+- **Storage refusing** — the screen shown when the database will not open says the app cannot save here and why, does not reuse the failed-write wording about a record that was never entered, promises nothing about deleting, and renders rather than throwing on any junk error.
+- **Erasing** — the one destructive path: records, recoverable Deleted records, profile, running shift, and the app's own local-storage keys all go (and other apps' keys do not); the warning counts what will be lost, names what it cannot reach, and reads correctly for a single record.
+- **The deployed pages** — canonical addresses, the social-card tags a shared link needs (with the preview image proven to exist in the repo), `robots.txt` that does not disallow the page whose `noindex` it needs read, a sitemap that lists only real files, and the header's top safe-area inset on the padding that pushes content *down*.
 
 Lint (`npm run lint`) and type-check (`npm run typecheck`, JSDoc + `tsc --checkJs` over the domain layer) run alongside tests in CI. After changing any cached asset, bump `CACHE` in `service-worker.js` so installed clients update — and note it in [`CHANGELOG.md`](CHANGELOG.md), which is keyed on that same string.
 

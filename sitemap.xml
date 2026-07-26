@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The indexable pages. index.html is the app itself and is excluded on purpose: it renders
+     from script and has nothing to show a crawler, so a search result for it would be a blank
+     screen where the explanation should be. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://jobwarden.kodaxa.dev/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://jobwarden.kodaxa.dev/install.html</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://jobwarden.kodaxa.dev/privacy.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://jobwarden.kodaxa.dev/terms.html</loc>
+    <priority>0.5</priority>
+  </url>
+</urlset>

@@ -1,5 +1,5 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v102';
+const CACHE = 'jobwarden-v105';
 const ASSETS = [
   './', './index.html', './landing.html', './install.html', './privacy.html', './terms.html', './manifest.webmanifest',
   './css/styles.css', './css/tokens.css', './css/shell.css', './css/system.css', './css/forms.css', './css/actions.css', './css/records.css', './css/light.css', './css/marketing.css', './css/install.css', './css/legal.css',
@@ -13,9 +13,10 @@ const ASSETS = [
   './js/config/infractionTypes.js', './js/config/uiCopy.js', './js/config/jurisdictions.js', './js/config/disclaimers.js', './js/config/payStatus.js', './js/config/payIssueOptions.js',
   './js/domain/timeUtils.js', './js/domain/breakRules.js', './js/domain/payIssueRules.js', './js/domain/incidentModel.js', './js/domain/integrity.js', './js/domain/patterns.js', './js/domain/shiftClock.js',
   './js/rules/index.js', './js/rules/california.js', './js/rules/newYork.js',
-  './js/data/db.js', './js/data/storageErrors.js', './js/data/incidentRepo.js', './js/data/settingsRepo.js', './js/data/shiftRepo.js', './js/data/errorLog.js',
+  './js/data/db.js', './js/data/storageErrors.js', './js/data/incidentRepo.js', './js/data/settingsRepo.js', './js/data/shiftRepo.js', './js/data/errorLog.js', './js/data/eraseAll.js',
   './js/capture/geo.js', './js/capture/media.js', './js/capture/evidenceStatus.js', './js/capture/evidenceFields.js', './js/capture/fieldUi.js', './js/capture/payIssueFields.js', './js/capture/captureFields.js', './js/capture/captureForm.js', './js/capture/quickCapture.js',
-  './js/ui/dom.js', './js/ui/icons.js', './js/ui/confirmDialog.js', './js/ui/statusUi.js', './js/ui/systemStatus.js', './js/ui/actionRow.js', './js/ui/navigationGuard.js', './js/ui/incidentList.js', './js/ui/exportView.js', './js/ui/restoreStatus.js', './js/ui/settingsView.js', './js/ui/onboarding.js', './js/ui/shiftPanel.js', './js/ui/reminderPermission.js', './js/ui/rightsFaq.js', './js/ui/legalView.js', './js/ui/theme.js', './js/ui/passphraseDialog.js', './js/ui/saveFailure.js',
+  './js/ui/themeBoot.js', './js/ui/themePref.js',
+  './js/ui/dom.js', './js/ui/icons.js', './js/ui/confirmDialog.js', './js/ui/statusUi.js', './js/ui/systemStatus.js', './js/ui/storageUnavailable.js', './js/ui/actionRow.js', './js/ui/navigationGuard.js', './js/ui/incidentList.js', './js/ui/deletedRecords.js', './js/ui/eraseData.js', './js/ui/exportView.js', './js/ui/restoreStatus.js', './js/ui/settingsView.js', './js/ui/onboarding.js', './js/ui/shiftPanel.js', './js/ui/reminderPermission.js', './js/ui/rightsFaq.js', './js/ui/legalView.js', './js/ui/theme.js', './js/ui/passphraseDialog.js', './js/ui/saveFailure.js',
   './js/export/download.js', './js/export/exportJson.js', './js/export/emailExport.js', './js/export/importBackup.js', './js/export/exportCsv.js',
   './js/export/exportReport.js', './js/export/exportSummary.js', './js/export/reportBrand.js', './js/export/backup.js', './js/export/backupCrypto.js',
 ];
@@ -23,10 +24,30 @@ const ASSETS = [
 // the failure a browser tab never shows you. tests/serviceWorker.test.mjs walks the real
 // import graph from the entry points and fails if anything reachable is missing.
 
+// Precache one asset. `cache.add()` would be shorter, and gets two things wrong here:
+//   1. It reads through the browser's HTTP cache, so a fresh build can install the previous
+//      build's copy of a file and ship a mixture that never existed. `cache: 'reload'` fetches
+//      from the network.
+//   2. It stores a REDIRECTED response under the URL that was requested. Production redirects
+//      '/' to the landing page, and answering a later navigation from a cached redirect is a
+//      hard failure ("a redirected response was used for a request whose redirect mode is not
+//      'follow'") — the site root would break for exactly the returning visitors the cache is
+//      meant to serve. Re-wrapping the body drops the redirect flag.
+async function precache(cache, url) {
+  try {
+    const res = await fetch(url, { cache: 'reload' });
+    if (!res.ok) return; // never store an error page as if it were the asset
+    const body = res.redirected
+      ? new Response(await res.blob(), { status: 200, statusText: 'OK', headers: res.headers })
+      : res;
+    await cache.put(url, body);
+  } catch { /* tolerate a missing asset */ }
+}
+
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE)
-      .then(c => Promise.all(ASSETS.map(a => c.add(a).catch(() => null)))) // tolerate a missing asset
+      .then(c => Promise.all(ASSETS.map(a => precache(c, a))))
       .then(() => self.skipWaiting())
   );
 });

@@ -29,3 +29,47 @@
   .system-banner-icon { width: 34px; height: 34px; }
   .system-banner-action { padding-inline: 11px; }
 }
+
+/* The screen shown when the database will not open. Caution-toned rather than neutral: the
+   person has to understand BEFORE they type anything that nothing here would be kept. The empty
+   state's default gold tile would read as "all is well". */
+.storage-unavailable { border-color: rgba(224,89,77,.42); }
+.storage-unavailable .feedback-empty { min-height: 0; padding: 32px 16px 8px; }
+.storage-unavailable .feedback-empty-icon {
+  color: var(--danger-text); border-color: rgba(224,89,77,.3);
+  background: rgba(224,89,77,.1); box-shadow: none;
+}
+.storage-unavailable .hint { text-align: center; max-width: 44ch; margin: 12px auto 0; }
+.storage-unavailable-detail { font-family: var(--mono); overflow-wrap: anywhere; color: var(--faint); }
+
+/* ---------------------------------------------------------------------------
+   The disclosure reveal. One concern: content that opens the way the app says it will.
+
+   Adaptive disclosure is the product's central pattern — only the question the situation needs —
+   and every caret in the app already rotates on the shared curve. Then the panel it points at
+   appeared instantly: the affordance animated and the thing it revealed did not, which is the
+   tell of a half-finished interaction. The eye follows the caret and the content is simply
+   already there, so the connection has to be inferred rather than seen.
+
+   The content rises into place; the box itself still snaps. That is deliberate. Animating the box
+   means transitioning height to `auto` under `overflow: hidden` via ::details-content, which puts
+   the panel's visibility at the mercy of a transition completing: wherever the animation timeline
+   does not advance — a paused renderer, print, a browser without ::details-content (Firefox, as of
+   writing) — the reveal can leave the panel clipped around content that is really there. A reveal
+   must never be the reason something cannot be read. This way an animation that does not run
+   leaves the panel plainly open, which is exactly today's behaviour, and one keyframe covers every
+   disclosure in the app instead of a supported path and an unsupported one.
+
+   One keyframe for all eight disclosures — the seven <details> and the record row, which toggles
+   `hidden` and so cannot transition at all — meaning every panel in the app opens the same way.
+   (The global reduced-motion block flattens the duration to nothing.)
+   --------------------------------------------------------------------------- */
+:is(.issue-group, .logsec-more, .glance-means, .rights-item, .history, .deleted-wrap,
+    .onboard-setup)[open] > :not(summary),
+.row.expanded .row-detail {
+  animation: disclose var(--dur-enter) var(--ease-out);
+}
+@keyframes disclose {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}

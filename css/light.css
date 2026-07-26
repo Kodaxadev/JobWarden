@@ -39,6 +39,19 @@
   --banner-text:#5b4109; --banner-line:rgba(128,97,21,.34);
   --page-glow:radial-gradient(130% 72% at 50% -18%, #f4eee2 0%, rgba(244,238,226,0) 62%);
   --page-vignette:radial-gradient(145% 46% at 50% 112%, rgba(63,51,35,.1), rgba(63,51,35,0) 65%);
+
+  /* Interaction lighting, in ink. A white wash is invisible on a pale surface, and this used to be
+     patched selector by selector — so every control the list forgot (action cells, issue choices,
+     group heads, the back button) had no visible hover or press in daylight at all. Overriding the
+     tokens covers every pressable and every sunk surface at once, present and future. Sunk
+     surfaces read as pressed paper: a soft brown press and a hairline of daylight bouncing off
+     the surface below, never the dark theme's black. */
+  --wash-hover:rgba(23,32,51,.035);
+  --wash-press:rgba(23,32,51,.065);
+  --press-sink:inset 0 2px 3px rgba(45,37,27,.18);
+  --press-sink-sm:inset 0 1px 2px rgba(45,37,27,.13);
+  --recess:inset 0 1px 2px rgba(45,37,27,.12), inset 0 -1px 0 rgba(255,252,244,.62);
+  --recess-field:inset 0 1px 2px rgba(45,37,27,.13), inset 0 -1px 0 rgba(255,252,244,.68);
 }
 
 /* Navy instruments keep their dark-theme ink instead of inheriting daylight ink. */
@@ -58,13 +71,12 @@
   --node:rgba(234,238,246,.28); --edge-top:rgba(255,255,255,.08);
 }
 
-/* Recessed controls should read as pressed paper wells, not black-shadowed plastic. */
 :root[data-theme="light"] :is(input[type=text], input[type=password], input[type=time],
   input[type=date], input[type=number], select, textarea) {
-  box-shadow:inset 0 1px 2px rgba(45,37,27,.13), inset 0 -1px 0 rgba(255,252,244,.68);
+  box-shadow:var(--recess-field);
 }
 :root[data-theme="light"] :is(input, select, textarea):focus {
-  box-shadow:inset 0 1px 2px rgba(45,37,27,.1), var(--ring-gold);
+  box-shadow:var(--recess-field), var(--ring-gold);
 }
 
 /* Light controls lift by one quiet edge; dark-mode shadows were too heavy on paper. */
@@ -76,34 +88,15 @@
   box-shadow:inset 0 1px 0 var(--edge-top), 0 2px 4px rgba(45,37,27,.12),
     0 9px 18px -13px rgba(45,37,27,.36);
 }
-:root[data-theme="light"] .btn:active {
-  box-shadow:inset 0 2px 3px rgba(45,37,27,.18);
-}
 :root[data-theme="light"] .chip {
   box-shadow:inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(45,37,27,.1);
 }
 :root[data-theme="light"] .chip:hover {
   box-shadow:inset 0 1px 0 var(--edge-top), 0 2px 4px rgba(45,37,27,.13);
 }
-:root[data-theme="light"] .chip:active {
-  box-shadow:inset 0 1px 2px rgba(45,37,27,.16);
-}
 
-/* Interaction tints are ink-based in daylight; white tints disappear on pale surfaces. */
-:root[data-theme="light"] :is(.rights-item summary, .row-head):hover {
-  background:rgba(23,32,51,.035);
-}
-:root[data-theme="light"] :is(.rights-item summary, .row-head):active {
-  background:rgba(23,32,51,.065);
-}
-:root[data-theme="light"] .tab:active .icon { background:rgba(23,32,51,.055); }
 :root[data-theme="light"] .glance-sol,
 :root[data-theme="light"] .hist-entry { background:rgba(23,32,51,.035); }
-
-/* Data wells remain visibly recessed without carrying the dark theme's black inner edge. */
-:root[data-theme="light"] :is(.kpi, .narrative) {
-  box-shadow:inset 0 1px 2px rgba(45,37,27,.12), inset 0 -1px 0 rgba(255,252,244,.62);
-}
 
 /* Danger controls need dark red text on paper; the dark theme uses a pale red. */
 :root[data-theme="light"] .btn.danger {

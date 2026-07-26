@@ -46,8 +46,10 @@ export function renderLegal(container, { settings = {}, onBack } = {}) {
   container.appendChild(card('Your privacy', [
     'Your records and profile are stored only on this device. There is no account, no server, no cloud sync, no analytics, and no tracking — nothing is sent anywhere on its own.',
     'Your information leaves this device only when you choose to export, email, print, or share it. After that, it is in your hands.',
+    'One exception worth knowing: if a record has a saved location, the “open in Google Maps” link on that record sends those coordinates to Google. Nothing else about the record goes with them, and the coordinates stay in your record whether you tap it or not.',
     'Photos you add stay on this device. JobWarden never records audio. California generally requires every party’s consent before recording a confidential conversation; exceptions can apply.',
     'Because everything is local, losing this phone or letting the browser clear its storage can lose your records. Back up regularly from the Export screen.',
+    'You can also remove them yourself. Deleting a record moves it to Deleted, where you can restore it or delete it forever. Settings can erase everything on this phone at once. Neither can be undone, and neither reaches a backup or email you already sent.',
   ]));
 
   container.appendChild(card('Facts, not a calculator', [

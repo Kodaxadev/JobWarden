@@ -25,7 +25,7 @@ input[type=date] { -webkit-appearance: none; appearance: none; }
 input[type=date]::-webkit-date-and-time-value { text-align: left; margin: 0; }
 input[type=date]::-webkit-calendar-picker-indicator { margin-left: 0; }
 textarea { min-height: 104px; resize: vertical; line-height: 1.5; }
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: inset 0 1px 2px rgba(0,0,0,.4), var(--ring-gold); }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: var(--recess-field), var(--ring-gold); }
 .time-row { display: flex; gap: 12px; align-items: center; min-width: 0; }
 .time-row input { flex: 1 1 0; min-width: 0; }
 .time-row .btn { flex: none; min-height: 50px; }
@@ -35,7 +35,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
   border: 1px solid transparent; border-radius: var(--radius-sm);
   transition: background var(--dur-state) var(--ease-out), border-color var(--dur-state) var(--ease-out);
 }
-.check:hover { background: rgba(255,255,255,.025); border-color: var(--line); }
+.check:hover { background: var(--wash-hover); border-color: var(--line); }
 .check:has(input:checked) { color: var(--text); background: var(--gfill); border-color: var(--gline); }
 .check input { width: 22px; height: 22px; flex: none; margin-top: 1px; accent-color: var(--primary); }
 .check span { min-width: 0; overflow-wrap: anywhere; }
@@ -47,7 +47,14 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
   border-radius: var(--radius); background: rgba(255,255,255,.018);
   transition: border-color var(--dur-state) var(--ease-out), background var(--dur-state) var(--ease-out);
 }
-.issue-group[open] { border-color: var(--line-2); background: rgba(255,255,255,.025); }
+/* Open is a structural state, not a hover: it used the same white wash the hover does, so a group
+   the thumb was resting on and a group standing open rendered identically. Being open reads as a
+   sunk container instead — the lid is off, and the choices inside sit in the recess (the
+   Data-Sinks half of the Press-Rises Rule). The wash stays for the pointer alone. */
+.issue-group[open] {
+  border-color: var(--line-2); background: var(--field-bg);
+  box-shadow: var(--recess);
+}
 .issue-group.has-selection { border-color: rgba(205,171,69,.32); }
 .issue-group-head {
   /* Four tracks with 12px gaps spent 36px on air and left the copy column ~7px too narrow for
@@ -59,8 +66,8 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 }
 .issue-group-head::-webkit-details-marker { display: none; }
 .issue-group-head:focus-visible, .issue-choice:focus-visible { outline-offset: -3px; }
-.issue-group-head:hover { background: rgba(255,255,255,.025); }
-.issue-group-head:active { background: rgba(255,255,255,.045); }
+.issue-group-head:hover { background: var(--wash-hover); }
+.issue-group-head:active { background: var(--wash-press); }
 .issue-group-icon {
   width: 38px; height: 38px; display: grid; place-items: center; color: var(--primary-strong);
   border: 1px solid rgba(205,171,69,.22); border-radius: var(--radius-tile);
@@ -99,7 +106,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 }
 .chip { background: var(--sheen), var(--surface-3); color: var(--text); border: 1px solid var(--line-2); border-radius: var(--radius-sm); padding: 16px 16px; font-size: var(--fs-ui); min-height: 52px; cursor: pointer; text-align: left; display: inline-flex; align-items: center; gap: 12px; line-height: 1.35; overflow-wrap: anywhere; box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(0,0,0,.28); transition: border-color var(--dur-state) var(--ease-out), background var(--dur-state) var(--ease-out), box-shadow var(--dur-state) var(--ease-out), transform var(--dur-press) var(--ease-out); }
 .chip:hover { border-color: var(--node); box-shadow: inset 0 1px 0 var(--edge-top), 0 2px 5px rgba(0,0,0,.32); }
-.chip:active { transform: translateY(1px); box-shadow: inset 0 1px 2px rgba(0,0,0,.36); }
+.chip:active { transform: translateY(var(--press-drop)); box-shadow: var(--press-sink-sm); }
 .chip.on { background: var(--sheen), linear-gradient(180deg, var(--navy-2), var(--navy)); border-color: var(--primary); font-weight: 500; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.3); }
 .chip.on:hover { border-color: var(--primary-strong); }
 .issue-choice {
@@ -111,7 +118,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
   background: rgba(255,255,255,.035); border-color: var(--line);
   box-shadow: none;
 }
-.issue-choice:active { background: rgba(255,255,255,.055); box-shadow: inset 0 1px 2px rgba(0,0,0,.25); }
+.issue-choice:active { background: var(--wash-press); box-shadow: var(--press-sink-sm); }
 .issue-choice-icon {
   width: 32px; height: 32px; flex: none; display: grid; place-items: center;
   color: var(--muted); background: var(--surface-2); border: 1px solid var(--line);
@@ -178,7 +185,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .logsec-more { margin-top: 8px; border-top: 1px solid var(--line); }
 .logsec-more > summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: pointer; list-style: none; padding: 12px 0 4px; font-size: var(--fs-ui); color: var(--primary-strong); min-height: 44px; }
 .logsec-more > summary:hover { color: var(--primary); }
-.logsec-more > summary:active { opacity: .7; }
+.logsec-more > summary:active { background: var(--wash-press); }
 .logsec-more > summary::-webkit-details-marker { display: none; }
 .logsec-more-copy { display: inline-flex; align-items: baseline; gap: 8px; }
 .logsec-more-chevron { display: grid; place-items: center; color: var(--primary); }

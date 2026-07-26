@@ -67,6 +67,23 @@ export const CSV_PREAMBLE = [
   'No dollar amounts are calculated. Not legal advice.',
 ];
 
+// The weekly-hours roll-up is arithmetic over records the person entered, and two assumptions
+// ride along with the number that the number itself cannot show. Both surfaces that print it —
+// the Records glance card and the printable summary — say this, from here, so they cannot drift
+// apart or quietly lose the second sentence.
+//
+// The workplace one matters more than it looks: holding two hourly jobs is ordinary in this
+// audience, overtime is owed per EMPLOYER, and 25 hours at one place plus 20 at another is not a
+// five-hour overtime week. Bucketing by workplace instead would be a different error, since one
+// employer often runs several sites — so the app reports the total and names the assumption.
+export function weeklyOvertimeCaveat({ mixedWeeks = 0 } = {}) {
+  const parts = ['Weeks here run Sunday to Saturday; your employer’s workweek may start on another day, so confirm it.'];
+  if (mixedWeeks) {
+    parts.push('Some of these weeks add up hours from more than one workplace. Overtime is counted for each employer separately, so check that those hours belong to the same one.');
+  }
+  return parts.join(' ');
+}
+
 // Words that must never appear in user-facing copy, because each one asserts something the
 // app cannot know. Guarded by tests/disclaimers.test.mjs.
 //   proof / prove — the app produces records, not proof

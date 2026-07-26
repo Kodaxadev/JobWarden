@@ -7,6 +7,142 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v105 — 2026-07-26
+
+**The interaction states get the same treatment the surfaces already had.**
+
+Everything resting had a scale — surfaces, shadows, spacing, type, motion. The *states* did not, so
+every control eyeballed its own: seven different press washes between .045 and .06, three hover
+washes, four press-inset depths, and two controls that faded instead of pressing. None of it was a
+decision; it is what happens when there is no token to reach for, exactly as the type scale went
+before it had one.
+
+That gap was also a real daylight defect. A white 3% wash is invisible on a cream surface, so the
+light theme had to re-patch hover selector by selector — and everything the list forgot had no
+visible hover or press at all in daylight: the action cells in Export and Settings, the issue
+choices, the group heads, the back button. Five tokens, remapped per theme, now cover every
+pressable and every sunk surface at once. In daylight a hover shifts the surface by seven levels
+and a press by thirteen, where before it was about one.
+
+**Disclosures open instead of appearing.** Adaptive disclosure is what the app is built on, every
+caret already rotated on the shared curve — and then the panel it pointed at simply existed. All
+eight now share one keyframe, the record row included, which toggles `hidden` and could never
+transition at all. Nothing animates height under a clipped box: a reveal that stalls must leave the
+content plainly readable, not hidden inside a panel that never finished opening.
+
+**The active-tab indicator travels.** It was a mark on whichever tab was active, so it vanished
+from one and appeared on another with nothing connecting them — the one state change in the app
+with no motion, on the control used most. It is now a single marker on the fascia, identical at
+rest, moved by transform alone.
+
+Smaller surface work: an open issue group reads as a sunk container rather than borrowing the
+hover wash, so resting a thumb on a group and standing it open no longer look the same; and the
+edit-history and Deleted drawers stop drawing the browser's own triangle next to five disclosures
+that use the app's caret, with a real 44px target and the same press feedback as everything else.
+
+**Still blocking public launch:** review of the findings language and UPL posture by a licensed
+California employment attorney.
+
+## v104 — 2026-07-26
+
+**Four ways the app could quietly write the wrong thing, or nothing at all.**
+
+**Double-tapping Save wrote the record twice.** Sealing hashes every attached photo before the
+write, so on the phones this is built for that window is long enough to hit again — and each tap
+ran the record factory afresh, minting a new id, so both writes landed. Two identical records in
+an evidence log, with nothing to tell them apart afterwards. Both capture paths now go dead on
+the first tap and show that they are working; the quick "interrupted lunch" sheet needed it most,
+since being fast is the whole point of it.
+
+**If the database would not open, the app went blank.** It was a toast — which vanishes after two
+seconds and leaves an empty shell someone can still type a record into, believing it was kept.
+The causes are ordinary here: a private window, "block all cookies", a locked-down work phone.
+Now it says the app cannot save on this phone, why, and what to do, and stays on screen.
+
+**Overlapping settings saves overwrote each other.** The theme saves the moment it is picked, and
+tapping "Save settings" straight after raced it — both reads started from the same stored value
+and the later write dropped the earlier change. Marking a backup as done raced the same way, and
+losing that revives the overdue banner. The read and the write are now one transaction.
+
+**Every export filename carried the wrong date after about 4pm.** The stamp was the UTC date, so
+in California an evening backup was named for tomorrow — and "which backup is the newest" is read
+straight off those filenames.
+
+Two smaller ones. The weekly-hours roll-up adds up every record in a Sunday–Saturday week
+whatever workplace it came from, but overtime is owed per employer and two hourly jobs is
+ordinary: when a flagged week draws on more than one workplace it now says so, and both surfaces
+that print the number take that caveat from one place instead of each wording their own. And the
+"map" link on a record — the only control in the app that hands recorded evidence to a third
+party — now says "open in Google Maps" rather than "map", carries `noreferrer` like every other
+outbound link, and is named in the privacy policy's list of ways data leaves the phone. A photo
+that fails to attach in the quick sheet is reported instead of just not appearing.
+
+**Still blocking public launch:** review of the findings language and UPL posture by a licensed
+California employment attorney.
+
+## v103 — 2026-07-26
+
+**A production defect that only existed in production, and the missing half of "your records
+are yours."**
+
+The service worker precached the site root. In production the root redirects to the landing
+page, so what got stored under `/` was a redirected response — and a browser answering a
+navigation from one of those returns a network error, not a page. Every returning visitor to the
+bare domain would have hit a failure screen, online as much as off, and nothing in development
+could show it because there is no redirect on localhost. The worker now stores a plain copy of
+the body, and while installing it fetches past the browser's HTTP cache so a new build cannot
+ship the previous build's files. The worker also has behaviour tests now — install, activate,
+cache-first, the offline navigation fallbacks, the dev-loop path — rather than only a check that
+its asset list is complete.
+
+Deleting a record moves it to **Deleted**, which is right, and nothing ever emptied that drawer:
+a record logged by mistake stayed on the phone for good and travelled inside every backup.
+**Delete forever** removes one. **Erase everything on this phone**, in Settings, removes all
+records, photos, settings, the local diagnostics log and any running shift, leaving the app as it
+was before first use. Both say plainly that they cannot be undone and cannot reach a backup or
+email already sent. The privacy policy and the in-app Legal screen no longer point at the
+browser's own storage screen as the only way out.
+
+Restoring a backup now refuses records whose fields are the wrong type, instead of saving them
+and breaking Records on the next read, and it reports how many it could not read rather than
+dropping them in silence.
+
+The light theme stopped announcing itself as an afterthought: the app no longer opens dark and
+snaps to light once the database answers, and the phone's status bar takes the theme's colour
+instead of staying black above a cream header. Installed to an iPhone home screen, the header
+reserved the top safe area on its **bottom** padding, putting the brand row under the status
+bar — fixed. Records and Export each read the whole store twice per render and re-ran the rules
+engine over every record twice; they read it once.
+
+Shared links arrive as a card rather than a bare URL, the pages declare canonical addresses,
+`robots.txt` and a sitemap exist, and search now lands on the page that explains what this is
+instead of on the app shell.
+
+**Still blocking public launch:** review of the findings language and UPL posture by a licensed
+California employment attorney.
+
+## v92–v102 — 2026-07-25
+
+**Backfilled.** These builds shipped without entries, which defeats the point of a file keyed on
+the id a user reads back to you. Newest first:
+
+- **v102** — the header badge reported a constant in live-status green, and was greenest in the
+  riskiest state (records on the phone, no copy anywhere). It now reports whether a backup exists
+  and how fresh it is, or stays silent and gives the banner the floor.
+- **v101** — the hero image was an upscaled screenshot, 39% of it cropped away, still showing a
+  placeholder the app had dropped. Redrawn as markup in the app's own tokens: sharp at every DPR,
+  and it cannot drift out of date.
+- **v100** — one trade's vocabulary had crept back into the capture form's first field and the
+  sample copy. Removed, with a test so it stays out.
+- **v99** — the record chevron left the screen at 200% text size.
+- **v98** — dialog action labels wrapped at phone width.
+- **v97** — light-theme gold was under AA wherever it carried text.
+- **v96** — printed evidence ran outside the paper.
+- **v95** — unbounded user text broke the record row.
+- **v94** — the install and legal footers had no real tap targets.
+- **v93** — six landing-page tap targets sat under the floor, the Install button among them.
+- **v92** — copy that carried the meaning was being truncated; the icon-tile radius got a name.
+
 ## v91 — 2026-07-25
 
 **Evidence access, backup restore, and deleted-record recovery now protect the user’s work.**
@@ -194,196 +330,8 @@ placeholder, and never imply an LLC or corporation that does not exist.
 **Still blocking public launch:** review of the findings language and UPL posture by a
 licensed California employment attorney.
 
-## v68–v70 — 2026-07-25
+## Earlier builds
 
-**Saying plainly what this is.** The policies said the app records a worker's own account
-and decides nothing. The product did not. The landing headline was "Keep the proof." Step
-two was "It builds your case file." The tamper-evident feature claimed the report "can
-prove it." The capture flow called photos "Add proof." The rights guide told the reader
-"you are owed" a break. Each of those asserts something the app cannot know — and they are
-what people actually read; nobody forms their expectations from §6 of the Terms.
-
-All of it now traces to one file, `js/config/disclaimers.js`, holding four positions:
-
-- your records are **your own account**, unverified by anyone, never asserted to be true;
-- a **"possible issue" is a pointer at a rule, not a determination** that it was broken;
-- nothing says you have a claim, and nothing predicts what anyone will do about it;
-- the fingerprint shows a record **has not changed since it was saved on that device** —
-  not that its contents are true, and not a third-party timestamp.
-
-Where you'll see them: an **"About this document"** block leading both printable reports,
-above the first record, at body size rather than fine print, because a stranger reads that
-page before anything the worker wrote. A **"What does 'possible issue' mean?"** explainer
-right under the Records counts. The plainest sentence in the app leading the Legal screen.
-A straight-talking paragraph in the landing hero, above the fold. The same framing now
-follows the records off the device, in the **email body** and in the **spreadsheet** (which
-leads with three note rows before the header, and whose "Findings" column is now "Possible
-issues (pointers, not determinations)").
-
-**First run acknowledges it.** The disclaimer used to sit at the bottom of the setup screen.
-It now leads that screen, links the Privacy Policy and Terms, and setup will not continue
-until you tick one plain sentence — stored verbatim with its timestamp, so a later reword
-cannot rewrite what someone agreed to.
-
-**Terms** gains §6 (your records are your own statements), §7 (no reliance; a log does not
-toll a deadline and is not notice to an employer), and an indemnity paragraph.
-
-**The part that lasts** is `tests/disclaimers.test.mjs`. It scans every user-facing string —
-literals and HTML text, not identifiers, not comments — for words that assert what the app
-cannot know, and fails unless the sentence is disclaiming them. It also checks the preamble
-precedes the first record, that no finding note states a conclusion or a dollar figure, and
-that the rights guide describes rules rather than telling a reader what they are owed. It
-caught a real miss while being written, and it has a test asserting the guard still fires.
-
-*Brand note:* the tagline "Document · Protect · Empower" became "Document · Preserve ·
-Understand" — both old verbs promise an outcome. Easy to revert; it appears in the report
-letterhead, the landing footer, and the page title.
-
-*Also:* a UI module importing a symbol nobody exported shipped green, because no test
-imports the view layer. Every named import across the app is now checked against the target
-module's actual exports.
-
-## v65–v67 — 2026-07-24
-
-**Two claims a California hourly worker meets constantly, that the app had nowhere to log.**
-
-- **Sent home early after showing up** — reporting-time pay. Report for a scheduled shift,
-  get sent home before working half of it, and half the scheduled day is owed (at least 2
-  hours, at most 4). The Log screen now asks what the shift was *scheduled* to be, because
-  that is what the rule compares against, plus who sent you home and the reason they gave.
-  A shift worked at under half its schedule is flagged, with the unpaid meal netted out
-  first. IWC Wage Orders §5.
-- **Paid for something the job needed** — uniforms, tools, a required phone, mileage. Record
-  what it was, what it cost, when you paid, whether you were paid back, when you asked, and
-  what they said. Lab. Code §2802.
-
-Both behave like everything else here: facts, never a dollar figure. The finding says a
-premium *may* be owed and points at the section; the arithmetic is left to the DLSE or
-counsel. Picking either issue without filling in details still produces a *reported* finding
-rather than nothing, and both new field groups are sealed evidence — editing one after the
-fact is caught.
-
-Existing records are untouched and their fingerprints still verify: the new fields default
-empty, which the v2 seal prunes before hashing. That is the forward-compatibility contract,
-and the gate added in v61 is what proves it held here.
-
-The rights guide gained matching topics, so a worker who logs one of these can read what the
-rule actually is without leaving the app.
-
-**These are new attorney-review surface.** `docs/LEGAL_FOUNDATION.md` now carries a table of
-every legal claim the app makes and where it came from, with the specific open questions on
-these two written down rather than assumed settled.
-
-*Corrected in v67:* the first cut of these findings counted supporting detail — the reason
-you were given for being sent home, the fact that you asked to be reimbursed — as separate
-issues in the pattern roll-up, so a six-record week reported eight. One incident now counts
-once. Supporting facts still appear on the record and in the report; they no longer inflate
-the tally.
-
-## v64 — 2026-07-24
-
-**A failed save no longer flashes past.** Both capture paths used to answer a write failure
-with a two-second toast carrying a raw error name. That is the wrong instrument here: the
-next thing a user does is put the phone away believing the record is kept, and what is lost
-is not a form but a record of something that already happened and cannot be observed again.
-A failure now blocks until acknowledged, says plainly that the record was **not** saved, and
-gives a next step per cause — a full phone, a private/incognito window, a second tab holding
-the database, or the unknown case. When the cause is space, it offers the trade that keeps
-the evidence: **save without the photos, keep the facts.**
-
-**A content policy inside the printed report.** The printable report and summary are
-generated HTML written into a same-origin window. Escaping and the `data:image/` allowlist
-were the only defence, and a restored backup file is untrusted input. Both documents now
-carry their own CSP (`script-src 'none'`), so anything that slipped past the escaper still
-cannot run. Plus edge headers: `X-Frame-Options`, COOP, CORP, and topic/cohort opt-outs.
-
-**Legibility and reading level.** Record metadata on the Records screen was 11.5px mono —
-fine on a good screen, hostile on a cheap one in a parking lot; now 12.5px. Issue-group
-labels 11 → 12px. In the rights guide, five paragraphs ran 31–35 words in a single sentence:
-median reading grade is now 7.6 (was 8.9), worst 12.0 (was 14.2), nothing past 28 words per
-sentence — and a test keeps it there.
-
-**Under the hood:** AGENTS.md's 400-line cap, the no-debug-marker rule, and the
-zero-runtime-dependencies promise are now CI checks rather than things to remember.
-176 tests.
-
-## v61 — 2026-07-24
-
-**Encrypted backups.** New **Save locked backup** on the Export screen writes the same
-archive under AES-256-GCM, with the key derived on-device from a passphrase you choose
-(PBKDF2-SHA256, 310,000 iterations). This exists because the normal way a backup leaves
-the phone is an email to yourself, after which the whole evidence archive — names,
-employer, GPS, photos — sits in an inbox in cleartext, and for this app's users the
-adversary is sometimes a household member. No server, no key escrow, no new runtime
-dependency; the passphrase is never stored or sent. **A forgotten passphrase means the
-file cannot be opened by anyone, including us**, and the app says so at full size before
-you commit to one. Restore detects a locked file automatically and re-asks in place after
-a typo rather than sending you back to the file picker.
-
-**Time math is now DST-correct.** An overnight span used to get a flat 24 hours added,
-which is wrong by an hour across a daylight-saving transition. A 10pm–6am shift is seven
-worked hours on spring-forward and nine on fall-back, and that hour moves meal deadlines,
-the >10h second-meal threshold, and the daily-overtime line.
-
-**Findings for issues you report without details.** Picking "no second lunch on a long
-shift" or "worked but was not paid" with no times entered used to produce nothing at all.
-The pick is itself a fact, so the record now carries a `…Reported` finding that says so
-plainly, instead of looking empty.
-
-**Light-theme contrast fixes.** Three surfaces stay dark navy in both themes (the brand
-mark, the live shift panel, the empty-state seal) but were inheriting light mode's dark
-ink — measured 1.87:1 on the header mark and 1.68:1 on the shift status, both well below
-AA. Dark-theme ink is now pinned inside them: 10.2:1 and 6.11:1.
-
-**Honest copy about shift reminders.** The meal-deadline reminder only fires while
-JobWarden is open — a closed PWA cannot fire one without a server, which this app does not
-have. The shift panel and the landing page now say so and name the workaround (leave it
-running, or set a phone alarm for the deadline shown) instead of promising an alert that
-does not arrive.
-
-**Pre-release legal pages.** `privacy.html` and `terms.html` no longer ship `[Operator]` /
-`[contact email]` placeholders dressed as a policy. They state plainly that this is a
-preview and must not launch publicly until the operating entity, contact email, and
-attorney review are done. The privacy policy also documents the locked-backup option and
-its irreversibility.
-
-**Under the hood**
-
-- **Offline-asset gate.** The service worker's asset list is hand-maintained, and a module
-  missing from it breaks the app *offline only* — the one state a browser tab never shows
-  you. A test now walks the real import graph from the entry points and fails on a gap.
-- **Seal contract gate.** "Every new schema field must default to empty" lived in a comment
-  in `integrity.js`. It is now enforced: the blank record's sealed view is pinned, and a
-  golden content hash fails if the view, the normalizers, or the pruning move without a
-  deliberate `SEAL_VERSION` bump.
-- **Database migration ladder.** `db.js` had one create-if-missing block. It is now an
-  ordered, append-only list of steps with the rules for adding one written down, and the
-  version is derived from the list length so it cannot drift.
-- **The data layer has tests.** `fake-indexeddb` (devDependency only — the app still ships
-  zero runtime dependencies) covers the incident and settings repos: sealing on write,
-  soft delete and restore, restore-without-resealing, tamper detection, legacy hydration.
-- **The dev loop stopped needing a fresh port.** On localhost the service worker now goes
-  network-first and bypasses the HTTP cache, so a plain reload runs the edit.
-  `launch.json` drops from 37 accumulated one-shot servers to 2.
-- **Icon pipeline.** The generator's name list had drifted from what the UI renders
-  (`iconEl('alert')` resolved to nothing). `scripts/build-icons.mjs` is now the single
-  source of truth, with a test that fails if a name the UI uses is missing.
-- 158 tests, `eslint` and `tsc --checkJs` green. Zero vulnerabilities in the dependency
-  tree, dev included.
-
-## v58 and earlier
-
-Not individually recorded — this file starts at v61. The commit history is the record for
-earlier builds, and `docs/IMPROVEMENT_AUDIT.md` tracks what shipped against the audit.
-The larger earlier landmarks:
-
-- **v58** — scoped export: filter Records to a subset (one employer) and report exactly those.
-- **v57** — light theme (opt-in; dark stays the brand default), System/Light/Dark toggle.
-- **v56** — local error-log ring buffer + Settings diagnostics; one shared focus trap.
-- **v55** — Records search, issue/place filters, month grouping, teaching empty state.
-- **v54** — photo downscaling on ingest; backups built as Blob parts, not one megastring.
-- **v53** — overtime findings (daily + weekly), time-sanity warnings, statute-of-limitations nudge.
-- **v52** — security headers + CSP on all pages, SW update toast, version in Settings.
-- **v49** — versioned seals covering final pay; jurisdiction seam; report XSS fixes.
-- **v48** — full Privacy Policy and Terms of Service pages.
-- **v44/v47** — the per-state rules seam, and New York behind it (draft, attorney-gated).
+v68 and earlier are in [`docs/CHANGELOG-ARCHIVE.md`](docs/CHANGELOG-ARCHIVE.md). This file
+stays under the 400-line cap in AGENTS.md by rolling old entries into that archive rather than
+dropping them — a build id a user reads back to you has to resolve to something, however old.

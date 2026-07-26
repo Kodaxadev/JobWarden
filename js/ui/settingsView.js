@@ -11,6 +11,7 @@ import { PAY_STATUS_OPTIONS, PAY_STATUS_HINT, EXEMPT_STATUS_WARNING } from '../c
 import { actionRow } from './actionRow.js';
 import { statusRow, updateStatusRow } from './statusUi.js';
 import { createNavigationGuard } from './navigationGuard.js';
+import { eraseDataAction } from './eraseData.js';
 
 // Bytes → a short human string that also handles GB (humanSize in media.js stops at MB).
 function fmtBytes(n) {
@@ -287,5 +288,23 @@ export async function renderSettingsView(container, {
     el('h2', { text: 'App health' }),
     el('div', { class: 'status-list' }, [healthStatus]),
     diagnosticActions,
+  ]));
+
+  // Last, and on its own: deleting a record moves it to Deleted, where it can be restored. This
+  // is the only control that actually destroys anything, and the promise that these records
+  // belong to the person who logged them is not complete without it.
+  container.appendChild(el('section', { class: 'card' }, [
+    el('h2', { text: 'Erase this phone' }),
+    el('p', { class: 'hint', text: 'Deleting a record moves it to Deleted, where you can restore it. This removes everything for good. Save a backup first if you might want these records later.' }),
+    el('div', { class: 'action-list compact' }, [
+      eraseDataAction({
+        onErased: () => {
+          // Nothing on screen is true any more — profile, records and first-run state are gone.
+          // A reload is the honest redraw, and it works offline from the cached shell.
+          guard.reset();
+          location.reload();
+        },
+      }),
+    ]),
   ]));
 }

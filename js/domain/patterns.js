@@ -42,6 +42,12 @@ function weekStartOf(dateStr) {
 // cross-record view a single day can't show (seven 7-hour days is 49h). Hours are facts already
 // computed per record; summing them is arithmetic, not damage math — never dollars. The employer's
 // official workweek may start on another day, so the Sun–Sat basis is disclosed as a caveat.
+// Weekly hours are also summed regardless of WHERE they were worked, and overtime is owed per
+// employer, not per person. Hourly workers holding two jobs are common in exactly this audience,
+// and 25h at one place plus 20h at another is not a 5-hour overtime week. So each week reports
+// the workplaces that fed it, and `mixedWeeks` counts the ones drawing on more than one — the
+// case where the total is most likely to mislead. Splitting the buckets by workplace instead
+// would be its own error: one employer often has several sites.
 export function weeklyOvertime(incidents = []) {
   const byWeek = {};
   for (const i of incidents) {
@@ -49,14 +55,26 @@ export function weeklyOvertime(incidents = []) {
     if (hv == null || !i.incidentDate) continue;
     const k = weekStartOf(i.incidentDate);
     if (!k) continue;
-    byWeek[k] = (byWeek[k] || 0) + Number(hv);
+    const week = byWeek[k] || (byWeek[k] = { hours: 0, places: new Set() });
+    week.hours += Number(hv);
+    if (i.workplace) week.places.add(i.workplace);
   }
   const round2 = n => Math.round(n * 100) / 100;
   const weeks = Object.entries(byWeek)
-    .map(([weekStart, hours]) => ({ weekStart, hours: round2(hours), overtime: round2(Math.max(0, hours - 40)) }))
+    .map(([weekStart, w]) => ({
+      weekStart,
+      hours: round2(w.hours),
+      overtime: round2(Math.max(0, w.hours - 40)),
+      workplaces: [...w.places].sort(),
+    }))
     .filter(w => w.overtime > 0)
     .sort((a, b) => a.weekStart.localeCompare(b.weekStart));
-  return { weeks, count: weeks.length, totalOtHours: round2(weeks.reduce((s, w) => s + w.overtime, 0)) };
+  return {
+    weeks,
+    count: weeks.length,
+    totalOtHours: round2(weeks.reduce((s, w) => s + w.overtime, 0)),
+    mixedWeeks: weeks.filter(w => w.workplaces.length > 1).length,
+  };
 }
 
 const hasFlag = (i, key) => (i.flags || []).some(f => f.key === key);

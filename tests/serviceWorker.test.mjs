@@ -30,7 +30,19 @@ function reachableModules(entries) {
   return seen;
 }
 
-const ENTRIES = ['js/app.js', 'js/installPage.js'];
+// Derive the entry points from the pages themselves. Hardcoding them means a module added to a
+// page's <head> is reachable at runtime but invisible to this walk — and therefore missing from
+// the offline cache, which is the exact failure this file exists to catch.
+const PAGES = ['index.html', 'landing.html', 'install.html', 'privacy.html', 'terms.html'];
+const ENTRIES = [...new Set(PAGES.flatMap(page => [
+  ...readFileSync(page, 'utf8').matchAll(/<script[^>]*\ssrc="\.\/([^"]+)"/g),
+].map(m => m[1])))];
+
+test('the entry-point walk actually found the pages’ scripts', () => {
+  for (const known of ['js/app.js', 'js/installPage.js', 'js/ui/themeBoot.js']) {
+    assert.ok(ENTRIES.includes(known), `${known} should have been discovered in a page <head>`);
+  }
+});
 
 test('every module the app can import is cached for offline use', () => {
   const missing = [...reachableModules(ENTRIES)].filter(f => !ASSETS.includes(f)).sort();

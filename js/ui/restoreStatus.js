@@ -23,7 +23,17 @@ export function restoreApplyFailureCopy(message = '') {
   };
 }
 
-export function restoreResultCopy({ added = 0, skipped = 0, changed = 0 } = {}) {
+export function restoreResultCopy({ added = 0, skipped = 0, changed = 0, unreadable = 0 } = {}) {
+  // Records the app could not read are evidence the person believes they just got back and did
+  // not. That outranks a fingerprint warning, and the useful instruction is to keep the file:
+  // the records are still in it, and nothing here has removed them.
+  if (unreadable) return {
+    label: added ? 'Restored, but part of the file could not be read' : 'No records could be read from this backup',
+    detail: `${added} record${added === 1 ? '' : 's'} added · ${unreadable} could not be read.`
+      + ' Keep this backup file — those records are still in it.',
+    iconName: 'triangle-alert',
+    tone: added ? 'warning' : 'error',
+  };
   if (changed) return {
     label: 'Restored with a fingerprint warning',
     detail: `${added} added · ${skipped} duplicate${skipped === 1 ? '' : 's'} skipped · review ${changed} changed record${changed === 1 ? '' : 's'} in Records.`,

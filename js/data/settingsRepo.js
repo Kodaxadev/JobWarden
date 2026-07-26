@@ -26,11 +26,18 @@ export async function getSettings() {
   return { ...DEFAULTS, ...(s || {}) };
 }
 
+// Read and write inside ONE transaction. Reading first and writing after left a window where two
+// overlapping saves both started from the same stored value and then both wrote it back, so the
+// later one silently dropped the earlier one's change. That is reachable without trying: the
+// theme saves the moment it is picked, and tapping "Save settings" right afterwards raced it.
+// Marking a backup as done races the same way, and losing that revives the overdue banner.
 export async function saveSettings(patch) {
-  const current = await getSettings();
-  const next = { ...current, ...patch, key: KEY };
-  await tx(STORE_SETTINGS, 'readwrite', st => reqToPromise(st.put(next)));
-  return next;
+  return tx(STORE_SETTINGS, 'readwrite', async st => {
+    const stored = await reqToPromise(st.get(KEY));
+    const next = { ...DEFAULTS, ...(stored || {}), ...patch, key: KEY };
+    await reqToPromise(st.put(next));
+    return next;
+  });
 }
 
 export async function markBackedUp() {

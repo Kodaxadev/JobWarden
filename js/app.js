@@ -18,6 +18,7 @@ import { qs, clear, toast } from './ui/dom.js';
 import { logError } from './data/errorLog.js';
 import { applyTheme, watchSystemTheme } from './ui/theme.js';
 import { bindSystemStatus } from './ui/systemStatus.js';
+import { renderStorageUnavailable } from './ui/storageUnavailable.js';
 
 // Local error capture (never sent anywhere) — surfaced in Settings so "it's broken" is diagnosable.
 window.addEventListener('error', e => logError(e.message, e.filename ? `${e.filename}:${e.lineno || ''}` : ''));
@@ -58,11 +59,16 @@ async function quickBackup() {
   refreshBanner();
 }
 
+const tabbar = qs('.tabbar');
+
 function setActive(name) {
-  tabs.forEach(t => {
+  tabs.forEach((t, i) => {
     const on = t.dataset.view === name;
     t.classList.toggle('active', on);
     if (on) t.setAttribute('aria-current', 'page'); else t.removeAttribute('aria-current');
+    // Which tab the indicator travels to. The bar itself is one marker on the fascia rather than
+    // a mark on each tab, so it can move between them instead of blinking (see shell.css).
+    if (on) tabbar?.style.setProperty('--tab-i', String(i));
   });
 }
 
@@ -146,8 +152,18 @@ async function monitorShift() {
 }
 
 async function boot() {
-  try { await openDb(); requestPersistence(); }
-  catch (e) { toast('Storage unavailable: ' + (e?.message || e), { tone: 'error' }); }
+  // Every screen reads from storage, so a database that will not open cannot be toasted past:
+  // the toast disappears and leaves an empty shell that a person can still type a record into.
+  // Stop here and say so. (Retry rather than reload — reopening is cheap, and if the user has
+  // just allowed storage in another tab it works.)
+  try {
+    await openDb();
+    requestPersistence();
+  } catch (e) {
+    clear(bannerHost);
+    renderStorageUnavailable(main, e, { onRetry: () => boot() });
+    return;
+  }
   setInterval(monitorShift, 60000);
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') monitorShift(); });
   monitorShift();
@@ -181,4 +197,11 @@ if ('serviceWorker' in navigator) {
     });
   }).catch(() => {});
 }
-boot();
+// A rejection anywhere in boot used to be an unhandled promise and an app that rendered nothing
+// at all — the database can also fail on the first READ, after opening cleanly. Same honest
+// screen, so there is never a silent blank shell.
+boot().catch(e => {
+  logError(e?.message || e, 'boot');
+  clear(bannerHost);
+  renderStorageUnavailable(main, e, { onRetry: () => boot().catch(() => {}) });
+});

@@ -1,7 +1,7 @@
 // exportView.js — export & backup screen. One concern: export UI.
 import { el, clear, toast, withBusy } from './dom.js';
 import { confirmDialog } from './confirmDialog.js';
-import { getAllIncidents } from '../data/incidentRepo.js';
+import { getIncidentGroups } from '../data/incidentRepo.js';
 import { getSettings, markBackedUp } from '../data/settingsRepo.js';
 import { exportJson, exportEncryptedJson } from '../export/exportJson.js';
 import { emailRecords } from '../export/emailExport.js';
@@ -19,9 +19,8 @@ import {
 
 export async function renderExportView(container, { onChanged, onCreate } = {}) {
   clear(container);
-  const [items, backupItems, settings] = await Promise.all([
-    getAllIncidents(),
-    getAllIncidents({ includeDeleted: true }),
+  const [{ active: items, all: backupItems }, settings] = await Promise.all([
+    getIncidentGroups(),   // backups take `all` — recoverable Deleted records included
     getSettings(),
   ]);
   const deletedCount = backupItems.length - items.length;

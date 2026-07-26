@@ -1,9 +1,9 @@
 # JobWarden — Where It's Weak, and Where It Could Be Better
 
-Written 2026-07-02 against `986e6c9` (SW v51, 93 tests). The two **Progress** sections below
-record what has shipped since; the numbered sections keep the original wording so the
-tradeoffs stay visible even where they were later taken. Last reviewed 2026-07-25 (SW v86,
-248 tests).
+Written 2026-07-02 against `986e6c9` (SW v51, 93 tests). What has shipped against it since is
+in [`IMPROVEMENT_PROGRESS.md`](IMPROVEMENT_PROGRESS.md); the numbered sections here keep their
+original wording so the tradeoffs stay visible even where they were later taken. Last reviewed
+2026-07-26 (SW v105, 342 tests).
 
 This is the honest document: every place the project is bad, fragile, missing, or
 deliberately traded away — from product strategy to the tech stack — with what it would
@@ -13,84 +13,6 @@ cost should stay visible** so they're re-decided on purpose, not by inertia.
 **Severity:** 🔴 Critical (undermines the product's core promise) · 🟠 High (real user harm
 or ceiling) · 🟡 Medium (friction, drift risk) · ⚪ Low (polish).
 **Effort:** S (hours) · M (days) · L (weeks+).
-
----
-
-## Progress — shipped 2026-07-03 (SW v52→v58)
-
-Most of the actionable list below is now done and verified (105 tests, eslint + `tsc --checkJs`
-+ tests all green in CI):
-
-- **✅ Photo downscaling on ingest** (~2000px, 80% smaller; seal hashes the stored bytes) + **Blob-built backups** (no more single megastring). §3, §8.
-- **✅ Weekly-hours roll-up + daily-OT note** (seven 7-hour days now flags as a >40h week; CA daily OT >8h/>12h, exempt/AWS-aware). §2.
-- **✅ Records filtering + month grouping + teaching empty state + scoped export** (filter to one employer → report exactly those). §6.
-- **✅ eslint (flat) + JSDoc typedefs with `tsc --checkJs` on the domain layer, both in CI**; fixed the Date-coercion + cross-env Buffer issues the typecheck surfaced. §4, §9.
-- **✅ Time-sanity validation warnings** (never blocking) + **overnight date convention** documented + hinted. §2.
-- **✅ Statute-of-limitations nudge** on records older than ~2 years. §2.
-- **✅ SW update toast + version + storage estimate in Settings**; **security headers + CSP on all pages** (microphone hard-blocked at the platform); **font preload**, **lazy thumbnails**. §4, §5, §8.
-- **✅ Light theme** (opt-in; dark stays default; all text AA-verified). §6.
-- **✅ Local error-log ring buffer + Settings diagnostics**; **one shared focus trap**. §9, §4.
-- **✅ Landing answers "can my employer see it?"**. §1.
-
----
-
-## Progress — shipped 2026-07-24 (SW v59→v67)
-
-Second pass, aimed at durability, trust, and failure paths — plus the two catalog gaps a
-California worker hits most often (198 tests, eslint + `tsc --checkJs` green, zero
-vulnerabilities in the dependency tree, dev included):
-
-- **✅ Passphrase-encrypted backup** (AES-256-GCM, PBKDF2-SHA256 310k, on-device key, no
-  escrow, binary format so a photo-heavy archive never becomes a base64 megastring; header
-  authenticated as AAD; hostile iteration counts refused). §5.
-- **✅ DST-correct overnight time math** — the flat `+24h` wrap was an hour wrong across a
-  transition, which moves meal deadlines and the >10h line. §2.
-- **✅ Seal schema-evolution rule is now a gate**, not a comment: the blank record's sealed
-  view is pinned and a golden content hash fails on any silent change to the view. §3.
-- **✅ DB migration ladder** — append-only steps with the rules written down, version derived
-  from the ladder length, steps proven re-run-safe. §3.
-- **✅ The data layer has tests** (`fake-indexeddb`, devDependency only): sealing on write,
-  soft delete/restore, restore-without-resealing, tamper detection, legacy hydration. §4.
-- **✅ Offline-asset gate** — a test walks the real import graph and fails if a reachable
-  module is missing from the SW cache list (the failure mode that is invisible in a tab). §4.
-- **✅ The SW dev-loop friction is gone** — network-first + HTTP-cache bypass on localhost, so
-  a plain reload runs the edit; `launch.json` cut from 37 one-shot servers to 2. §4, §9.
-- **✅ CHANGELOG**, keyed on the SW cache id the user can read back in Settings. §9.
-- **✅ Shift-alert honesty** — the panel and the landing page now say the reminder only fires
-  while the app is open, and name the workaround. §1.
-- **✅ Two light-theme contrast failures fixed** — the header mark (1.87:1) and the shift
-  status (1.68:1) were inheriting light-mode ink on the permanently-navy surfaces. §6, §7.
-- **✅ Findings for reported-but-undetailed issues** — a picked chip with no times now says so
-  instead of producing nothing. §2.
-- **✅ A failed save blocks instead of toasting**, explains the cause in plain words, and offers
-  the drop-the-photos trade that keeps the facts. §3.
-- **✅ Two of §2's catalog gaps closed**: reporting-time pay (IWC §5) and necessary work
-  expenses (§2802), with matching rights-guide topics — and logged as new attorney-review
-  surface in `LEGAL_FOUNDATION.md`, which now tables every legal claim the app makes. §2.
-- **✅ Reading-level pass on the rights guide** (median grade 8.9 → 7.0, no sentence past 28
-  words) — and the sentence ceiling is a test now, not a one-time cleanup. §7.
-- **✅ Sub-12px metadata audit**: record content raised to 12.5px, issue labels to 12px; the
-  10px wordmark stays, being a brand lockup rather than reading text. §6.
-- **✅ House rules are CI checks**: the 400-line cap, no debug markers, zero runtime deps. §9.
-
-## Progress — shipped 2026-07-25 (SW v85→v86)
-
-The first app-wide visual-system pass is verified at phone widths in both themes. Issue
-selection now uses five icon-led disclosures instead of sixteen equal-weight buttons.
-Action cells, quick capture, record review, and edit mode now share hierarchy, labels,
-icons, caution semantics, visible save actions, and unsaved-change protection.
-
-**Still open after SW v86**: 🔴 attorney review (external), now the only public-launch
-blocker; 🔴/🟠 **Spanish/i18n** — the string layer is a clean
-refactor but the *legal-adjacent content must be human-translated*, so it's a dedicated
-project, not an auto-translate. SW v84 closed the remaining structured California catalog
-gaps in §2: split shifts, §226 pay stubs, tip problems, and paid-sick-leave action. Still
-open are E2EE sync (a deliberate cut); Playwright in CI (the loop is verified by hand each
-pass, but automating it needs a browser runner); trusted timestamping (OpenTimestamps);
-per-record *checkbox*
-selection (the filter-scoped export covers the main use case); a real screen-reader pass on a
-budget Android. The shield-and-check logo rework was completed in `jobwarden-v81`, with
-one canonical vector source now driving the header and generated PWA icons.
 
 ---
 

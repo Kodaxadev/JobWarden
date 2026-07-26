@@ -1,7 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { summarizePatterns, buildTimeline, dateRange } from '../js/domain/patterns.js';
 import { createIncident } from '../js/domain/incidentModel.js';
+import { weeklyOvertimeCaveat } from '../js/config/disclaimers.js';
 
 // A late + short lunch on an 8.5h shift.
 const lateShort = (date) => createIncident({
@@ -143,4 +145,63 @@ test('summarizePatterns includes the weekly-overtime roll-up', () => {
   assert.ok(s.weeklyOvertime);
   assert.equal(s.weeklyOvertime.count, 1);
   assert.equal(s.weeklyOvertime.totalOtHours, 8);
+});
+
+// Weekly hours are summed across every record in a Sunday–Saturday week, whatever workplace they
+// came from. Overtime is owed per EMPLOYER, and holding two hourly jobs is ordinary in this
+// audience — so 25 hours at one place plus 20 at another must not read as a 5-hour overtime week
+// with nothing said about it. The roll-up names the workplaces it drew on.
+test('an over-40 week says which workplaces it added together', () => {
+  const day = (date, hours, workplace) => ({
+    incidentDate: date, workplace, types: ['off_clock_work'],
+    flags: [{ key: 'hoursWorked', value: hours }],
+  });
+  // Sunday 2026-06-14 through Saturday 2026-06-20: 25h at one place, 20h at another.
+  const twoJobs = [
+    day('2026-06-15', 12.5, 'Store #12'), day('2026-06-16', 12.5, 'Store #12'),
+    day('2026-06-17', 10, 'Diner on 5th'), day('2026-06-18', 10, 'Diner on 5th'),
+  ];
+  const mixed = weeklyOvertime(twoJobs);
+  assert.equal(mixed.count, 1);
+  assert.equal(mixed.weeks[0].hours, 45);
+  assert.deepEqual(mixed.weeks[0].workplaces, ['Diner on 5th', 'Store #12']);
+  assert.equal(mixed.mixedWeeks, 1, 'this is the week whose total could mislead');
+
+  const oneJob = [day('2026-06-15', 22.5, 'Store #12'), day('2026-06-16', 22.5, 'Store #12')];
+  const single = weeklyOvertime(oneJob);
+  assert.equal(single.count, 1);
+  assert.deepEqual(single.weeks[0].workplaces, ['Store #12']);
+  assert.equal(single.mixedWeeks, 0, 'one employer needs no extra warning');
+});
+
+test('a record with no workplace does not invent one', () => {
+  const nameless = weeklyOvertime([
+    { incidentDate: '2026-06-15', workplace: '', flags: [{ key: 'hoursWorked', value: 21 }] },
+    { incidentDate: '2026-06-16', workplace: '', flags: [{ key: 'hoursWorked', value: 21 }] },
+  ]);
+  assert.deepEqual(nameless.weeks[0].workplaces, []);
+  assert.equal(nameless.mixedWeeks, 0);
+});
+
+test('the weekly caveat names the workweek basis always, and the second job only when there is one', () => {
+  const plain = weeklyOvertimeCaveat({ mixedWeeks: 0 });
+  assert.match(plain, /Sunday to Saturday/);
+  assert.match(plain, /workweek may start on another day/);
+  assert.doesNotMatch(plain, /more than one workplace/, 'do not warn about a job they do not have');
+
+  const mixed = weeklyOvertimeCaveat({ mixedWeeks: 2 });
+  assert.match(mixed, /Sunday to Saturday/);
+  assert.match(mixed, /more than one workplace/);
+  assert.match(mixed, /for each employer separately/);
+  assert.equal(weeklyOvertimeCaveat(), plain, 'no argument is the safe default');
+});
+
+// Two surfaces print this number. They used to carry their own hand-written caveats, already
+// worded differently — which is how the second sentence goes missing from one of them.
+test('both surfaces take the caveat from the one place it is written', () => {
+  for (const f of ['js/ui/incidentList.js', 'js/export/exportSummary.js']) {
+    const src = readFileSync(f, 'utf8');
+    assert.match(src, /weeklyOvertimeCaveat/, `${f} must use the shared caveat`);
+    assert.doesNotMatch(src, /workweek may start on another day/, `${f} still hand-writes it`);
+  }
 });

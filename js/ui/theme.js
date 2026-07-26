@@ -3,17 +3,15 @@
 // dim cheap screen. System follows the OS. "System" is resolved to an explicit data-theme in
 // JS so the CSS needs only one light block (no media-query duplication).
 import { getSettings, saveSettings } from '../data/settingsRepo.js';
+import { paintTheme, rememberThemePref, resolveTheme } from './themePref.js';
 
 const lightMq = () => window.matchMedia('(prefers-color-scheme: light)');
 
-function resolve(pref) {
-  if (pref === 'light') return 'light';
-  if (pref === 'system') return lightMq().matches ? 'light' : 'dark';
-  return 'dark';
-}
-
 export function applyTheme(pref) {
-  document.documentElement.setAttribute('data-theme', resolve(pref));
+  // Mirror the preference so the NEXT launch can paint it from <head>, before the database it
+  // actually lives in has opened — otherwise a light-theme app flashes dark on every open.
+  rememberThemePref(pref);
+  paintTheme(resolveTheme(pref));
 }
 
 let _bound = false;

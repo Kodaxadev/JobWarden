@@ -6,7 +6,7 @@ import { manifestHash, HASH_ALGO } from '../domain/integrity.js';
 import { jurisdictionLabel } from '../config/jurisdictions.js';
 import { formatDate } from '../domain/timeUtils.js';
 import { PAPER_CSS, BRAND_CSS, REPORT_CSP, docHead } from './reportBrand.js';
-import { DOCUMENT_PREAMBLE, DOCUMENT_FOOTER, WHAT_THE_SEAL_MEANS } from '../config/disclaimers.js';
+import { DOCUMENT_PREAMBLE, DOCUMENT_FOOTER, WHAT_THE_SEAL_MEANS, weeklyOvertimeCaveat } from '../config/disclaimers.js';
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -39,9 +39,12 @@ export async function buildSummaryHtml(incidents, settings = {}) {
   const totals = [
     ...s.headline.map(h => `<li><b>${h.count}</b> ${esc(h.label)}</li>`),
     s.offClock.records ? `<li><b>${s.offClock.totalMinutes} min</b> off-the-clock work, across ${s.offClock.records} shift(s)</li>` : '',
-    ot && ot.count ? `<li><b>${ot.count} week(s)</b> over 40 hours worked (${ot.totalOtHours}h total over 40, Sun–Sat basis) — possible weekly overtime</li>` : '',
+    ot && ot.count ? `<li><b>${ot.count} week(s)</b> over 40 hours worked (${ot.totalOtHours}h total over 40) — possible weekly overtime</li>` : '',
   ].filter(Boolean).join('');
 
+  // The assumptions inside the weekly number, in the document that leaves the phone.
+  const otCaveat = ot && ot.count
+    ? `<p class="meta">${esc(weeklyOvertimeCaveat(ot))}</p>` : '';
   const places = s.byWorkplace.length > 1
     ? `<p class="meta">By location: ${s.byWorkplace.map(w => `${esc(w.name)} (${w.count})`).join(' · ')}</p>` : '';
   const interrupters = s.interruptions.total > 0 && s.interruptions.byActor.length
@@ -73,6 +76,7 @@ export async function buildSummaryHtml(incidents, settings = {}) {
     ${interrupters}
     <h2>Totals (counts only — no dollar amounts)</h2>
     ${totals ? `<ul class="totals">${totals}</ul>` : '<p class="meta">No possible issues flagged.</p>'}
+    ${otCaveat}
     <h2>Timeline</h2>
     <table>
       <thead><tr><th>Date</th><th>Place</th><th>What was logged</th><th>Possible issue</th></tr></thead>

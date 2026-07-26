@@ -1,7 +1,7 @@
 // captureForm.js — the Log screen. One concern: composing the adaptive capture on one screen
 // (a slim live bar, "What happened?", the detail sections that question reveals, proof, save)
 // and persisting it. The detail sections come from captureFields; only what was picked shows.
-import { el, clear, toast } from '../ui/dom.js';
+import { el, clear, toast, withBusy } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { confirmDialog } from '../ui/confirmDialog.js';
 import { createIncident, reviseIncident, validateIncident, sanityWarnings } from '../domain/incidentModel.js';
@@ -106,8 +106,10 @@ export async function renderCaptureForm(container, {
     validationMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
     validationMessage.focus({ preventScroll: true });
   };
+  // `.btn-label` rather than a bare text node so withBusy can swap the words during the write
+  // without replacing the button's contents (and deleting the icon with them).
   const saveBtn = el('button', { type: 'button', class: 'btn save big', onclick: () => save() },
-    [iconEl('save'), document.createTextNode(' ' + (existing ? 'Save changes' : 'Save record'))]);
+    [iconEl('save'), el('span', { class: 'btn-label', text: existing ? 'Save changes' : 'Save record' })]);
   form.append(body, el('div', { class: 'savewrap' }, [saveBtn]));
 
   if ((settings.workplaces || []).length) {
@@ -131,7 +133,23 @@ export async function renderCaptureForm(container, {
     activeSections(state).forEach(sec => adaptiveHost.appendChild(sec));
   }
 
+  // Sealing a record hashes every attached photo before the write, so saving takes real time on
+  // the phones this app is built for — and nothing stopped a second tap during that window.
+  // Each tap ran createIncident() again, minting a NEW id, so an impatient double-tap wrote the
+  // same event into the log twice. There is no way to tell those two records apart afterwards.
+  let saving = false;
+
   async function save() {
+    if (saving) return;
+    saving = true;
+    try {
+      await attemptSave();
+    } finally {
+      saving = false;
+    }
+  }
+
+  async function attemptSave() {
     const input = {
       incidentDate: state.incidentDate, workplace: state.workplace, location: state.location,
       clockIn: state.clockIn, clockOut: state.clockOut, types: state.types,
@@ -163,7 +181,7 @@ export async function renderCaptureForm(container, {
     }
     const write = (rec) => (existing ? putIncident(rec) : addIncident(rec));
     try {
-      await write(draft);
+      await withBusy(saveBtn, 'Saving…', () => write(draft));
       guard.reset();
       setNavigationGuard?.(null);
       toast(existing ? 'Record updated' : 'Record saved on this phone', { tone: 'success' });

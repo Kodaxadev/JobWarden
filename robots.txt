@@ -1,0 +1,10 @@
+# JobWarden — https://jobwarden.kodaxa.dev
+# Everything here is public marketing and policy text. There is no user data on this server to
+# crawl: records live on the reader's own phone and are never uploaded.
+#
+# index.html is the app shell and carries its own `noindex` — it is deliberately NOT disallowed
+# here, because a crawler that cannot fetch a page can never read the noindex on it.
+User-agent: *
+Allow: /
+
+Sitemap: https://jobwarden.kodaxa.dev/sitemap.xml

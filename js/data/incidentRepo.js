@@ -59,8 +59,22 @@ export async function getDeletedIncidents() {
   return (all || []).map(hydrateKeepingRaw).filter(i => i.deleted).sort(byNewest);
 }
 
+// Active, recoverable-Deleted, and everything — from ONE pass over the store. Records and
+// Export each need two of the three, and asking twice reads every record twice and re-runs
+// the rules engine over each one twice, which is the most expensive thing either screen does.
+export async function getIncidentGroups() {
+  const all = await getAllIncidents({ includeDeleted: true });
+  return { active: all.filter(i => !i.deleted), deleted: all.filter(i => i.deleted), all };
+}
+
 // Active by default; backup reminders can include recoverable Deleted records.
 export async function countIncidents({ includeDeleted = false } = {}) {
-  const all = await tx(STORE_INCIDENTS, 'readonly', s => reqToPromise(s.getAll()));
-  return (all || []).filter(i => includeDeleted || !i.deleted).length;
+  return tx(STORE_INCIDENTS, 'readonly', async s => {
+    if (includeDeleted) return reqToPromise(s.count()); // a count the store can answer on its own
+    // No index can answer this one: IndexedDB keys cannot be booleans, so `deleted` is not
+    // indexable. Read the values, but do NOT hydrate — running the rules engine over every
+    // record to produce a number is work the backup banner repeats on every save.
+    const all = await reqToPromise(s.getAll());
+    return (all || []).filter(i => !i.deleted).length;
+  });
 }

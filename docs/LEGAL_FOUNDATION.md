@@ -58,6 +58,16 @@ require one regardless. Must state plainly and truthfully:
   the browser clears storage) — hence backup/restore. State this honestly.
 - Children: not directed at users under 13.
 - Contact + effective date + how changes are communicated.
+- **Deletion, accurately** (added 2026-07-26). The policy previously said a user "can wipe
+  everything by clearing the app's storage or uninstalling it," which was the whole truth only
+  because the app had no destructive control of its own — in-app "delete" moved a record to
+  **Deleted**, where it stayed forever and went into every backup. There are now two real
+  ones: **Delete forever** on a Deleted record, and **Erase everything on this phone** in
+  Settings (records, photos, settings, the local diagnostics log, and any in-progress shift).
+  §11 of `privacy.html` names both, and names their limit: neither can be undone, and neither
+  reaches a backup file or an email the user already sent. The same two sentences are in the
+  in-app Legal screen. **[ATTORNEY]** — this is the CCPA/CPRA right-to-delete surface; confirm
+  the wording claims no more than the app does.
 
 **Drafted 2026-06-22:** [`privacy.html`](../privacy.html) — full policy covering all of the
 above, written to match how the app actually behaves (no collection, no servers, local-only).

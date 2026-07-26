@@ -1,13 +1,14 @@
 // quickCapture.js — the <5-second "interrupted lunch" path. One concern: capturing a single
 // interruption as a standalone, timestamped, sealed record the moment it happens — zero typing
 // required. The fact is the strongest evidence when it's saved AT the interruption, not later.
-import { el, clear, toast, trapFocus } from '../ui/dom.js';
+import { el, clear, toast, trapFocus, withBusy } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { createIncident } from '../domain/incidentModel.js';
 import { addIncident } from '../data/incidentRepo.js';
 import { getSettings } from '../data/settingsRepo.js';
 import { reportSaveFailure } from '../ui/saveFailure.js';
 import { fileToAttachment, attachmentUrl, humanSize } from './media.js';
+import { photoStatusCopy } from './evidenceStatus.js';
 import { todayDateStr } from '../domain/timeUtils.js';
 
 const WHO = ['Manager', 'Supervisor', 'Coworker', 'Customer', 'Other'];
@@ -68,19 +69,36 @@ export async function openInterruptedLunch({ onSaved } = {}) {
       thumbs.appendChild(el('div', { class: 'thumb' }, [el('img', { src: attachmentUrl(a), alt: a.name }), rm, el('span', { class: 'thumb-meta', text: humanSize(a.size) })]));
     });
   };
+  // A photo that fails to attach used to just not appear — and a thrown error here rejected the
+  // whole handler, so several photos could vanish on one bad file. The Log screen already names
+  // partial failures (see evidenceStatus.js); this path says it too, rather than leaving someone
+  // to believe the proof went in.
   fileInput.addEventListener('change', async e => {
-    for (const file of e.target.files) { const a = await fileToAttachment(file); if (a) attachments.push(a); }
-    fileInput.value = ''; renderThumbs();
+    let failed = 0;
+    for (const file of e.target.files) {
+      try {
+        const a = await fileToAttachment(file);
+        if (a) attachments.push(a); else failed++;
+      } catch { failed++; }
+    }
+    fileInput.value = '';
+    renderThumbs();
+    if (failed) toast(photoStatusCopy(attachments.length, failed).text, { tone: 'warning' });
   });
   const photoBtn = el('button', {
     type: 'button', class: 'btn quick-photo', onclick: () => fileInput.click(),
   }, [iconEl('camera'), document.createTextNode(' Add a photo (optional)')]);
 
+  // This sheet exists to be tapped fast in the middle of something, which is exactly when a
+  // second tap lands before the first write returns. Each tap minted its own record id, so the
+  // interruption went into the log twice. withBusy disables the button synchronously on the
+  // first tap, before the first await, so the second tap has nothing to hit.
+  let saveBtn;
   const save = async () => {
     const input = interruptedLunchInput({ by, name: nameInput.value, returnedToWork: returnedCb.checked, note: note.value, workplace, attachments });
     const draft = createIncident(input);
     try {
-      await addIncident(draft);
+      await withBusy(saveBtn, 'Saving…', () => addIncident(draft));
       toast('Interrupted lunch saved', { tone: 'success' });
       close();
       onSaved?.();
@@ -137,7 +155,8 @@ export async function openInterruptedLunch({ onSaved } = {}) {
     ]),
     el('div', { class: 'quick-actions' }, [
       el('button', { type: 'button', class: 'btn', text: 'Cancel', onclick: close }),
-      el('button', { type: 'button', class: 'btn primary', text: 'Save record', onclick: save }),
+      (saveBtn = el('button', { type: 'button', class: 'btn primary', onclick: save },
+        [el('span', { class: 'btn-label', text: 'Save record' })])),
     ]),
   ]);
   const overlay = el('div', { class: 'overlay' }, [sheet]);

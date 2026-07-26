@@ -1,7 +1,10 @@
 /* shell.css — header, tabs, banners, dialogs, toasts, shared surfaces & buttons. */
 /* Docked and solid — a cool instrument fascia, seated over the scrolling page by its own
    shadow. No backdrop-blur (banned: budget-phone tax) and no warm relic tints. */
-.app-header { position: sticky; top: 0; z-index: var(--z-header); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 16px 16px calc(16px + env(safe-area-inset-top)); background: var(--header-bg); border-bottom: 1px solid var(--line); box-shadow: inset 0 1px 0 var(--hi), 0 10px 24px -18px rgba(0,0,0,.5); }
+/* The top inset belongs on the TOP padding: installed to a home screen with viewport-fit=cover,
+   the page runs under the status bar, and the brand row has to start below the clock and the
+   notch — not 16px from the physical top of the screen. */
+.app-header { position: sticky; top: 0; z-index: var(--z-header); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: calc(16px + env(safe-area-inset-top)) 16px 16px; background: var(--header-bg); border-bottom: 1px solid var(--line); box-shadow: inset 0 1px 0 var(--hi), 0 10px 24px -18px rgba(0,0,0,.5); }
 .brand { margin: 0; display: flex; align-items: center; gap: 12px; min-width: 0; }
 .mark { width: 42px; height: 42px; flex: none; border-radius: var(--radius); display: grid; place-items: center; color: var(--primary-strong); background: var(--sheen), linear-gradient(160deg, var(--navy-2), var(--navy-deep)); border: 1px solid rgba(205,171,69,.3); box-shadow: var(--shadow-1); }
 .mark img { width: 27px; height: 30px; }
@@ -45,19 +48,19 @@
 
 .btn { background: var(--sheen), var(--surface-2); color: var(--text); border: 1px solid var(--line-2); border-radius: var(--radius); padding: 12px 16px; font: 500 var(--fs-ui)/var(--lh-snug) var(--font); font-variant-numeric: tabular-nums; min-height: var(--tap); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; justify-content: center; box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(0,0,0,.32), 0 4px 10px -6px rgba(0,0,0,.4); transition: transform var(--dur-press) var(--ease-out), border-color var(--dur-state) var(--ease-out), background var(--dur-state) var(--ease-out), box-shadow var(--dur-state) var(--ease-out); }
 .btn:hover { border-color: var(--node); background: var(--sheen), var(--surface-3); box-shadow: inset 0 1px 0 var(--edge-top), 0 2px 4px rgba(0,0,0,.34), 0 6px 14px -6px rgba(0,0,0,.44); }
-.btn:active { transform: translateY(1px); box-shadow: inset 0 2px 3px rgba(0,0,0,.42); }
+.btn:active { transform: translateY(var(--press-drop)); box-shadow: var(--press-sink); }
 /* The one gold action on a screen: machined gold — bright catch, body, deep base, seated bevel. */
 .btn.primary { background: var(--gold-face); border-color: var(--primary-strong); color: var(--on-gold); font-weight: 600; box-shadow: var(--gold-bevel), var(--glow-gold), 0 2px 4px rgba(0,0,0,.3), 0 8px 18px -8px rgba(0,0,0,.52); }
 .btn.primary:hover { background: var(--gold-face-hover); border-color: #f0d98e; box-shadow: var(--gold-bevel), var(--glow-gold), 0 3px 6px rgba(0,0,0,.32), 0 10px 22px -8px rgba(0,0,0,.54); }
-.btn.primary:active { transform: translateY(1px); background: linear-gradient(180deg, #c4a13c, #a9832a); box-shadow: inset 0 2px 4px rgba(66,46,8,.5); }
+.btn.primary:active { transform: translateY(var(--press-drop)); background: linear-gradient(180deg, #c4a13c, #a9832a); box-shadow: inset 0 2px 4px rgba(66,46,8,.5); }
 .btn.danger { background: rgba(224,89,77,.12); border-color: rgba(224,89,77,.42); color: #ffb1aa; box-shadow: inset 0 1px 0 rgba(255,255,255,.05); }
 .btn.danger:hover { background: rgba(224,89,77,.18); border-color: rgba(224,89,77,.6); box-shadow: inset 0 1px 0 rgba(255,255,255,.06); }
-.btn.danger:active { transform: translateY(1px); box-shadow: inset 0 2px 3px rgba(0,0,0,.35); }
+.btn.danger:active { transform: translateY(var(--press-drop)); box-shadow: var(--press-sink); }
 .btn.tiny { min-height: 44px; padding: 8px 16px; font-size: var(--fs-sm); white-space: nowrap; box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(0,0,0,.3); }
 .btn.big { width: 100%; font-size: var(--fs-title); padding: 16px; }
 .btn.save { width: 100%; font-size: var(--fs-title); font-weight: 600; padding: 16px; border: 1px solid #9ad9a8; border-radius: var(--radius); color: #102610; background: linear-gradient(180deg, #93d8a2, var(--ok)); box-shadow: inset 0 1px 0 rgba(255,255,255,.38), inset 0 -1px 0 rgba(0,20,6,.18), 0 2px 4px rgba(0,0,0,.25), 0 14px 30px -12px rgba(70,160,90,.42); }
 .btn.save:hover { background: linear-gradient(180deg, #9fdead, #89d59a); border-color: #abe2b8; }
-.btn.save:active { transform: translateY(1px); background: linear-gradient(180deg, #83c993, #74c087); box-shadow: inset 0 2px 4px rgba(6,40,16,.4); }
+.btn.save:active { transform: translateY(var(--press-drop)); background: linear-gradient(180deg, #83c993, #74c087); box-shadow: inset 0 2px 4px rgba(6,40,16,.4); }
 .btn.save .icon svg { width: 22px; height: 22px; }
 .btn:disabled { opacity: .5; cursor: default; transform: none; }
 /* Busy is its own state, not a disabled button. Locking a backup runs PBKDF2 for a couple of
@@ -87,11 +90,27 @@
 .tab .icon { width: 42px; height: 30px; border-radius: var(--radius-sm); display: grid; place-items: center; transition: background var(--dur-state) var(--ease-out), box-shadow var(--dur-state) var(--ease-out); }
 .tab .icon svg { width: 23px; height: 23px; }
 .tab:hover { color: var(--muted); }
-.tab:active .icon { background: rgba(255,255,255,.05); }
+.tab:active .icon { background: var(--wash-press); }
 .tab.active { color: var(--primary-strong); }
 .tab.active:hover { color: var(--primary-strong); }
 .tab.active .icon { background: rgba(205,171,69,.14); box-shadow: 0 0 0 1px rgba(205,171,69,.26), inset 0 1px 0 rgba(255,255,255,.06); }
-.tab.active::before { content: ""; position: absolute; top: 0; left: 36%; right: 36%; height: 3px; border-radius: 0 0 4px 4px; background: linear-gradient(180deg, var(--primary-strong), var(--primary)); box-shadow: 0 1px 10px rgba(205,171,69,.5); }
+/* The active-tab indicator travels instead of teleporting. It was a ::before on whichever tab
+   happened to be active, so it vanished from one tab and appeared on another with nothing
+   connecting the two — the one state change in the app with no motion at all, on the control used
+   most. It is now a single marker on the fascia with exactly the old bar's geometry, gradient and
+   glow, moved by transform alone (no layout animation). Its width is 28% of a tab, so one tab of
+   travel is 100/28 of its own width. */
+.tabbar { --tab-count: 4; }
+.tabbar::after {
+  content: ""; position: absolute; top: 0; height: 3px; pointer-events: none;
+  width: calc(100% / var(--tab-count) * 0.28);
+  left: calc(100% / var(--tab-count) * 0.36);
+  transform: translateX(calc(var(--tab-i, 0) * 100% / 0.28));
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(180deg, var(--primary-strong), var(--primary));
+  box-shadow: 0 1px 10px rgba(205,171,69,.5);
+  transition: transform var(--dur-enter) var(--ease-out);
+}
 .tab:focus-visible { outline-offset: -4px; border-radius: var(--radius-sm); }
 
 .disclaimer { display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center; font-size: var(--fs-sm); color: var(--gtext); line-height: 1.5; max-width: 560px; margin: 0 auto; padding: 8px 16px calc(88px + env(safe-area-inset-bottom)); }
