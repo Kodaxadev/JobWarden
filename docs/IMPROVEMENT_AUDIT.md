@@ -159,7 +159,7 @@ Adjacent wage-hour claims a CA worker would reasonably expect to log, all absent
 - **Split-shift premium** (IWC §4): needs a second work interval per day; the model has
   `meal`/`meal2` but no second *work* span.
 - **Expense reimbursement (§2802)** — uniforms, tools, mileage, personal phone. Common
-  in exactly the dealership/service context this app grew from.
+  across hourly work generally, not any one trade.
 - **Paystub violations (§226)** as a structured type (currently only a photo).
 - **Tip theft (§351)**, **sick-leave retaliation (Labor Code §246.5)**.
 Each addition is also new attorney-review surface — batch them.

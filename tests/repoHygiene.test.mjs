@@ -60,3 +60,36 @@ test('the app ships zero runtime dependencies', () => {
   assert.deepEqual(pkg.dependencies ?? {}, {},
     'a runtime dependency is supply-chain surface on an evidence tool — keep it in devDependencies or vendor it');
 });
+
+// JobWarden is for anyone paid by the hour. The app grew out of one workplace, and the
+// vocabulary of that trade kept creeping back into shipped copy — a "Dealership / place"
+// placeholder on the first field of the first screen, a sample record set on a service floor.
+// A worker at a warehouse, a register or a bedside reads that and concludes the tool is not
+// for them, which is the one impression this app cannot afford to give.
+const TRADE_WORDS = [
+  'dealership', 'showroom', 'service advisor', 'service writer',
+  'repair order', 'flat rate', 'flag hour', 'test drive',
+];
+
+// Copy the user can actually read. Docs and tests may discuss the history; the product may not.
+const USER_FACING = FILES
+  .map(f => f.split('\\').join('/'))
+  .filter(f => f.startsWith('js/') || /^[a-z-]+\.html$/.test(f));
+
+test('no shipped copy narrows the app to one trade', () => {
+  const hits = [];
+  for (const f of USER_FACING) {
+    const text = readFileSync(f, 'utf8');
+    for (const word of TRADE_WORDS) {
+      const at = text.toLowerCase().indexOf(word);
+      if (at !== -1) hits.push(`${f}: "${word}" — ${text.slice(Math.max(0, at - 40), at + 40).replace(/\s+/g, ' ').trim()}`);
+    }
+  }
+  assert.deepEqual(hits, [], `JobWarden is for all wage workers:\n${hits.join('\n')}`);
+});
+
+test('the trade-word guard is actually reading shipped copy', () => {
+  assert.ok(USER_FACING.length > 20, `only ${USER_FACING.length} user-facing files — the filter is wrong`);
+  assert.ok(USER_FACING.some(f => f.endsWith('/captureFields.js')),
+    'the capture form is where the placeholder regressed twice; it must be in scope');
+});

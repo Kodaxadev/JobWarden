@@ -101,7 +101,9 @@ function issueChips(state, onChange) {
   return wrap;
 }
 export function whatHappenedSection(state, { onChange } = {}) {
-  const place = textInput(state.workplace, v => state.workplace = v, { list: 'workplaces', placeholder: 'Dealership / place' });
+  // Keep the example trade-neutral: a placeholder naming one industry tells everyone else the
+  // app is not for them, and this is the first field on the first screen.
+  const place = textInput(state.workplace, v => state.workplace = v, { list: 'workplaces', placeholder: 'Store, site, or address' });
   return el('section', { class: 'logsec what' }, [
     el('div', { class: 'logsec-head' }, [iconEl('triangle-alert'), el('h3', { class: 'logsec-title', text: 'What happened?' })]),
     el('div', { class: 'grid2 what-when' }, [
