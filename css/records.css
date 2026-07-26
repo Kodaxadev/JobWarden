@@ -77,24 +77,40 @@
 .row-head:active { background: rgba(255,255,255,.045); }
 .row-head.static { cursor: default; align-items: center; }
 .row-head.static:hover, .row-head.static:active { background: none; }
-.row-main { min-width: 0; }
-.row-trailing { display: flex; align-items: flex-start; gap: 8px; flex: none; }
-.row-chevron { display: grid; place-items: center; margin-top: 1px; color: var(--faint); }
+/* Basis 0, not auto: on `auto` the two columns shrink in proportion to their content, so one
+   long workplace name gave the main column 237px and left the rail 5px to fit an 18px chevron. */
+.row-main { min-width: 0; flex: 1 1 0; }
+/* This rail once held the workplace too, and as `flex: none` + nowrap it grew to whatever that
+   unbounded name needed — 1163px for a real one — shoving the chevron off the right edge and
+   clipping the name with no ellipsis to admit it. The name now lives in .row-place; the cap
+   stays as a guard so nothing that lands here can starve the main column again. */
+.row-trailing { display: flex; align-items: flex-start; gap: 8px; flex: none; max-width: 45%; }
+.row-chevron { display: grid; place-items: center; margin-top: 1px; color: var(--faint); flex: none; }
 .row-chevron svg { width: 18px; height: 18px; transition: transform var(--dur-state) var(--ease-out); }
 .row.expanded .row-chevron svg { transform: rotate(180deg); color: var(--primary); }
 .row-date { font-family: var(--mono); font-weight: 500; font-size: var(--fs-ui); margin-bottom: 8px; }
+/* The workplace moved here out of the trailing rail. Left-aligned under the date it has the
+   full column to wrap in and reads as part of the record; the rail gave it 88px of gutter. */
+.row-place { color: var(--muted); font-size: var(--fs-sm); line-height: var(--lh-snug); overflow-wrap: anywhere; margin: 0 0 8px; }
+.row-date:has(+ .row-place) { margin-bottom: var(--space-hair); }  /* date + place are one identity line */
 .row-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip.mini { display: inline-block; background: var(--surface-3); border: 1px solid var(--line-2); border-radius: var(--radius-pill); padding: 4px 12px; font-size: var(--fs-micro); min-height: 0; color: var(--muted); }
 .row-flags { color: var(--incident); font-size: var(--fs-sm); line-height: 1.45; margin-top: 8px; }
 /* This is record CONTENT (the workplace, the photo count), not chrome — it was 11.5px mono,
    which is legible on a good screen and hostile on a cheap one in a parking lot. */
-.row-meta { font-family: var(--mono); color: var(--faint); font-size: var(--fs-sm); white-space: nowrap; text-align: right; }
+/* One badge per line. Run together as "2 photos  GPS" they wrapped wherever the rail happened
+   to end, which can fall inside a badge; stacking makes the break deliberate and keeps the rail
+   only as wide as the longest single badge. */
+.row-meta { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-hair); font-family: var(--mono); color: var(--faint); font-size: var(--fs-sm); line-height: var(--lh-snug); white-space: nowrap; }
 .row-detail { padding: 0 16px 16px; border-top: 1px solid var(--line); }
 .record-detail-label { display: flex; align-items: center; gap: 8px; margin: 14px 0 0; font-family: var(--mono); font-size: var(--fs-micro); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
 .record-detail-label svg { width: 15px; height: 15px; color: var(--primary); }
-.facts { display: grid; grid-template-columns: 132px 1fr; gap: 8px 12px; margin: 16px 0; font-size: var(--fs-ui); }
+/* minmax(0,1fr), not 1fr: a bare 1fr keeps an `auto` minimum, so one unbreakable word in a
+   value — a witness name typed without spaces — widened the track past the card. Grid tracks
+   are shared, so that one value dragged every other row out to 425px in a 320px viewport. */
+.facts { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 8px 12px; margin: 16px 0; font-size: var(--fs-ui); }
 .facts dt { color: var(--muted); }
-.facts dd { margin: 0; }
+.facts dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .finding-panel { margin: 12px 0; padding: 12px; border: 1px solid var(--iline); border-radius: var(--radius-sm); background: var(--ifill); }
 .finding-head { display: flex; align-items: center; gap: 8px; color: var(--incident); font-size: var(--fs-sm); }
 .finding-head svg { width: 16px; height: 16px; }
@@ -112,7 +128,7 @@
 .row-detail a { color: var(--primary-strong); }
 
 @media (max-width: 420px) {
-  .facts { grid-template-columns: 1fr; gap: 3px; }
+  .facts { grid-template-columns: minmax(0, 1fr); gap: 3px; }
   .facts dd { margin-bottom: 8px; }
   .facts dd:last-child { margin-bottom: 0; }
 }

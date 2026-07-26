@@ -197,8 +197,10 @@ function glanceCard(items) {
 
 function row(item, { onEdit, onChanged, onRepeat }) {
   const flagText = getRules(item.jurisdiction).summarize(item.flags || []).join(' · ');
+  // The workplace is unbounded user input and belongs in the main column, where it has the
+  // width to wrap and reads left-aligned like the rest of the record. The trailing rail keeps
+  // only the badges, whose length we control.
   const meta = [];
-  if (item.workplace) meta.push(item.workplace);
   if ((item.attachments || []).length) meta.push(`${item.attachments.length} photo${item.attachments.length === 1 ? '' : 's'}`);
   if (item.location) meta.push('GPS');
 
@@ -206,11 +208,12 @@ function row(item, { onEdit, onChanged, onRepeat }) {
   const head = el('button', { type: 'button', class: 'row-head', 'aria-expanded': 'false', 'aria-controls': detailId }, [
     el('div', { class: 'row-main' }, [
       el('div', { class: 'row-date', text: formatDate(item.incidentDate) }),
+      item.workplace ? el('div', { class: 'row-place', text: item.workplace }) : null,
       chipRow(item),
       flagText ? el('div', { class: 'row-flags', text: flagText }) : null,
     ]),
     el('div', { class: 'row-trailing' }, [
-      meta.length ? el('div', { class: 'row-meta', text: meta.join('  ') }) : null,
+      meta.length ? el('div', { class: 'row-meta' }, meta.map(m => el('span', { text: m }))) : null,
       el('span', { class: 'row-chevron', 'aria-hidden': 'true' }, [iconEl('chevron-down')]),
     ]),
   ]);
