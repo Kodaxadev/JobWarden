@@ -71,3 +71,50 @@ test('the report still says what it is and is not', async () => {
   assert.ok(html.includes('not a timestamp from any outside service'));
   assert.ok(html.includes('have not been verified'), 'whose account this is must be stated');
 });
+
+// A workplace name, a witness list and a narrative are whatever the worker typed. When one
+// arrives as a long unbroken run — a pasted URL, an address with no spaces — the printed
+// document has no scrollbar to rescue it: whatever sits past the right edge of the paper is
+// simply not in the evidence. Both documents overflowed letter paper by 115px and 59px before
+// these rules existed.
+const UNBROKEN = 'Wolfeschlegelsteinhausenbergerdorffvoralternwarengewissenhaftschaferswesenchaftswarenwolkegemeinschaft';
+
+const longRecord = () => createIncident({
+  incidentDate: '2026-06-16', types: ['missed_meal'], clockIn: '08:00', clockOut: '17:00',
+  workplace: UNBROKEN, witnesses: UNBROKEN, narrative: UNBROKEN,
+});
+
+const stylesheetOf = html => [...html.matchAll(/<style>([\s\S]*?)<\/style>/g)].map(m => m[1]).join('\n');
+
+for (const [name, build] of BUILDERS) {
+  test(`the printable ${name} keeps an unbroken run of user text inside the paper`, async () => {
+    const css = stylesheetOf(await build([longRecord()], { employer: UNBROKEN }));
+
+    // Every track that shares its width with a sibling must be able to reach zero. A bare 1fr
+    // keeps an `auto` minimum, so one long value widens the track and drags the whole grid or
+    // table past the page — the fault is in the track, not in the cell that exposed it.
+    for (const [, value] of css.matchAll(/grid-template-columns:([^;}]+)/g)) {
+      const outsideMinmax = value.replace(/minmax\([^)]*\)/g, '');
+      assert.ok(!/\b1fr\b/.test(outsideMinmax),
+        `grid-template-columns:${value.trim()} — a shared track needs minmax(0, 1fr), not a bare 1fr`);
+    }
+
+    // And the containers that actually receive that text need somewhere to break.
+    const ruleFor = selector => css.split('}')
+      .map(chunk => chunk.split('{'))
+      .filter(parts => parts.length === 2 && parts[0].trim().split(/\s+/).pop() === selector)
+      .map(parts => parts[1])[0];
+
+    for (const sel of ['.narr', 'dd', 'th,td']) {
+      const body = ruleFor(sel);
+      if (!body) continue;   // not every document defines every one of these
+      assert.match(body, /overflow-wrap:\s*anywhere|word-break:\s*break-all/,
+        `${sel} holds user text and must be able to break inside a long run`);
+    }
+  });
+
+  test(`the printable ${name} still contains the long value it had to wrap`, async () => {
+    const html = await build([longRecord()], { employer: UNBROKEN });
+    assert.ok(html.includes(UNBROKEN), 'wrapping must not come at the cost of dropping the text');
+  });
+}

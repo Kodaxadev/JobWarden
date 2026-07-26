@@ -18,7 +18,10 @@ const STYLE = `
   ul.totals{margin:6px 0 0;padding-left:18px} ul.totals li{margin:3px 0}
   ul.totals b{font-size:14px}
   table{border-collapse:collapse;width:100%;font-size:11.5px;margin-top:6px}
-  th,td{border:1px solid var(--paper-line);padding:5px 7px;text-align:left;vertical-align:top}
+  /* A workplace name is unbounded user input and table-layout:auto sizes a column to its
+     longest unbreakable run, so one long name pushes the table past its 100% width and off the
+     page. Letting cells break keeps the table inside the paper. */
+  th,td{border:1px solid var(--paper-line);padding:5px 7px;text-align:left;vertical-align:top;overflow-wrap:anywhere}
   th{background:var(--paper-navy-tint);color:var(--paper-navy)} td.f{color:var(--paper-gold-deep)}
   tr{page-break-inside:avoid}
 `;
