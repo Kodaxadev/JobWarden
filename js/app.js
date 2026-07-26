@@ -10,7 +10,7 @@ import { renderSettingsView } from './ui/settingsView.js';
 import { renderRightsFaq } from './ui/rightsFaq.js';
 import { renderLegal } from './ui/legalView.js';
 import { renderOnboarding } from './ui/onboarding.js';
-import { renderBackupBanner } from './export/backup.js';
+import { renderBackupBanner, renderBackupStatus } from './export/backup.js';
 import { exportJson } from './export/exportJson.js';
 import { getActiveShift, saveActiveShift } from './data/shiftRepo.js';
 import { dueAlerts } from './domain/shiftClock.js';
@@ -25,6 +25,7 @@ window.addEventListener('unhandledrejection', e => logError(e.reason?.message ||
 
 const main = qs('#view');
 const bannerHost = qs('#banner');
+const backupStatusHost = qs('#backup-status');
 const systemHost = qs('#system-status');
 const tabs = [...document.querySelectorAll('.tab')];
 let navigationGuard = null;
@@ -42,6 +43,7 @@ async function refreshBanner() {
     countIncidents({ includeDeleted: true }),
   ]);
   renderBackupBanner(bannerHost, { settings, count, onBackupNow: quickBackup });
+  renderBackupStatus(backupStatusHost, { settings, count });
 }
 
 async function quickBackup() {

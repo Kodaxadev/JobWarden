@@ -9,8 +9,11 @@
 .wm-name { font-family: var(--serif); font-weight: 600; font-size: var(--fs-title); letter-spacing: .04em; line-height: 1.05; color: var(--text); white-space: nowrap; }
 .wm-name .wm-warden { color: var(--primary); }
 .over { font-family: var(--mono); font-size: var(--fs-micro); font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: var(--primary); margin-top: 4px; }
-.pill { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--gline); color: var(--gtext); background: var(--gfill); border-radius: 999px; padding: 8px 12px; font-size: var(--fs-sm); font-weight: 500; white-space: nowrap; }
+.pill { display: inline-flex; align-items: center; gap: 8px; flex: none; border: 1px solid var(--gline); color: var(--gtext); background: var(--gfill); border-radius: 999px; padding: 8px 12px; font-size: var(--fs-sm); font-weight: 500; white-space: nowrap; }
 .pill-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); flex: none; }
+/* The badge is absent more often than not — no records, or the banner is already nagging — and
+   an empty host must not hold a slot in the header's space-between. */
+.pill-host:empty { display: none; }
 
 .banner-host:empty { display: none; }
 .banner {
