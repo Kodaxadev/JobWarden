@@ -11,8 +11,12 @@
   --hi:rgba(255,252,244,.72);
   --text:#172033; --muted:#4c5564; --faint:#5b6370;
 
-  /* Gold is deepened when it carries text; filled gold actions keep navy ink. */
-  --primary:#806115; --primary-strong:#694c0d; --primary-deep:#5b4109;
+  /* Gold is deepened when it carries text; filled gold actions keep navy ink.
+     #806115 was 4.35:1 on --bg — under AA for normal text, and gold text sits directly on the
+     page background in the wordmark eyebrow, the rights links and the shift clock. Three points
+     per channel deeper reads the same and measures 4.70:1. (On --surface it already passed at
+     5.21, so only text over the background was ever short.) */
+  --primary:#7a5c14; --primary-strong:#694c0d; --primary-deep:#5b4109;
   --incident:#855407; --ok:#1c6a3a; --gtext:#1b6337;
   --iline:rgba(133,84,7,.34); --ifill:rgba(133,84,7,.08);
   --gline:rgba(28,106,58,.34); --gfill:rgba(28,106,58,.085);
@@ -27,7 +31,7 @@
     0 2px 4px rgba(45,37,27,.08), 0 16px 36px -18px rgba(45,37,27,.32);
   --shadow-3:inset 0 1px 0 rgba(255,252,244,.88),
     0 8px 20px rgba(45,37,27,.13), 0 28px 58px -24px rgba(45,37,27,.38);
-  --glow-gold:0 12px 30px -20px rgba(128,97,21,.46);
+  --glow-gold:0 12px 30px -20px rgba(122,92,20,.46);   /* tracks --primary */
 
   --header-bg:linear-gradient(180deg, rgba(248,244,235,.98), rgba(238,232,221,.97));
   --tabbar-bg:linear-gradient(180deg, #f4efe6, #e9e2d7);
