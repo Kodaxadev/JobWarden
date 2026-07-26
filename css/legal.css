@@ -65,4 +65,7 @@ strong{ color:var(--text); font-weight:600; }
 ul{ margin: 0 0 12px; padding-left: 24px; } li{ margin: 8px 0; }
 .note{ font-size:var(--lg-note); color:var(--faint); background:rgba(214,224,240,.04); border:1px solid var(--line); border-radius:14px; padding: 12px 16px; margin: 16px 0; }
 footer{ border-top:1px solid var(--line); margin-top: 40px; padding-top: 20px; color:var(--faint); font-size:var(--lg-sm); }
-footer a{ color:var(--faint); }
+/* The footer is a standalone link row, not links inside a sentence, so WCAG 2.5.5's inline
+   exemption does not cover it — they were 15px targets. Inline links within the policy prose
+   are deliberately left alone; padding those would wreck the line rhythm. */
+footer a{ color:var(--faint); display:inline-flex; align-items:center; min-height:44px; }
