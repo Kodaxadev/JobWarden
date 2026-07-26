@@ -1,5 +1,5 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v100';
+const CACHE = 'jobwarden-v101';
 const ASSETS = [
   './', './index.html', './landing.html', './install.html', './privacy.html', './terms.html', './manifest.webmanifest',
   './css/styles.css', './css/tokens.css', './css/shell.css', './css/system.css', './css/forms.css', './css/actions.css', './css/records.css', './css/light.css', './css/marketing.css', './css/install.css', './css/legal.css',
@@ -8,7 +8,7 @@ const ASSETS = [
   './fonts/cinzel-latin-600-normal.woff2', './fonts/cinzel-latin-700-normal.woff2',
   './icons/logo-mark.svg', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png',
   './icons/marketing-lock.svg', './icons/marketing-shield.svg', './icons/marketing-wifi-off.svg',
-  './assets/marketing-app-preview.png', './assets/marketing-paper-texture.png',
+  './assets/marketing-paper-texture.png',
   './js/app.js', './js/installPage.js', './js/version.js',
   './js/config/infractionTypes.js', './js/config/uiCopy.js', './js/config/jurisdictions.js', './js/config/disclaimers.js', './js/config/payStatus.js', './js/config/payIssueOptions.js',
   './js/domain/timeUtils.js', './js/domain/breakRules.js', './js/domain/payIssueRules.js', './js/domain/incidentModel.js', './js/domain/integrity.js', './js/domain/patterns.js', './js/domain/shiftClock.js',

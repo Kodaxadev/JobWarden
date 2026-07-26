@@ -6,7 +6,7 @@ Final result: passed
 
 - Selected source: `C:\Users\Justi\.codex\generated_images\019f9aef-b609-7981-9acd-f30f694ee1df\call_s1C14Di9BM4bseP8veEBrpdt.png`
 - Implementation: `landing.html`, `install.html`, `css/marketing.css`, and `css/install.css`
-- Product artifact: `assets/marketing-app-preview.png`
+- Product artifact: the hero app screen is markup (`.app-shot` in `landing.html`), not a raster
 - Texture asset: `assets/marketing-paper-texture.png`
 
 ## Comparison evidence

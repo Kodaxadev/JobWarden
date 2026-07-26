@@ -48,7 +48,92 @@ h1 span{display:inline}
 .privacy-note{max-width:520px;margin:0;color:#718097;font-size:var(--mk-sm)}
 .hero-actions .button-primary{min-width:264px}.hero-actions .button-secondary{min-width:240px}
 .app-preview{align-self:end;margin:48px 0 0;max-width:500px;border:1px solid rgba(212,173,75,.38);background:#060a12;box-shadow:0 40px 80px rgba(0,0,0,.38);transform:translateY(24px)}
-.app-preview img{width:100%;max-height:565px;object-fit:cover;object-position:top}
+
+/* ── The app screen, drawn rather than screenshotted ────────────────────────────────────────
+   Carries the app's own dark tokens, locally scoped, so the depiction matches the product
+   instead of approximating it. Shown whole rather than cropped: the raster it replaced was cut
+   at 565px, which meant its tab bar was never visible at any viewport and the crop landed 2px
+   under the last row — close enough that a wrapped sub-label would have sliced through text. */
+.app-shot{
+  --s-bg:#0a0b0e;--s-surface:#14161c;--s-surface-2:#1c1f27;--s-surface-3:#262a33;
+  --s-field:#0d0e13;--s-line:rgba(234,238,246,.09);--s-line-2:rgba(234,238,246,.16);
+  --s-text:#eef1f6;--s-muted:#a8aebb;--s-faint:#949cab;
+  --s-gold:#cdab45;--s-navy:#16263f;--s-navy-2:#223a61;
+  --s-amber:#e6b15a;--s-amber-line:rgba(230,177,90,.42);--s-amber-fill:rgba(230,177,90,.08);
+  --s-ok:#7fcf92;--s-gline:rgba(90,160,100,.34);--s-gfill:rgba(78,150,92,.14);--s-gtext:#86d597;
+  --s-sheen:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 42%);
+  height:565px;overflow:hidden;padding:14px 14px 0;background:var(--s-bg);
+  color:var(--s-text);font-family:var(--sans);font-size:15px;line-height:1.35;
+  display:flex;flex-direction:column;
+}
+/* The tab bar is docked and the space between it and the header scrolls — so a real screenshot
+   of this screen has its content cut by the bottom of the viewport with the bar intact beneath.
+   Reproducing that is both the honest depiction and what keeps the hero at its designed height. */
+.shot-body{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:12px}
+.app-shot svg{width:20px;height:20px;flex:none}
+
+.shot-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.shot-brand{display:flex;align-items:center;gap:12px;min-width:0}
+.shot-mark{width:42px;height:42px;flex:none;border-radius:14px;display:grid;place-items:center;
+  background:var(--s-sheen),linear-gradient(160deg,var(--s-navy-2),var(--s-navy));
+  border:1px solid rgba(205,171,69,.28)}
+.shot-mark img{width:27px;height:30px;display:block}
+.shot-wordmark{display:flex;flex-direction:column;min-width:0}
+/* Cinzel, .04em, gold on "Warden" — the app's own wordmark, not a marketing restatement. */
+.shot-name{font-family:var(--serif);font-weight:600;font-size:18px;letter-spacing:.04em;line-height:1.05;white-space:nowrap}
+.shot-name span{color:var(--s-gold)}
+.shot-over{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--s-gold);margin-top:4px}
+.shot-pill{display:inline-flex;align-items:center;gap:8px;flex:none;border:1px solid var(--s-gline);
+  color:var(--s-gtext);background:var(--s-gfill);border-radius:999px;padding:7px 11px;font-size:12px;white-space:nowrap}
+.shot-dot{width:7px;height:7px;border-radius:50%;background:var(--s-ok);box-shadow:0 0 8px var(--s-ok);flex:none}
+
+.shot-quick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.shot-qbtn{display:flex;align-items:center;justify-content:center;gap:9px;min-height:52px;padding:8px 12px;
+  border:1px solid var(--s-line-2);border-radius:14px;background:var(--s-sheen),var(--s-surface-2);
+  font-size:15px;font-weight:500;text-align:center;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 1px 2px rgba(0,0,0,.3)}
+.shot-qbtn svg{width:18px;height:18px;color:var(--s-muted)}
+.shot-qbtn-alert{border-color:var(--s-amber-line);background:var(--s-amber-fill)}
+.shot-qbtn-alert svg{color:var(--s-amber)}
+
+/* The focal card. Border and glow are .logsec.what's own values — rgba(205,171,69,.32) and
+   --glow-gold — not a punchier marketing version of them. A stronger border read better at this
+   size, which is exactly the drift this markup exists to stop. The glow carries the emphasis;
+   it is the only one on the screen, per the One-Glow rule. */
+.shot-card{border:1px solid rgba(205,171,69,.32);border-radius:18px;padding:14px;
+  background:var(--s-sheen),var(--s-surface);
+  box-shadow:0 0 44px -12px rgba(205,171,69,.3),inset 0 1px 0 rgba(255,255,255,.09),0 2px 4px rgba(0,0,0,.32)}
+.shot-card-head{display:flex;align-items:center;gap:9px;margin:0 0 13px;font-size:18px;font-weight:600;letter-spacing:-.015em}
+.shot-card-head svg{color:var(--s-gold)}
+.shot-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.shot-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.shot-flabel{font-size:13px;color:var(--s-muted)}
+/* Field-Recessed: cooler than the card, sunk in with an inner top shadow. */
+.shot-input{display:flex;align-items:center;min-height:44px;padding:0 11px;border:1px solid var(--s-line-2);
+  border-radius:11px;background:var(--s-field);font-size:15px;color:var(--s-text);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.4);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.shot-mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.shot-hint{margin:12px 0 10px;font-size:13px;color:var(--s-muted)}
+.shot-rows{display:flex;flex-direction:column;gap:8px}
+.shot-row{display:grid;grid-template-columns:38px minmax(0,1fr) 18px;align-items:center;gap:10px;
+  min-height:66px;padding:12px;border:1px solid var(--s-line);border-radius:14px;
+  background:var(--s-surface-2)}
+.shot-tile{width:38px;height:38px;display:grid;place-items:center;border-radius:30%;
+  background:var(--s-sheen),linear-gradient(160deg,var(--s-navy-2),var(--s-navy));
+  border:1px solid rgba(205,171,69,.2);color:var(--s-gold)}
+.shot-tile svg{width:19px;height:19px}
+.shot-rtext{display:flex;flex-direction:column;gap:2px;min-width:0}
+.shot-rtext b{font-size:15px;font-weight:600}
+/* Full sub-labels. The raster this replaced truncated every one of them to "…". */
+.shot-rtext small{font-size:12px;color:var(--s-muted);line-height:1.35;text-wrap:pretty}
+.shot-chev{width:18px;height:18px;color:var(--s-faint)}
+
+.shot-tabs{flex:none;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:12px -14px 0;
+  padding:8px 6px;border-top:1px solid var(--s-line);background:var(--s-surface)}
+.shot-tab{display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 2px;
+  font-size:12px;color:var(--s-faint)}
+.shot-tab svg{width:21px;height:21px}
+.shot-tab-on{color:var(--s-gold)}
 .app-preview figcaption{padding:12px 16px;border-top:1px solid var(--line);color:#78869a;font-family:var(--mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase}
 
 .record-section{min-height:620px;display:grid;grid-template-columns:1fr 1.1fr;align-items:start;gap:9vw;padding-top:42px;padding-bottom:96px;background:var(--ivory);color:var(--ink)}
@@ -103,7 +188,7 @@ footer a:hover{color:var(--gold)}
   h1::after{width:130px;margin-top:22px}
   .hero-actions{display:grid}.button{width:100%}.app-preview{width:88vw;transform:translateY(18px)}
   .trust-line{gap:14px}.trust-line span{gap:5px}.trust-line img{width:16px;height:16px}
-  .app-preview img{max-height:520px}.record-section,.process-section,.privacy-section{padding-top:78px;padding-bottom:78px}
+  .record-section,.process-section,.privacy-section{padding-top:78px;padding-bottom:78px}
   .record-copy h2,.section-intro h2,.privacy-section h2{font-size:2.65rem}
   .record-sheet{padding:30px 24px;transform:rotate(-1deg)}.record-sheet dl div{grid-template-columns:1fr;gap:5px}
   .privacy-grid{grid-template-columns:1fr;gap:26px}.closing-section{padding-top:68px;padding-bottom:68px}
