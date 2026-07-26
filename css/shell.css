@@ -186,8 +186,15 @@ body.onboarding .disclaimer { padding-bottom: calc(24px + env(safe-area-inset-bo
 .confirm-action, .confirm-cancel { min-width: 0; }
 @media (max-width: 390px) {
   .confirm-dialog { padding: 18px; }
-  .confirm-dialog .dialog-actions { display: grid; grid-template-columns: 1fr 1fr; }
-  .confirm-dialog .btn { width: 100%; padding-inline: 12px; }
+  /* auto-fit, not a forced 1fr 1fr: two columns at 320px gave each button a 92px content box,
+     which wrapped "Delete record" onto two lines on the one dialog whose action label most
+     needs to read at a glance. 140px is the track width that holds the longest action label in
+     the app on one line, so the pair stays side by side wherever two of them fit (144px each at
+     375px) and stacks full-width where they do not (242px each at 320px).
+     Scoped to .dialog, not .confirm-dialog: the passphrase dialogs share this action row and
+     were wrapping "Save locked backup" for the same reason. */
+  .dialog .dialog-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+  .dialog .dialog-actions .btn { width: 100%; padding-inline: 12px; }
 }
 
 /* Passphrase dialog. The "you cannot recover this" warning is deliberately full-size
