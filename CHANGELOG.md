@@ -7,6 +7,34 @@ file is keyed on. Newest first.
 This project has not had a public production launch — see
 [`docs/LEGAL_FOUNDATION.md`](docs/LEGAL_FOUNDATION.md) for what is still blocking one.
 
+## v106 — 2026-07-26
+
+**Every literal colour and radius in the stylesheets now has a name.**
+
+The design detector had been flagging roughly fifty values a session, which meant it was flagging
+nothing: the signal was buried. Most of it turned out to be bookkeeping — the light theme and the
+landing/install palettes were documented in prose but never in the machine-readable frontmatter, so
+tooling scored the entire daylight theme as drift. With that closed, fourteen genuine strays were
+left standing, and they were real.
+
+The install guide and landing page each keep their own `:root` block, and then nine and two colours
+respectively were written straight into rules anyway — a disabled button fill, the status line, the
+three hairlines ruling the device guides, the gold that carries text on paper. They are named in
+those files now. The app had a matching pair: white ink hardcoded on the selected chip and on the
+photo-remove button, which are a navy fill and a red one, so they are `--on-navy` and `--on-danger`
+rather than one shared `#fff`. The save button's ramp was documented with a hole in it — the hover
+gradient's base stop and the hover border were the only two of the set never written down.
+
+Four square icon tiles were still carrying hand-picked radii of 9, 10, 10 and 12px. `--radius-tile`
+was introduced to end exactly that, and these four were missed: 30% of their tile lands within a
+pixel of each. The landing and install buttons keep their deliberately sharp 3px corner, now named
+as an editorial choice on the brand surface rather than sitting there looking like drift.
+
+No pixel moved. Every rendered value was checked against the hex it replaced on all three surfaces.
+
+**Still blocking public launch:** review of the findings language and UPL posture by a licensed
+California employment attorney.
+
 ## v105 — 2026-07-26
 
 **The interaction states get the same treatment the surfaces already had.**

@@ -107,7 +107,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .chip { background: var(--sheen), var(--surface-3); color: var(--text); border: 1px solid var(--line-2); border-radius: var(--radius-sm); padding: 16px 16px; font-size: var(--fs-ui); min-height: 52px; cursor: pointer; text-align: left; display: inline-flex; align-items: center; gap: 12px; line-height: 1.35; overflow-wrap: anywhere; box-shadow: inset 0 1px 0 var(--edge-top), 0 1px 2px rgba(0,0,0,.28); transition: border-color var(--dur-state) var(--ease-out), background var(--dur-state) var(--ease-out), box-shadow var(--dur-state) var(--ease-out), transform var(--dur-press) var(--ease-out); }
 .chip:hover { border-color: var(--node); box-shadow: inset 0 1px 0 var(--edge-top), 0 2px 5px rgba(0,0,0,.32); }
 .chip:active { transform: translateY(var(--press-drop)); box-shadow: var(--press-sink-sm); }
-.chip.on { background: var(--sheen), linear-gradient(180deg, var(--navy-2), var(--navy)); border-color: var(--primary); font-weight: 500; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.3); }
+.chip.on { background: var(--sheen), linear-gradient(180deg, var(--navy-2), var(--navy)); border-color: var(--primary); font-weight: 500; color: var(--on-navy); box-shadow: inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.3); }
 .chip.on:hover { border-color: var(--primary-strong); }
 .issue-choice {
   width: 100%; min-height: 50px; padding: var(--space-2) var(--space-3); gap: var(--space-3);
@@ -134,7 +134,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .issue-choice-check svg { width: 21px; height: 21px; }
 .issue-choice.on {
   background: linear-gradient(180deg, rgba(34,58,97,.9), rgba(22,38,63,.92));
-  border-color: rgba(205,171,69,.52); color: #fff;
+  border-color: rgba(205,171,69,.52); color: var(--on-navy);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.09);
 }
 .issue-choice.on .issue-choice-icon { color: var(--primary-strong); border-color: rgba(205,171,69,.3); }
@@ -158,7 +158,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .thumb { position: relative; }
 .thumb img, .thumb-img { width: 84px; height: 84px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--line-2); box-shadow: 0 2px 6px rgba(0,0,0,.35); }
 .thumb-meta { display: block; font-family: var(--mono); font-size: var(--fs-micro); color: var(--faint); text-align: center; margin-top: 3px; }
-.thumb-x { position: absolute; top: -8px; right: -8px; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: var(--danger); color: #fff; border: 2px solid var(--bg); cursor: pointer; }
+.thumb-x { position: absolute; top: -8px; right: -8px; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; background: var(--danger); color: var(--on-danger); border: 2px solid var(--bg); cursor: pointer; }
 .thumb-x .icon svg { width: 16px; height: 16px; }
 .savewrap { padding: 24px 0 4px; }
 
@@ -216,7 +216,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .shift-time strong { font: 500 var(--fs-ui)/1.2 var(--mono); color: var(--text); }
 .shift-time span { font: 400 var(--fs-micro)/1.3 var(--mono); color: var(--faint); }
 .shift-meal { display: grid; grid-template-columns: 32px minmax(0,1fr); align-items: center; gap: 10px; font-size: var(--fs-ui); line-height: 1.4; padding: 11px 12px; border-radius: var(--radius-sm); margin-bottom: 12px; border: 1px solid var(--line-2); color: var(--muted); background: rgba(0,0,0,.14); box-shadow: inset 0 1px 2px rgba(0,0,0,.22); }
-.shift-meal > .icon { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 9px; color: var(--primary-strong); background: rgba(205,171,69,.08); }
+.shift-meal > .icon { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--radius-tile); color: var(--primary-strong); background: rgba(205,171,69,.08); }
 .shift-meal > .icon svg { width: 18px; height: 18px; }
 .shift-meal-copy { display: flex; flex-direction: column; min-width: 0; }
 .shift-meal-copy strong { color: var(--text); font-size: var(--fs-ui); font-weight: 600; }
@@ -261,7 +261,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 /* Quick capture sheet (interrupted lunch) */
 .quick-sheet { max-width: 460px; max-height: min(760px, calc(100dvh - 32px)); display: flex; flex-direction: column; overflow: hidden; text-align: left; }
 .quick-head { display: grid; grid-template-columns: 40px minmax(0,1fr); align-items: center; gap: 3px 12px; margin: 0 0 8px; }
-.quick-head-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; color: var(--danger-text); background: rgba(224,89,77,.1); border: 1px solid rgba(224,89,77,.3); }
+.quick-head-icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: var(--radius-tile); color: var(--danger-text); background: rgba(224,89,77,.1); border: 1px solid rgba(224,89,77,.3); }
 .quick-head-icon svg { width: 20px; height: 20px; }
 .quick-title { min-width: 0; }
 .quick-kicker, .capture-mode-kicker { display: block; margin-bottom: 3px; font-family: var(--mono); font-size: var(--fs-micro); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
@@ -292,7 +292,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--p
 .capture-mode { display: grid; grid-template-columns: auto minmax(0,1fr) 36px; gap: 10px; align-items: center; margin: 0 0 var(--space-4); padding: 10px 12px 10px 6px; border: 1px solid rgba(205,171,69,.28); border-radius: var(--radius); background: rgba(205,171,69,.055); }
 .capture-mode-copy { min-width: 0; display: flex; flex-direction: column; }
 .capture-mode-copy strong { font-size: var(--fs-sm); }
-.capture-mode-icon { width: 36px; height: 36px; display: grid; place-items: center; color: var(--primary); border: 1px solid rgba(205,171,69,.2); border-radius: 10px; background: rgba(205,171,69,.07); }
+.capture-mode-icon { width: 36px; height: 36px; display: grid; place-items: center; color: var(--primary); border: 1px solid rgba(205,171,69,.2); border-radius: var(--radius-tile); background: rgba(205,171,69,.07); }
 .capture-mode-icon svg { width: 18px; height: 18px; }
 
 @media (max-width: 360px) {

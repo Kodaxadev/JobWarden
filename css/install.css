@@ -3,7 +3,7 @@
 @font-face{font-family:Geist;src:url("../fonts/geist-sans-latin-600-normal.woff2") format("woff2");font-weight:600;font-display:swap}
 @font-face{font-family:"Geist Mono";src:url("../fonts/geist-mono-latin-400-normal.woff2") format("woff2");font-weight:400;font-display:swap}
 @font-face{font-family:Cinzel;src:url("../fonts/cinzel-latin-600-normal.woff2") format("woff2");font-weight:600;font-display:swap}
-:root{--navy:#0a101c;--ivory:#f2ecdf;--ink:#171b24;--white:#f8f5ec;--gold:#d4ad4b;--line:rgba(248,245,236,.18);--serif:Cinzel,Georgia,serif;--sans:Geist,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--mono:"Geist Mono",ui-monospace,monospace;--ls-micro:.7rem;--ls-sm:.8rem;--ls-body:1rem;--ls-lg:1.15rem;--ls-h3:1.55rem;--ls-h2:2.6rem;--lh-body:1.55}
+:root{--navy:#0a101c;--ivory:#f2ecdf;--ink:#171b24;--white:#f8f5ec;--gold:#d4ad4b;--line:rgba(248,245,236,.18);--gold-disabled:#5f543b;--ink-disabled:#a6a08e;--status-ink:#7f8da2;--status-ok:#8bd09b;--guide-edge:#cfc4b1;--guide-rule:#c7bcaa;--guide-row-rule:#d2c8b7;--gold-on-paper:#8b6e2d;--gold-on-paper-ink:#7b6127;--serif:Cinzel,Georgia,serif;--sans:Geist,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;--mono:"Geist Mono",ui-monospace,monospace;--ls-micro:.7rem;--ls-sm:.8rem;--ls-body:1rem;--ls-lg:1.15rem;--ls-h3:1.55rem;--ls-h2:2.6rem;--lh-body:1.55}
 *{box-sizing:border-box}body{margin:0;background:var(--navy);color:var(--white);font:400 var(--ls-body)/var(--lh-body) var(--sans)}
 a{color:inherit}img{display:block;max-width:100%}
 a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:5px}
@@ -19,18 +19,18 @@ h1{margin:0 0 25px;font-size:clamp(3.2rem,6.4vw,6.1rem)}.lede{max-width:620px;ma
 .actions{display:flex;flex-wrap:wrap;gap:12px}
 .button{min-height:52px;display:inline-flex;align-items:center;justify-content:center;gap:18px;border:1px solid transparent;border-radius:3px;padding:13px 22px;font:600 .9rem/1 var(--sans);text-decoration:none;transition:transform .16s ease,background .16s ease,color .16s ease}
 .button:hover{transform:translateY(-2px)}.button-primary{background:var(--gold);color:#111827}.button-primary:hover{background:#e2be61}
-.button-primary:disabled{background:#5f543b;color:#a6a08e;cursor:not-allowed;transform:none}.button-secondary{border-color:rgba(248,245,236,.35)}
-.button-secondary:hover{border-color:var(--gold);color:var(--gold)}.status{min-height:24px;margin:20px 0 0;color:#7f8da2;font-size:.79rem}.status.ok{color:#8bd09b}
+.button-primary:disabled{background:var(--gold-disabled);color:var(--ink-disabled);cursor:not-allowed;transform:none}.button-secondary{border-color:rgba(248,245,236,.35)}
+.button-secondary:hover{border-color:var(--gold);color:var(--gold)}.status{min-height:24px;margin:20px 0 0;color:var(--status-ink);font-size:.79rem}.status.ok{color:var(--status-ok)}
 .install-mark{justify-self:center;width:min(100%,340px);aspect-ratio:1;display:grid;place-content:center;justify-items:center;gap:20px;border:1px solid rgba(212,173,75,.36);background:#0e1727;box-shadow:0 30px 70px rgba(0,0,0,.32)}
 .install-mark img{width:112px;height:122px}.install-mark span{color:var(--gold);font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase}
 .instructions{padding-top:110px;padding-bottom:110px;background:var(--ivory);color:var(--ink)}
 .section-intro{display:grid;grid-template-columns:.7fr 1.3fr;align-items:end;gap:8vw;margin-bottom:64px}
 .section-intro h2,.after-install h2{margin:0;font-size:clamp(2.6rem,4.6vw,4.7rem)}
-.device-guides{display:grid;grid-template-columns:1fr 1fr;gap:24px}.device-guide{padding:34px;border:1px solid #cfc4b1;background:#ede5d7}
-.device-guide.recommended{border-color:#8b6e2d;box-shadow:inset 0 4px 0 var(--gold)}.guide-heading{display:flex;align-items:flex-start;gap:22px;padding-bottom:28px;border-bottom:1px solid #c7bcaa}
-.guide-number{color:#8b6e2d;font:400 .72rem/1 var(--mono)}.guide-heading p{margin:0 0 3px;color:#6c665d;font-size:.77rem}.guide-heading h3{margin:0;font:600 1.55rem/1.2 var(--sans)}
-.device-guide ol{margin:0;padding:0;list-style:none}.device-guide li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:22px 0;border-bottom:1px solid #d2c8b7}
-.device-guide li:last-child{border:0;padding-bottom:0}.device-guide li>span{width:28px;height:28px;display:grid;place-items:center;border:1px solid #8b6e2d;color:#7b6127;font:.72rem/1 var(--mono)}
+.device-guides{display:grid;grid-template-columns:1fr 1fr;gap:24px}.device-guide{padding:34px;border:1px solid var(--guide-edge);background:#ede5d7}
+.device-guide.recommended{border-color:var(--gold-on-paper);box-shadow:inset 0 4px 0 var(--gold)}.guide-heading{display:flex;align-items:flex-start;gap:22px;padding-bottom:28px;border-bottom:1px solid var(--guide-rule)}
+.guide-number{color:var(--gold-on-paper);font:400 .72rem/1 var(--mono)}.guide-heading p{margin:0 0 3px;color:#6c665d;font-size:.77rem}.guide-heading h3{margin:0;font:600 1.55rem/1.2 var(--sans)}
+.device-guide ol{margin:0;padding:0;list-style:none}.device-guide li{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:22px 0;border-bottom:1px solid var(--guide-row-rule)}
+.device-guide li:last-child{border:0;padding-bottom:0}.device-guide li>span{width:28px;height:28px;display:grid;place-items:center;border:1px solid var(--gold-on-paper);color:var(--gold-on-paper-ink);font:.72rem/1 var(--mono)}
 .device-guide li p{margin:2px 0 0}.after-install{padding-top:110px;padding-bottom:110px;background:#101827}.after-install h2{max-width:900px;margin-bottom:60px}
 .after-install ul{margin:0;padding:0;border-top:1px solid var(--line);list-style:none}.after-install li{display:grid;grid-template-columns:.8fr 1.2fr;gap:60px;padding:24px 0;border-bottom:1px solid var(--line)}
 .after-install strong{font-family:var(--sans);font-size:1.15rem}.after-install span{color:#9daabd}

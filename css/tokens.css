@@ -20,10 +20,13 @@
   /* gold accent + navy brand. Gold is light, so solid gold fills use navy text (--on-gold). */
   --primary:#cdab45; --primary-strong:#e6cd7e; --primary-deep:#9b7a22;
   --gold-1:#d8b54e; --gold-2:#b6912c; --on-gold:#14233c;
+  --on-navy:#ffffff;                           /* ink on a solid navy fill, the mirror of --on-gold */
   --navy:#16263f; --navy-2:#223a61; --navy-deep:#0e1b2e;
   --incident:#e6b15a;                          /* findings / amber */
   --iline:rgba(230,177,90,.42); --ifill:rgba(230,177,90,.08);  /* the amber "attention" tint pair */
   --danger:#e0594d; --danger-text:#ffc1c1;     /* readable light red on a danger tint */
+  --on-danger:#ffffff;                         /* ink on a SOLID danger fill (the photo remove button),
+                                                  not on the tint — that one takes --danger-text */
   --ok:#7fcf92;                                /* evidence green */
   --gline:rgba(90,160,100,.34); --gfill:rgba(78,150,92,.14); --gtext:#86d597;
 
