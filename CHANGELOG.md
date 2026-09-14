@@ -37,6 +37,7 @@ stylesheet were added to the offline cache. See
 ## Earlier versions
 
 The full previous changelog, through v106, is retained unchanged in
-[`docs/CHANGELOG-PRE-V107.md`](docs/CHANGELOG-PRE-V107.md).
+[`CHANGELOG-PRE-V107.md`](CHANGELOG-PRE-V107.md). It remains at the repository root
+so its original relative links continue to resolve.
 The older archive remains at
 [`docs/CHANGELOG-ARCHIVE.md`](docs/CHANGELOG-ARCHIVE.md).
