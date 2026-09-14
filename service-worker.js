@@ -1,8 +1,8 @@
 // service-worker.js — offline app shell cache. One concern: caching + offline fallback.
-const CACHE = 'jobwarden-v106';
+const CACHE = 'jobwarden-v107';
 const ASSETS = [
-  './', './index.html', './landing.html', './install.html', './privacy.html', './terms.html', './manifest.webmanifest',
-  './css/styles.css', './css/tokens.css', './css/shell.css', './css/system.css', './css/forms.css', './css/actions.css', './css/records.css', './css/light.css', './css/marketing.css', './css/install.css', './css/legal.css',
+  './', './index.html', './landing.html', './how-it-works.html', './install.html', './privacy.html', './terms.html', './manifest.webmanifest',
+  './css/styles.css', './css/tokens.css', './css/shell.css', './css/system.css', './css/forms.css', './css/actions.css', './css/records.css', './css/light.css', './css/marketing.css', './css/website.css', './css/install.css', './css/legal.css',
   './fonts/geist-sans-latin-400-normal.woff2', './fonts/geist-sans-latin-500-normal.woff2', './fonts/geist-sans-latin-600-normal.woff2',
   './fonts/geist-mono-latin-400-normal.woff2', './fonts/geist-mono-latin-500-normal.woff2',
   './fonts/cinzel-latin-600-normal.woff2', './fonts/cinzel-latin-700-normal.woff2',
@@ -96,6 +96,7 @@ self.addEventListener('fetch', e => {
       if (req.mode !== 'navigate') return Response.error();
       const path = new URL(req.url).pathname;
       if (path.endsWith('/install.html')) return caches.match('./install.html');
+      if (path.endsWith('/how-it-works.html')) return caches.match('./how-it-works.html');
       if (path.endsWith('/') || path.endsWith('/landing.html')) return caches.match('./landing.html');
       return caches.match('./index.html');
     }))
