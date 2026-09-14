@@ -42,12 +42,12 @@ test('new pages remain static and have accessible document entry points', () => 
     assert.match(html, /href="\.\/install\.html"/);
     assert.match(html, /property="og:image"/);
   }
-  assert.match(landing, /Interface illustration · Example entry/);
+  assert.match(landing, /Illustrative entry · Not a real worker’s record/);
   assert.match(guide, /<summary>What is a PWA\?<\/summary>/);
 });
 
 test('new navigation and stylesheet are included in the offline shell', () => {
-  assert.ok(Number(worker.match(/jobwarden-v(\d+)/)?.[1]) >= 107);
+  assert.ok(Number(worker.match(/jobwarden-v(\d+)/)?.[1]) >= 108);
   assert.match(worker, /'\.\/how-it-works\.html'/);
   assert.match(worker, /'\.\/css\/website\.css'/);
   assert.match(worker, /path\.endsWith\('\/how-it-works\.html'\)/);
@@ -58,4 +58,13 @@ test('same-page guide links resolve to real section ids', () => {
   const ids = new Set([...guide.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]));
   for (const match of guide.matchAll(/href="#([^"]+)"/g)) assert.ok(ids.has(match[1]), match[1]);
   assert.equal(ids.size, [...guide.matchAll(/\bid="([^"]+)"/g)].length);
+});
+
+test('worker-centred homepage artwork stays accessible without scripts or image lettering', () => {
+  assert.match(landing, /Your side of<br>the <em>working<br>day\.<\/em>/);
+  assert.match(landing, /A private workday log/);
+  assert.match(landing, /aria-label="Fictional example of a workday note"/);
+  assert.match(landing, /<dt>Break started<\/dt>/);
+  assert.doesNotMatch(landing, /class="device"|class="screen-card"|<iframe/);
+  assert.match(read('css/website.css'), /prefers-reduced-motion/);
 });

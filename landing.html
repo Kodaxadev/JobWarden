@@ -4,15 +4,15 @@
   <meta charset="utf-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self' data:; font-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0a101c">
-  <title>JobWarden — Your workday, on the record.</title>
-  <meta name="description" content="A private, on-device work log for missed breaks, unpaid work, and the details that matter. Website and installable PWA, currently in trial.">
+  <meta name="theme-color" content="#f4eee4">
+  <title>JobWarden — Your side of the working day.</title>
+  <meta name="description" content="The lunch you didn't finish. The work after clock-out. A private place to keep your side of the working day. California workday log and PWA, in trial.">
   <link rel="canonical" href="https://jobwarden.kodaxa.dev/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="JobWarden">
   <meta property="og:url" content="https://jobwarden.kodaxa.dev/">
-  <meta property="og:title" content="JobWarden — Your workday, on the record.">
-  <meta property="og:description" content="A private, on-device work log for missed breaks, unpaid work, and the details that matter. Website and installable PWA, currently in trial.">
+  <meta property="og:title" content="JobWarden — Your side of the working day.">
+  <meta property="og:description" content="The lunch you didn't finish. The work after clock-out. A private place to keep your side of the working day. California workday log and PWA, in trial.">
   <meta property="og:image" content="https://jobwarden.kodaxa.dev/icons/icon-512.png">
   <meta property="og:image:alt" content="The JobWarden shield and check mark.">
   <meta name="twitter:card" content="summary">
@@ -26,7 +26,7 @@
   <header class="site-header shell">
     <a class="brand" href="./landing.html" aria-label="JobWarden home">
       <img src="./icons/logo-mark.svg" width="38" height="42" alt="">
-      <span><strong>JobWarden</strong><small>THE PRIVATE WORKDAY LOG</small></span>
+      <span><strong>JobWarden</strong><small>A little clarity for your working day.</small></span>
     </a>
     <nav aria-label="Main navigation">
       <a href="./how-it-works.html">How it works</a>
@@ -35,57 +35,44 @@
     </nav>
   </header>
   <main id="main">
-    <section class="hero shell" aria-labelledby="hero-title">
+    <section class="human-hero shell" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow"><span class="status-dot"></span>FOR THE DETAILS THAT MATTER</p>
-        <h1 id="hero-title">Your workday,<br><span>on the record.</span></h1>
-        <p class="lede">Missed breaks. Unpaid work. A conversation worth remembering. Keep a clear, private record while the details are still fresh.</p>
-        <div class="hero-actions"><a class="button primary" href="./index.html">Open trial app <span aria-hidden="true">↗</span></a><a class="button secondary" href="./how-it-works.html">See how it works <span aria-hidden="true">→</span></a></div>
-        <div class="trust-line"><span>No account</span><span>No tracking</span><span>Works offline</span></div>
-        <p class="device-note">Your records stay on this device unless you choose to export them.</p>
-        <a class="trial-link" href="./how-it-works.html#trial"><span class="trial-badge">IN TRIAL</span> California · Attorney review pending <span aria-hidden="true">→</span></a>
+        <p class="eyebrow">FOR THE PERSON BEHIND THE TIMESHEET</p>
+        <h1 id="hero-title">Your side of<br>the <em>working<br>day.</em></h1>
+        <p class="lede">The lunch you didn’t finish. The work after clock-out. The conversation you’re still thinking about.</p>
+        <p class="hero-purpose">A private workday log. Write it down while it’s still fresh.</p>
+        <div class="hero-actions"><a class="button primary" href="./index.html">Try JobWarden <span aria-hidden="true">↗</span></a><a class="button secondary" href="./how-it-works.html">Take a closer look <span aria-hidden="true">→</span></a></div>
+        <p class="device-note">No account. No tracking. Your records stay on this device unless you choose to export them.</p>
+        <a class="trial-link" href="./how-it-works.html#trial"><span class="trial-badge">IN TRIAL</span><span>California · Attorney review pending</span></a>
       </div>
-      <figure class="product-stage" aria-labelledby="preview-caption">
-        <div class="stage-index" aria-hidden="true">FIELD LOG <span>001 / PERSONAL</span></div>
-        <div class="paper-record" aria-hidden="true">
-          <div class="paper-top">PERSONAL ACCOUNT <span>JW / 001</span></div>
-          <p class="paper-kicker">INCIDENT RECORD</p><h3>Interrupted<br>lunch.</h3>
-          <dl><div><dt>WHEN</dt><dd>25 July 2026</dd></div><div><dt>WHERE</dt><dd>Store 12 · Main floor</dd></div></dl>
-          <p class="paper-note">Asked to return to the floor before the break was finished.</p>
-          <span class="paper-stamp">YOUR WORDS. YOUR RECORD.</span>
-        </div>
-        <div class="device" role="img" aria-label="Illustration of JobWarden's log screen, with meal breaks, rest breaks, pay and schedule, and speaking up categories. Example data, not a live record.">
-          <div class="device-top"><span>9:41</span><span class="device-island"></span><span>▰</span></div>
-          <div class="screen-head"><img src="./icons/logo-mark.svg" width="28" height="32" alt=""><span>Job<b>Warden</b><small>FIELD LOG</small></span><span class="local-dot" title="On-device storage"></span></div>
-          <div class="quick-actions"><span>↳ &nbsp; Interrupted lunch</span><span>◷ &nbsp; Start shift</span></div>
-          <div class="screen-card">
-            <p class="screen-title">What happened?</p>
-            <div class="screen-fields"><span>Date<b>07 / 25 / 2026</b></span><span>Place<b>Store 12</b></span></div>
-            <p class="screen-help">Choose a category to get started.</p>
-            <div class="issue-row"><span class="issue-icon">◷</span><span><b>Meal breaks</b><small>Missed, late, or interrupted</small></span><span>⌄</span></div>
-            <div class="issue-row"><span class="issue-icon">Ⅱ</span><span><b>Rest breaks</b><small>Missed, shortened, or interrupted</small></span><span>⌄</span></div>
-            <div class="issue-row"><span class="issue-icon">≡</span><span><b>Pay &amp; schedule</b><small>Unpaid work, records, or tips</small></span><span>⌄</span></div>
-            <div class="issue-row"><span class="issue-icon">↗</span><span><b>Speaking up &amp; sick leave</b><small>Reports, treatment, or leave</small></span><span>⌄</span></div>
-          </div>
-          <div class="screen-tabs"><span class="selected">▤<b>Log</b></span><span>☷<b>Records</b></span><span>↓<b>Export</b></span><span>⚙<b>Settings</b></span></div>
-        </div>
-        <div class="stage-note"><span class="local-dot"></span>On your device.<br><strong>Under your control.</strong></div>
-        <figcaption id="preview-caption">Interface illustration · Example entry</figcaption>
+      <figure class="workday-scene" aria-labelledby="journal-caption">
+        <div class="scene-heading" aria-hidden="true"><span>A MOMENT FROM THE WORKDAY</span><span>↓</span></div>
+        <div class="journal-cover" aria-hidden="true"><span>JobWarden</span><b>My workday.<br>My words.</b><small>A LITTLE SPACE FOR WHAT HAPPENED.</small></div>
+        <article class="journal-entry" aria-label="Fictional example of a workday note">
+          <div class="entry-top"><span>A NOTE TO MYSELF</span><span>25 JUL</span></div>
+          <h2>The lunch<br>I didn’t <em>finish.</em></h2>
+          <p class="entry-story">Asked to come back to the floor before my break was over.</p>
+          <dl class="entry-times"><div><dt>Break started</dt><dd>12:42 <small>PM</small></dd></div><div><dt>Back on the floor</dt><dd>1:08 <small>PM</small></dd></div></dl>
+          <p class="entry-ending">I’m writing it down<br>before the day gets away.</p>
+          <span class="entry-underline" aria-hidden="true"></span>
+        </article>
+        <div class="keepsake" aria-hidden="true"><span>Little details.</span><strong>Worth<br>keeping.</strong></div>
+        <figcaption id="journal-caption">Illustrative entry · Not a real worker’s record</figcaption>
       </figure>
     </section>
-    <section class="principles shell" aria-label="The JobWarden approach">
-      <article><span class="index-label">01 / CAPTURE</span><h2>Keep the context.</h2><p>Times, places, photos, and what happened—in your own words.</p></article>
-      <article><span class="index-label">02 / REVIEW</span><h2>Find the pattern.</h2><p>A record you can revisit, with related entries easier to see together.</p></article>
-      <article><span class="index-label">03 / EXPORT</span><h2>Choose what to share.</h2><p>Turn your entries into a report, spreadsheet, or restorable backup.</p></article>
+    <section class="human-principles shell" aria-label="A place for your own account">
+      <p class="principle-intro">You lived it.<br><em>Keep your account of it.</em></p>
+      <article><h2>While it’s fresh.</h2><p>A time, a place, a photo. The little details are easier to keep now than piece together later.</p></article>
+      <article><h2>When you need it.</h2><p>Come back to your notes. See what repeats. Export a copy when you’re ready.</p></article>
     </section>
-    <section class="overview-link shell" aria-labelledby="overview-title"><div><p class="eyebrow">A LITTLE CLARITY GOES A LONG WAY</p><h2 id="overview-title">Built for the moment.<br>Useful when you look back.</h2></div><div><p>See what JobWarden records, how privacy works, and what to expect from the trial.</p><a class="text-link" href="./how-it-works.html">Explore JobWarden <span aria-hidden="true">↗</span></a></div></section>
+    <section class="human-invitation shell" aria-labelledby="invitation-title">
+      <div><p class="eyebrow">A WORKDAY LOG. WITH YOU AT THE CENTER.</p><h2 id="invitation-title">Some details don’t<br>make the <em>timesheet.</em></h2></div>
+      <div><p>Give them a place of their own. See what JobWarden helps you record, how it works, and what stays private.</p><a class="text-link" href="./how-it-works.html">Get to know JobWarden <span aria-hidden="true">↗</span></a></div>
+    </section>
   </main>
   <footer class="site-footer shell">
-    <div class="footer-top">
-      <a class="brand footer-brand" href="./landing.html"><img src="./icons/logo-mark.svg" width="30" height="34" alt=""><strong>JobWarden</strong></a>
-      <nav aria-label="Footer navigation"><a href="./how-it-works.html">How it works</a><a href="./install.html">Install</a><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a></nav>
-    </div>
-    <div class="footer-bottom"><p>Website + PWA · In trial · California</p><a href="https://kodaxa.dev">Designed &amp; built by Kodaxa <span aria-hidden="true">↗</span></a></div>
+    <div class="footer-top"><a class="brand footer-brand" href="./landing.html"><img src="./icons/logo-mark.svg" width="30" height="34" alt=""><strong>JobWarden</strong></a><nav aria-label="Footer navigation"><a href="./how-it-works.html">How it works</a><a href="./install.html">Install</a><a href="./privacy.html">Privacy</a><a href="./terms.html">Terms</a></nav></div>
+    <div class="footer-bottom"><p>Website + PWA · In trial · California</p><a href="https://kodaxa.dev">Made with care by Kodaxa <span aria-hidden="true">↗</span></a></div>
     <p class="legal-note">Not legal advice. California employment-attorney review is pending. A personal log records your account; it does not determine whether a law was broken.</p>
   </footer>
 </body>
